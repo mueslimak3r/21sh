@@ -1,4 +1,4 @@
-#include "ft_shell.h"
+#include "ftshell.h"
 
 static bool	validate_term(void)
 {
@@ -23,10 +23,10 @@ void		init_term(void)
 	char	*temp;
 
 	temp = buf;
-	tcgetattr(STDERR_FILENO, &terms.old_term);
-	tcgetattr(STDERR_FILENO, &terms.new_term);
-	terms.new_term.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDERR_FILENO, TCSANOW, &terms.new_term);
+	tcgetattr(STDERR_FILENO, &g_term.old_term);
+	tcgetattr(STDERR_FILENO, &g_term.new_term);
+	g_term.new_term.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.new_term);
 	if (!(tgetstr("vi", &temp)))
 	{
 		ft_putstr_fd("error: host terminal attr invalid\n", STDERR_FILENO);
@@ -35,7 +35,7 @@ void		init_term(void)
 	ft_putstr_fd(tgetstr("vi", &temp), STDERR_FILENO);
 	ft_putstr_fd(tgetstr("ti", &temp), STDERR_FILENO);
 	GET_SCREENSIZE;
-	terms.rows = 1;
+	g_term.rows = 1;
 }
 
 void		reset_term(void)
@@ -44,18 +44,30 @@ void		reset_term(void)
 	char	buf[30];
 
 	temp = buf;
-	tcsetattr(STDERR_FILENO, TCSANOW, &terms.old_term);
+	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
 	ft_putstr_fd(tgetstr("ve", &temp), STDERR_FILENO);
 	ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
 }
 
 int			main(int ac, char **av)
 {
+	//t_args	*args;
 
-	if (ac < 2 || !(validate_term()))
+	if (ac || av)
+	{
+		;
+	}
+
+	if (!(validate_term()))
 		return (0);
 	init_term();
 	set_sighandle();
+	//shell_loop();
+	CLEAR_SCREEN;
+	while (1)
+	{
+		;
+	}
 	reset_term();
 	return (0);
 }

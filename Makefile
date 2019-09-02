@@ -1,6 +1,6 @@
 NAME = 21sh
 
-SRC = main.c
+SRC = main.c signals.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -18,10 +18,10 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -C libft
-	@gcc $(FLAGS) $(INC) $(OBJ) libft/libft.a -ltermcap -o $(NAME)
+	@gcc $(FLAGS) $(OBJ) libft/libft.a -ltermcap -o $(NAME)
 
 $(OBJ):
-	@$(CC) $(FLAGS) -c $(SRC_POS)
+	@$(CC) $(INC) $(FLAGS) -c $(SRC_POS)
 
 clean:
 	@make clean -C libft
@@ -37,6 +37,6 @@ again: re
 	@make clean
 
 cleanup: fclean
-	@rm -rf *ft_ls*
+	@rm -rf *21sh*
 
 .PHONY : all, re, clean, fclean, again, cleanup
