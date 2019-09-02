@@ -54,5 +54,5 @@ void	parse_input(char *input)
 		a++;
 	}
 	operands[b] = ft_strsub(input, c, a - c);
-	ft_printf("[%s][%c][%s]", operands[0], operators[0], operands[2]);
+	ft_printf("[%s][%c][%s]", operands[0], operators[0], operands[1]);
 }

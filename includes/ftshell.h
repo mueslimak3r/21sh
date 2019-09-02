@@ -8,6 +8,14 @@
 # include "../libft/libft.h"
 # include <sys/stat.h>
 
+# define REDIR_L '<'
+# define REDIR_R '>'
+# define REDIR_LL "<<"
+# define REDIR_RR ">>"
+# define PIPE '|'
+# define AND '&'
+# define WAIT ';'
+
 # define SPACE 0x20
 # define ENTER 0xA
 # define ESCAPE 0x1B
@@ -52,5 +60,6 @@ struct s_term
 void			set_sighandle(void);
 void		    reset_term(void);
 void            init_term(void);
+void	parse_input(char *input);
 
 #endif
