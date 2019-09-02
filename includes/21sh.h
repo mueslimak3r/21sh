@@ -9,9 +9,7 @@
 # define AND '&'
 # define WAIT ';'
 
-# include "../includes/libft.h"
-# include "../includes/ftprintf.h"
-# include "../includes/ftgnl.h"
+# include "../libft/libft.h"
 
 void	parse_input(char *input);
 

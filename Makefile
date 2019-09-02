@@ -1,6 +1,6 @@
 NAME = 21sh
 
-SRC = main.c signals.c
+SRC = main.c parser.c
 
 OBJ = $(SRC:.c=.o)
 
