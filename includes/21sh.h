@@ -11,6 +11,15 @@
 
 # include "../libft/libft.h"
 
+typedef struct s_cdata  t_cdata;
+
+struct s_cdata
+{
+    char *command;
+    char **args;
+
+};
+
 void	parse_input(char *input);
 
 #endif
