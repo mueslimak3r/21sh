@@ -26,29 +26,23 @@
 # define CLEAR_SCREEN ft_putstr_fd(tgetstr("cl", NULL), STDERR_FILENO);
 # define GET_SCREENSIZE ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 
-typedef struct s_args       t_args;
-typedef struct s_arg_node   t_arg_node;
+typedef struct s_token      t_token;
 typedef struct s_term       t_term;
 
 struct winsize			g_window_size;
 struct s_term			g_term;
 
-struct s_arg_node
+struct s_token
 {
-    char                *value;
-    int                 len;
-    struct s_arg_node   *next;
-    struct s_arg_node   *prev;
+    char                *name;
+    char                **args;
+    int                 type;
+    int                 in;
+    int                 out;
+    int                 err;
 };
 
-struct s_args
-{
-    char                *args;
-    int                 ac;
-    struct s_arg_node   *stack;
-    struct s_args       *next;
-    struct s_args       *prev;
-};
+
 
 struct s_term
 {
@@ -56,6 +50,7 @@ struct s_term
 	struct termios		new_term;
 	int					rows;
 };
+
 
 void			set_sighandle(void);
 void		    reset_term(void);

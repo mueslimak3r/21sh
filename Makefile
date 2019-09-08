@@ -18,7 +18,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -C libft
-	@gcc $(FLAGS) $(OBJ) libft/libft.a -ltermcap -o $(NAME)
+	@gcc $(FLAGS) $(OBJ) libft/libft.a -lncurses -o $(NAME)
 
 $(OBJ):
 	@$(CC) $(INC) $(FLAGS) -c $(SRC_POS)

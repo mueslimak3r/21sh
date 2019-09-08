@@ -19,7 +19,7 @@ static bool	validate_term(void)
 
 void		init_term(void)
 {
-	char	buf[30];
+	char	buf[2048];
 	char	*temp;
 
 	temp = buf;
@@ -41,7 +41,7 @@ void		init_term(void)
 void		reset_term(void)
 {
 	char	*temp;
-	char	buf[30];
+	char	buf[2048];
 
 	temp = buf;
 	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
@@ -49,21 +49,12 @@ void		reset_term(void)
 	ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
 }
 
-void		shell_loop(int ac, char **av)
+void		shell_loop(void)
 {
 	while (ac && av)
 	{
 		;
 	}
-	/*
-	char	buf[5000];
-
-	ft_bzero(buf, 5000);
-	while (read(0, &buf, 5000) >= 0)
-	{
-		parse_input(buf);
-	}
-	*/
 }
 
 int			main(int ac, char **av)
@@ -81,7 +72,7 @@ int			main(int ac, char **av)
 	set_sighandle();
 	//shell_loop();
 	CLEAR_SCREEN;
-	shell_loop(ac, av);
+	shell_loop();
 	reset_term();
 	return (0);
 }
