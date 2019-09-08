@@ -1,4 +1,21 @@
-#include "21sh.h"
+# include "ftshell.h"
+
+# define REDIR_L '<'
+# define REDIR_R '>'
+# define REDIR_LL "<<"
+# define REDIR_RR ">>"
+# define PIPE '|'
+# define AND '&'
+# define WAIT ';'
+
+typedef struct s_cdata  t_cdata;
+
+struct s_cdata
+{
+    char *command;
+    char **args;
+
+};
 
 static int	is_token(char c)
 {

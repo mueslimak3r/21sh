@@ -49,11 +49,46 @@ void		reset_term(void)
 	ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
 }
 
+char		*ft_readstdin_line(void)
+{
+	char	buf[BUFF_SIZE + 1];
+	char	*tmp;
+	char	*s;
+	int		ret;
+
+	s = NULL;
+	while ((ret = read(0, buf, BUFF_SIZE)) > 0)
+	{
+		buf[ret] = '\0';
+		tmp = s ? ft_strjoin(s, buf) : ft_strdup(buf);
+		free(s);
+		s = tmp;
+		if (ft_strchr(s, '\n'))
+		{
+			tmp = ft_strndup(s, (ft_strchr(s, '\n') - s));
+			free(s);
+			return (tmp);
+		}
+	}
+	return (0);
+}
+
 void		shell_loop(void)
 {
-	while (ac && av)
+	char	*line;
+	t_ast	*tree;
+	int		quit;
+
+	quit = 0;
+	line = NULL;
+	while (!quit)
 	{
-		;
+		line = ft_readstdin_line();
+		if (!line)
+			continue ;
+		tree = make_tree(line);
+		quit = run_dispatch(&tree);
+		ft_arraydel(args);
 	}
 }
 

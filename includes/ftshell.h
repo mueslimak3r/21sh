@@ -28,6 +28,7 @@
 
 typedef struct s_token      t_token;
 typedef struct s_term       t_term;
+typedef struct s_ast        t_ast;
 
 struct winsize			g_window_size;
 struct s_term			g_term;
@@ -42,8 +43,6 @@ struct s_token
     int                 err;
 };
 
-
-
 struct s_term
 {
 	struct termios		old_term;
@@ -51,6 +50,41 @@ struct s_term
 	int					rows;
 };
 
+struct s_ast
+{
+    struct s_token      *token;
+    struct s_ast        *leftmost;
+    struct s_ast        *rightmost;
+};
+
+enum			e_tokentype
+{
+	WORD,
+	OPERATOR,
+	REDIRECT,
+	IO_NUMBER,
+	NEWLINE
+};
+
+enum			e_operatorlst
+{
+	NONE,
+	DSEMI,
+	SEMI,
+	AND_IF,
+	AND,
+	OR_IF,
+	PIPE,
+	DLESS_DASH,
+	DLESS,
+	LESS_AND,
+	LESS_GREAT,
+	LESS,
+	DGREAT,
+	GREAT_AND,
+	CLOBBER,
+	GREAT
+};
 
 void			set_sighandle(void);
 void		    reset_term(void);
