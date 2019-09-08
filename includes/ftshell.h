@@ -53,8 +53,9 @@ struct s_term
 struct s_ast
 {
     struct s_token      *token;
-    struct s_ast        *leftmost;
-    struct s_ast        *rightmost;
+    struct s_ast        *root;
+    struct s_ast        *left;
+    struct s_ast        *right;
 };
 
 enum			e_tokentype

@@ -1,14 +1,24 @@
 #include "ftshell.h"
 
-t_ast *make_tree(char *line)
+
+
+void    make_tree(t_ast **root, char *line)
 {
     t_ast *new;
 
-    new = NULL;
+    if (!*root)
+    {
+        *root = ft_memalloc(sizeof(t_ast));
+        new = *root;
+    }
+    else
+    {
+        new = ft_memalloc(sizeof(t_ast));
+    }
     while (line)
     {
-        //if (!get_operator(&line))
-        line++;
+        line += make_tree(&new->left, line)
+        line += make_tree(&new->right, line);
     }
     return (new);
 }
