@@ -88,7 +88,7 @@ void		shell_loop(void)
 			continue ;
 		tree = make_tree(line);
 		quit = run_dispatch(&tree);
-		ft_arraydel(args);
+		ft_strdel(&line);
 	}
 }
 
