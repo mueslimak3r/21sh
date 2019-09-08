@@ -17,59 +17,86 @@ struct s_cdata
 
 };
 
-static int	is_token(char c)
+int	is_operator(char *data)
 {
-	if (c == PIPE || c == WAIT)
-		return (1);
-	return (0);
+	if (!data || !*data)
+		return (-1);
+	if (*data == REDIR_L || *data == REDIR_R || *data == PIPE
+			|| *data == AND || *data == WAIT)
+	{
+		if (*data == REDIR_L && *(data + 1) == REDIR_L)
+			return (1);
+		if (*data == REDIR_R && *(data + 1) == REDIR_L)
+			return (1);
+		else
+			return (0);
+	}
+	return (-1);
 }
 
-/*static char	*str_thing(const char *input, int pos, int len)
+enum e_tokentype	define_flags(char *data)
 {
-	char	*ret;
+	enum e_tokentype	e;
 
-	ret = malloc(sizeof(char) * len);
-	ret[len--] = 0;
-	while (len)
+	if (*data == AND || *data == WAIT)
+		return ((e = OPERATOR));
+	if (*data == REDIR_L || *data == REDIR_R || *data == PIPE)
+		return ((e = REDIRECT));
+	return ((e = WORD));
+}
+
+void		add_token(t_token **head, t_token *new)
+{
+	t_token	*old;
+
+	old = *head;
+	if (!old)
+		*head = new;
+	else
 	{
-		ret[len] = input[pos + len];
-		len--;
+		while (old->next)
+			old = old->next;
+		old->next = new;
 	}
-	return (ret);
-}*/
+}
 
-void	parse_input(char *input)
+t_token		*new_token(char *data)
 {
-	char	**operands;
-	char	*operators;
-	size_t	size;
-	int	a;
-	int	b;
-	int	c;
+	t_token	*new;
 
-	size = ft_strlen(input);
-	operators = malloc(sizeof(char) * size);
-	operands = malloc(sizeof(char*) * size);
-	ft_bzero(operators, size);
-	ft_bzero(operands, size);
-	a = 0;
-	b = 0;
-	c = 0;
-	while (input[a] != '\n')
+	new = malloc(sizeof(t_token));
+	new->type = (int)define_flags(data);
+	new->name = data;
+	new->next = NULL;
+	return (new);
+}
+
+t_token		*parse_input(char *input)
+{
+	int	cur;
+	int	last;
+	t_token	*tokens;
+	int	res;
+
+	last = 0;
+	cur = 0;
+	tokens = NULL;
+	while (input[cur])
 	{
-		ft_printf("%c", input[a]);
-		if (is_token(input[a]))
+		if ((res = is_operator(input + cur)) >= 0)
 		{
-			ft_printf(" is a token\n");
-			operators[b] = input[a];
-			ft_printf("a = %d, c = %d\n", a, c);
-			operands[b++] = ft_strsub(input, c, a - c);
-			c = a + 1;
+			add_token(&tokens, new_token(ft_strsub(input, last, res + cur - last == 0 ? 1 : cur - last)));
+			if (last != cur && input[cur + 1])
+				add_token(&tokens, new_token(ft_strsub(input, cur, 1 + res)));
+			last = cur + 1 + res;
 		}
-		else
-			ft_printf(" is not a token\n");
-		a++;
+		cur += 1 + (res == 1 ? res : 0);
 	}
-	operands[b] = ft_strsub(input, c, a - c);
-	ft_printf("[%s][%c][%s]", operands[0], operators[0], operands[1]);
+	add_token(&tokens, new_token(ft_strsub(input, last, cur - last)));
+	while (tokens)
+	{
+		ft_printf("[%s] (%d)\n", tokens->name, tokens->type);
+		tokens = tokens->next;
+	}
+	return (tokens);
 }

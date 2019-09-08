@@ -41,6 +41,7 @@ struct s_token
     int                 in;
     int                 out;
     int                 err;
+    struct s_token	*next;
 };
 
 struct s_term
@@ -73,9 +74,9 @@ enum			e_operatorlst
 	DSEMI,
 	SEMI,
 	AND_IF,
-	AND,
+	AND_,
 	OR_IF,
-	PIPE,
+	PIPE_,
 	DLESS_DASH,
 	DLESS,
 	LESS_AND,
@@ -90,6 +91,7 @@ enum			e_operatorlst
 void			set_sighandle(void);
 void		    reset_term(void);
 void            init_term(void);
-void	parse_input(char *input);
+t_token	*parse_input(char *input);
+
 
 #endif

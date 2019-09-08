@@ -76,7 +76,7 @@ char		*ft_readstdin_line(void)
 void		shell_loop(void)
 {
 	char	*line;
-	t_ast	*tree;
+	//t_ast	*tree;
 	int		quit;
 
 	quit = 0;
@@ -86,8 +86,10 @@ void		shell_loop(void)
 		line = ft_readstdin_line();
 		if (!line)
 			continue ;
-		tree = make_tree(line);
-		quit = run_dispatch(&tree);
+		else
+			free(parse_input(line));
+		//tree = make_tree(line);
+		//quit = run_dispatch(&tree);
 		ft_strdel(&line);
 	}
 }
