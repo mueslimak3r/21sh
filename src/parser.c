@@ -9,6 +9,18 @@ int			is_operator(char *op)
 	return (0);
 }
 
+int			should_reparent(t_ast *node)
+{
+	char	*name;
+
+	if (!node)
+		return (0);
+	name = node->token->name;
+	if (IS_WAIT(name))
+		return (1);
+	return (0);
+}
+
 t_token		*make_tree_token(char *text)
 {
 	t_token *new;
@@ -53,7 +65,7 @@ t_ast		*make_tree_node(char *input, int start, int end)
 	return (new);
 }
 
-int			get_tokens(t_ast **tree, char *input, int curr)
+int			get_tokens(t_ast **tree, t_ast **root, char *input, int curr)
 {
 	t_ast	*new;
 	t_ast	*r_statement;
@@ -82,13 +94,24 @@ int			get_tokens(t_ast **tree, char *input, int curr)
 			return (0);
 		printf("swapping\n");
 		new = r_statement;
+		if (!*tree)
+			*tree = new;
+	}
+	else if (should_reparent(new))
+	{
+		if (r_statement)
+			*tree = r_statement;
+		new->right = *root;
+		*root = new;
 	}
 	else
+	{
 		new->right = r_statement;
+		if (!*tree)
+			*tree = new;
+	}
 	new->left = NULL;
-	get_tokens(&new->left, input, i - 1);
-	if (!*tree)
-		*tree = new;
+	get_tokens(&new->left, root, input, i - 1);
 	return (1);
 }
 
@@ -100,7 +123,7 @@ t_ast		*parse_input(char *input)
 	if (len < 1)
 		return (tree);
 	printf("s: %s - len: %d\n", input, len);
-	get_tokens(&tree, input, len - 1);
+	get_tokens(&tree, &tree, input, len - 1);
 	return (tree);
 }
 

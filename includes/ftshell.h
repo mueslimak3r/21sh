@@ -107,10 +107,10 @@ void		    reset_term(void);
 void            init_term(void);
 t_ast			*parse_input(char *input);
 void			parse_tokens(t_token *tokens);
-void    print_tree(t_ast *tree);
+void			print_tree(t_ast *tree);
 int				term_write(char *str, int fd);
 int				handle_controls(unsigned long code, char *str);
 
-int		g_routes[5000];
+int				g_routes[5000];
 
 #endif
