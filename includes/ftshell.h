@@ -42,6 +42,12 @@ typedef struct s_ast        t_ast;
 struct winsize			g_window_size;
 struct s_term			g_term;
 
+typedef union
+{
+	unsigned long	long_form;
+	char			arr_form[4];
+} u_input;
+
 struct s_token
 {
     char                *name;
@@ -102,4 +108,9 @@ void            init_term(void);
 t_ast			*parse_input(char *input);
 void			parse_tokens(t_token *tokens);
 void    print_tree(t_ast *tree);
+int				term_write(char *str, int fd);
+int				handle_controls(unsigned long code, char *str);
+
+static int		g_routes[5000];
+
 #endif

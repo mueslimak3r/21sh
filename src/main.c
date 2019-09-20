@@ -55,13 +55,19 @@ char		*ft_readstdin_line(void)
 	char	*tmp;
 	char	*s;
 	int		ret;
+	u_input	thing;
 
 	s = NULL;
-	while ((ret = read(0, buf, BUFF_SIZE)) > 0)
+	ft_memset(buf, 0, BUFF_SIZE + 1);
+	while ((ret = read(0, &thing, 8)) > 0)
 	{
 		buf[ret] = '\0';
-		tmp = s ? ft_strjoin(s, buf) : ft_strdup(buf);
-		free(s);
+		ft_memcpy(buf, thing.arr_form, 8);
+		if (!handle_controls(thing.long_form, s))
+		{
+			term_write(buf, STDERR_FILENO);
+			tmp = s ? ft_strjoin(s, buf) : ft_strdup(buf);
+		}
 		s = tmp;
 		if (ft_strchr(s, '\n'))
 		{
