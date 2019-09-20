@@ -93,10 +93,12 @@ t_token		*parse_input(char *input)
 		cur += 1 + (res == 1 ? res : 0);
 	}
 	add_token(&tokens, new_token(ft_strsub(input, last, cur - last)));
+	/*
 	while (tokens)
 	{
 		ft_printf("[%s] (%d)\n", tokens->name, tokens->type);
 		tokens = tokens->next;
 	}
+	*/
 	return (tokens);
 }

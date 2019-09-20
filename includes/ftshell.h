@@ -92,6 +92,6 @@ void			set_sighandle(void);
 void		    reset_term(void);
 void            init_term(void);
 t_token	*parse_input(char *input);
-
+void    parse_tokens(t_token *tokens);
 
 #endif

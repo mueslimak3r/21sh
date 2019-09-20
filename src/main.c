@@ -87,7 +87,7 @@ void		shell_loop(void)
 		if (!line)
 			continue ;
 		else
-			free(parse_input(line));
+			parse_tokens(parse_input(line));
 		//tree = make_tree(line);
 		//quit = run_dispatch(&tree);
 		ft_strdel(&line);

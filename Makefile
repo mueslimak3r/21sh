@@ -1,6 +1,6 @@
 NAME = 21sh
 
-SRC = main.c signals.c parser.c
+SRC = main.c signals.c parser.c ast.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -12,7 +12,7 @@ INC = -I includes
 
 CC = gcc
 
-FLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+FLAGS = -Wall -Wextra -Werror #-g -fsanitize=address
 
 all: $(NAME)
 
