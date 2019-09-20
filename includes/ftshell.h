@@ -111,6 +111,6 @@ void    print_tree(t_ast *tree);
 int				term_write(char *str, int fd);
 int				handle_controls(unsigned long code, char *str);
 
-static int		g_routes[5000];
+int		g_routes[5000];
 
 #endif

@@ -17,7 +17,7 @@ int		term_write(char *str, int fd)
 	int		des;
 
 	des = g_routes[fd] ? g_routes[fd] : fd;
-	write(ft_strlen(str), str, des);
+	write(des, str, ft_strlen(str));
 	return (1);
 }
 
