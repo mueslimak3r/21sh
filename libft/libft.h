@@ -98,5 +98,8 @@ void				*ft_realloc(void *thing, size_t orig_size, size_t size);
 char				*ft_strjoin_array(char **strs, char *tok);
 int					ft_atoi_base(char *str, const int base);
 char				ft_isspace(unsigned char c);
+int					ft_cntwords_space(const char *t);
+char				**ft_strsplit_space(char const *s);
+char    *ft_get_word(char *s, int nb);
 
 #endif

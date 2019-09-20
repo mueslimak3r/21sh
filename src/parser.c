@@ -6,7 +6,6 @@ int			is_operator(char *op)
 		return (2);
 	else if (IS_REDIR_L(op) || IS_REDIR_R(op) || IS_PIPE(op) || IS_AND(op) || IS_WAIT(op))
 		return (1);
-	printf("yo!||%s||\n", op);
 	return (0);
 }
 
@@ -17,8 +16,9 @@ t_token		*make_tree_token(char *text)
 	new = ft_memalloc(sizeof(t_token));
 	if (!new)
 		return (NULL);
-	printf("adding token: %s!\n", text);
-	new->name = text;
+	printf("adding token: -%s-\n", text);
+	new->name = ft_get_word(text, 1);
+	new->args = ft_strsplit_space(text);
 	return (new);
 }
 
@@ -35,6 +35,8 @@ t_ast		*make_tree_node(char *input, int start, int end)
 		printf("bad input\n");
 		return (0);
 	}
+	while (ft_isspace(input[start]))
+		start++;
 	token = make_tree_token(ft_strsub(input, start, end - start + 1));
 	if (token)
 	{
@@ -65,21 +67,15 @@ int			get_tokens(t_ast **tree, char *input, int curr)
 	{
 		while (i >= 0 && !is_operator(input + i))
 			i--;
-		printf("getting r statement\n");
 		r_statement = make_tree_node(input, ++i, curr);
 		curr = --i;
 	}
-	if (r_statement)
-		printf("got %s\n", r_statement->token->name);
-	printf("done\ngetting operator\n");
 	if (is_operator(input + i))
 	{
 		while (i >= 0 && is_operator(input + i))
 			i--;
 		new = make_tree_node(input, ++i, curr);
 	}
-	if (new)
-		printf("got %s\n", new->token->name);
 	if (!new)
 	{
 		if (!r_statement)
@@ -90,7 +86,6 @@ int			get_tokens(t_ast **tree, char *input, int curr)
 	else
 		new->right = r_statement;
 	new->left = NULL;
-	printf("done i: %d\n", i);
 	get_tokens(&new->left, input, i - 1);
 	if (!*tree)
 		*tree = new;
