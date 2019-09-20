@@ -1,13 +1,115 @@
 # include "ftshell.h"
 
-# define REDIR_L '<'
-# define REDIR_R '>'
-# define REDIR_LL "<<"
-# define REDIR_RR ">>"
-# define PIPE '|'
-# define AND '&'
-# define WAIT ';'
+int			is_operator(char *op)
+{
+	if (IS_REDIR_LL(op) || IS_REDIR_RR(op))
+		return (2);
+	else if (IS_REDIR_L(op) || IS_REDIR_R(op) || IS_PIPE(op) || IS_AND(op) || IS_WAIT(op))
+		return (1);
+	printf("yo!||%s||\n", op);
+	return (0);
+}
 
+t_token		*make_tree_token(char *text)
+{
+	t_token *new;
+
+	new = ft_memalloc(sizeof(t_token));
+	if (!new)
+		return (NULL);
+	printf("adding token: %s!\n", text);
+	new->name = text;
+	return (new);
+}
+
+t_ast		*make_tree_node(char *input, int start, int end)
+{
+	t_token	*token;
+	t_ast	*new;
+
+	new = NULL;
+	token = NULL;
+	printf("making node from start %d end %d\n", start, end);
+	if (!input[start])
+	{
+		printf("bad input\n");
+		return (0);
+	}
+	token = make_tree_token(ft_strsub(input, start, end - start + 1));
+	if (token)
+	{
+		new = malloc(sizeof(t_ast));
+		if (!new)
+		{
+			free(token);
+			return (0);
+		}
+		new->token = token;
+		new->left = NULL;
+		new->right = NULL;
+	}
+	return (new);
+}
+
+int			get_tokens(t_ast **tree, char *input, int curr)
+{
+	t_ast	*new;
+	t_ast	*r_statement;
+
+	r_statement = NULL;
+	new = NULL;
+	if (curr < 0)
+		return (0);
+	int i = curr;
+	if (!is_operator(input + i))
+	{
+		while (i >= 0 && !is_operator(input + i))
+			i--;
+		printf("getting r statement\n");
+		r_statement = make_tree_node(input, ++i, curr);
+		curr = --i;
+	}
+	if (r_statement)
+		printf("got %s\n", r_statement->token->name);
+	printf("done\ngetting operator\n");
+	if (is_operator(input + i))
+	{
+		while (i >= 0 && is_operator(input + i))
+			i--;
+		new = make_tree_node(input, ++i, curr);
+	}
+	if (new)
+		printf("got %s\n", new->token->name);
+	if (!new)
+	{
+		if (!r_statement)
+			return (0);
+		printf("swapping\n");
+		new = r_statement;
+	}
+	else
+		new->right = r_statement;
+	new->left = NULL;
+	printf("done i: %d\n", i);
+	get_tokens(&new->left, input, i - 1);
+	if (!*tree)
+		*tree = new;
+	return (1);
+}
+
+t_ast		*parse_input(char *input)
+{
+	t_ast	*tree;
+	int		len = ft_strlen(input);
+	tree = NULL;
+	if (len < 1)
+		return (tree);
+	printf("s: %s - len: %d\n", input, len);
+	get_tokens(&tree, input, len - 1);
+	return (tree);
+}
+
+/*
 typedef struct s_cdata  t_cdata;
 
 struct s_cdata
@@ -93,12 +195,6 @@ t_token		*parse_input(char *input)
 		cur += 1 + (res == 1 ? res : 0);
 	}
 	add_token(&tokens, new_token(ft_strsub(input, last, cur - last)));
-	/*
-	while (tokens)
-	{
-		ft_printf("[%s] (%d)\n", tokens->name, tokens->type);
-		tokens = tokens->next;
-	}
-	*/
 	return (tokens);
 }
+*/

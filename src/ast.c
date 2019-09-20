@@ -22,16 +22,16 @@ int		make_tree(t_ast **root, char *line, int i)
 }
 */
 
-void    print_tokens(t_token *tokens)
+void    print_tree(t_ast *tree)
 {
-    while (tokens)
-	{
-		ft_printf("[%s] (%d)\n", tokens->name, tokens->type);
-		tokens = tokens->next;
-	}
-}
-
-void    parse_tokens(t_token *tokens)
-{
-    print_tokens(tokens);
+    if (!tree)
+        return ;
+    printf("root: %s ", tree->token->name);
+    if (tree->left)
+        printf("left: %s ", tree->left->token->name);
+    if (tree->right)
+        printf("right: %s ", tree->right->token->name);
+    printf("\n");
+    print_tree(tree->left);
+    print_tree(tree->right);
 }

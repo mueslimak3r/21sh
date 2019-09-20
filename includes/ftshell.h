@@ -8,13 +8,22 @@
 # include "../libft/libft.h"
 # include <sys/stat.h>
 
-# define REDIR_L '<'
-# define REDIR_R '>'
+# define REDIR_L "<"
+# define REDIR_R ">"
 # define REDIR_LL "<<"
 # define REDIR_RR ">>"
-# define PIPE '|'
-# define AND '&'
-# define WAIT ';'
+# define PIPE "|"
+# define AND "&"
+# define WAIT ";"
+
+# define IS_REDIR_L(s) ((ft_strncmp(s, REDIR_L, 1)) ? (0) : (1))
+# define IS_REDIR_R(s) ((ft_strncmp(s, REDIR_R, 1)) ? (0) : (1))
+# define IS_REDIR_LL(s) ((ft_strncmp(s, REDIR_LL, 2)) ? (0) : (1))
+# define IS_REDIR_RR(s) ((ft_strncmp(s, REDIR_RR, 2)) ? (0) : (1))
+# define IS_PIPE(s) ((ft_strncmp(s, PIPE, 1)) ? (0) : (1))
+# define IS_AND(s) ((ft_strncmp(s, AND, 1)) ? (0) : (1))
+# define IS_WAIT(s) ((ft_strncmp(s, WAIT, 1)) ? (0) : (1))
+
 
 # define SPACE 0x20
 # define ENTER 0xA
@@ -54,7 +63,6 @@ struct s_term
 struct s_ast
 {
     struct s_token      *token;
-    struct s_ast        *root;
     struct s_ast        *left;
     struct s_ast        *right;
 };
@@ -91,7 +99,7 @@ enum			e_operatorlst
 void			set_sighandle(void);
 void		    reset_term(void);
 void            init_term(void);
-t_token	*parse_input(char *input);
-void    parse_tokens(t_token *tokens);
-
+t_ast			*parse_input(char *input);
+void			parse_tokens(t_token *tokens);
+void    print_tree(t_ast *tree);
 #endif
