@@ -24,7 +24,6 @@
 # define IS_AND(s) ((ft_strncmp(s, AND, 1)) ? (0) : (1))
 # define IS_WAIT(s) ((ft_strncmp(s, WAIT, 1)) ? (0) : (1))
 
-
 # define SPACE 0x20
 # define ENTER 0xA
 # define ESCAPE 0x1B
@@ -35,9 +34,12 @@
 # define CLEAR_SCREEN ft_putstr_fd(tgetstr("cl", NULL), STDERR_FILENO);
 # define GET_SCREENSIZE ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 
+# define PROMPT "@>"
+
 typedef struct s_token      t_token;
 typedef struct s_term       t_term;
 typedef struct s_ast        t_ast;
+typedef struct s_shellconf	t_shellconf;
 
 struct winsize			g_window_size;
 struct s_term			g_term;
@@ -71,6 +73,13 @@ struct s_ast
     struct s_token      *token;
     struct s_ast        *left;
     struct s_ast        *right;
+};
+
+struct s_shellconf
+{
+	int					g_routes[5000];
+	int					termsize[2];
+	int					cursor[2];
 };
 
 enum			e_tokentype
@@ -108,9 +117,11 @@ void            init_term(void);
 t_ast			*parse_input(char *input);
 void			parse_tokens(t_token *tokens);
 void			print_tree(t_ast *tree);
-int				term_write(char *str, int fd);
-int				handle_controls(unsigned long code, char *str);
+int				term_write(char *str, int fd, t_shellconf *conf);
+int				handle_controls(unsigned long code, char *str, t_shellconf *conf);
+char			*ft_readstdin_line(t_shellconf *conf);
 
 int				g_routes[5000];
+int				ft_printf_fd(int fd, const char *fmt, ...);
 
 #endif

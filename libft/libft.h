@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/21 16:24:04 by calamber          #+#    #+#             */
-/*   Updated: 2019/07/01 17:51:38 by calamber         ###   ########.fr       */
+/*   Updated: 2019/09/21 10:51:01 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void				ft_arraydel(char **array);
 char				*ft_makepath(char *s1, char *s2, char c);
 char				*ft_strndup(const char *src, size_t len);
 int					ft_returnfree(char **ptr, int ret);
-char				*ft_readstdin_line(void);
+//char				*ft_readstdin_line(void);
 int					ft_checkifc(char in, char c);
 void				*ft_realloc(void *thing, size_t orig_size, size_t size);
 char				*ft_strjoin_array(char **strs, char *tok);

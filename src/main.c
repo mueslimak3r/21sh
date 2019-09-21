@@ -32,7 +32,6 @@ void		init_term(void)
 		ft_putstr_fd("error: host terminal attr invalid\n", STDERR_FILENO);
 		exit (0);
 	}
-	ft_putstr_fd(tgetstr("vi", &temp), STDERR_FILENO);
 	ft_putstr_fd(tgetstr("ti", &temp), STDERR_FILENO);
 	GET_SCREENSIZE;
 	g_term.rows = 1;
@@ -49,7 +48,7 @@ void		reset_term(void)
 	ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
 }
 
-char		*ft_readstdin_line(void)
+char		*ft_readstdin_line(t_shellconf *conf)
 {
 	char	buf[BUFF_SIZE + 1];
 	char	*tmp;
@@ -59,13 +58,14 @@ char		*ft_readstdin_line(void)
 
 	s = NULL;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
+	ft_putstr_fd(PROMPT, STDERR_FILENO);
 	while ((ret = read(0, &thing, 8)) > 0)
 	{
 		buf[ret] = '\0';
 		ft_memcpy(buf, thing.arr_form, 8);
-		if (!handle_controls(thing.long_form, s))
+		if (!handle_controls(thing.long_form, s, conf))
 		{
-			term_write(buf, STDERR_FILENO);
+			term_write(buf, STDERR_FILENO, conf);
 			tmp = s ? ft_strjoin(s, buf) : ft_strdup(buf);
 		}
 		s = tmp;
@@ -81,16 +81,21 @@ char		*ft_readstdin_line(void)
 
 void		shell_loop(void)
 {
-	char	*line;
-	t_ast	*tree;
-	int		quit;
+	char		*line;
+	t_ast		*tree;
+	int			quit;
+	t_shellconf	conf;
 
 	quit = 0;
+	conf.termsize[0] = g_window_size.ws_col;
+	conf.termsize[1] = g_window_size.ws_row;
+	conf.cursor[0] = ft_strlen(PROMPT);
+	conf.cursor[1] = 0;
 	line = NULL;
 	tree = NULL;
 	while (!quit)
 	{
-		line = ft_readstdin_line();
+		line = ft_readstdin_line(&conf);
 		if (!line)
 			continue ;
 		else
