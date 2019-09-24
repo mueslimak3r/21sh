@@ -59,13 +59,14 @@ t_ast		*make_tree_node(char *input, int start, int end)
 			return (0);
 		}
 		new->token = token;
+		new->parent = NULL;
 		new->left = NULL;
 		new->right = NULL;
 	}
 	return (new);
 }
 
-int			get_tokens(t_ast **tree, t_ast **root, char *input, int curr)
+int			get_tokens(t_ast **tree, t_ast *parent, t_ast **head, char *input, int curr)
 {
 	t_ast	*new;
 	t_ast	*r_statement;
@@ -96,22 +97,27 @@ int			get_tokens(t_ast **tree, t_ast **root, char *input, int curr)
 		new = r_statement;
 		if (!*tree)
 			*tree = new;
+		new->parent = parent;
 	}
 	else if (should_reparent(new))
 	{
 		if (r_statement)
+		{
+			r_statement->parent = parent;
 			*tree = r_statement;
-		new->right = *root;
-		*root = new;
+		}
+		new->right = *head;
+		*head = new;
 	}
 	else
 	{
 		new->right = r_statement;
+		new->parent = parent;
 		if (!*tree)
 			*tree = new;
 	}
 	new->left = NULL;
-	get_tokens(&new->left, root, input, i - 1);
+	get_tokens(&new->left, new, head, input, i - 1);
 	return (1);
 }
 
@@ -123,7 +129,7 @@ t_ast		*parse_input(char *input)
 	if (len < 1)
 		return (tree);
 	printf("s: %s - len: %d\n", input, len);
-	get_tokens(&tree, &tree, input, len - 1);
+	get_tokens(&tree, NULL, &tree, input, len - 1);
 	return (tree);
 }
 

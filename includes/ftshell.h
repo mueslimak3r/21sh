@@ -36,6 +36,8 @@
 
 # define PROMPT "@>"
 
+int				g_routes[5000];
+
 typedef struct s_token      t_token;
 typedef struct s_term       t_term;
 typedef struct s_ast        t_ast;
@@ -71,6 +73,7 @@ struct s_term
 struct s_ast
 {
     struct s_token      *token;
+	struct s_ast		*parent;
     struct s_ast        *left;
     struct s_ast        *right;
 };
@@ -120,8 +123,6 @@ void			print_tree(t_ast *tree);
 int				term_write(char *str, int fd, t_shellconf *conf);
 int				handle_controls(unsigned long code, char *str, t_shellconf *conf);
 char			*ft_readstdin_line(t_shellconf *conf);
-
-int				g_routes[5000];
 int				ft_printf_fd(int fd, const char *fmt, ...);
 
 #endif
