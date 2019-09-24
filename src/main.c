@@ -101,8 +101,8 @@ void		shell_loop(void)
 		else
 			tree = parse_input(line);//ft_printf("%s\n", line);
 		if (tree)
-			print_tree(tree);
-			//quit = run_dispatch(&tree);
+			//print_tree(tree);
+			quit = parse_tree(&tree);
 		ft_strdel(&line);
 	}
 }

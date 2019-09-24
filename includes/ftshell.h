@@ -124,5 +124,5 @@ int				term_write(char *str, int fd, t_shellconf *conf);
 int				handle_controls(unsigned long code, char *str, t_shellconf *conf);
 char			*ft_readstdin_line(t_shellconf *conf);
 int				ft_printf_fd(int fd, const char *fmt, ...);
-
+int     parse_tree(t_ast **tree);
 #endif
