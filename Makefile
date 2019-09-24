@@ -1,6 +1,7 @@
 NAME = 21sh
 
-SRC = main.c signals.c parser.c ast.c write.c utils.c
+SRC = main.c signals.c parser.c ast.c write.c utils.c \
+	minishell_path.c minishell_env.c
 
 OBJ = $(SRC:.c=.o)
 

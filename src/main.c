@@ -139,6 +139,7 @@ int			main(int ac, char **av)
 
 	if (!(validate_term()))
 		return (0);
+	if (!make_env(&g_term.env))
 	init_term();
 	set_sighandle();
 	//shell_loop();

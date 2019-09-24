@@ -7,6 +7,12 @@
 # include <termios.h>
 # include "../libft/libft.h"
 # include <sys/stat.h>
+# include <unistd.h>
+# include <dirent.h>
+# include <errno.h>
+
+# define PATH_MAX 255
+
 
 # define SPACE 0x20
 # define ENTER 0xA
@@ -67,8 +73,15 @@ struct s_token
     struct s_token	*next;
 };
 
+typedef struct	s_env
+{
+	char		**envp;
+	int			size;
+}				t_env;
+
 struct s_term
 {
+	struct s_env		env;
 	char				**symbls;
 	struct termios		old_term;
 	struct termios		new_term;
@@ -85,6 +98,7 @@ struct s_ast
 
 struct s_shellconf
 {
+
 	int					g_routes[5000];
 	int					termsize[2];
 	int					cursor[2];
@@ -108,4 +122,9 @@ char			*ft_readstdin_line(t_shellconf *conf);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int     parse_tree(t_ast **tree);
 int     dispatch_tree(t_ast **tree, t_stats *ret);
+
+int			run_dispatch(char **args, t_env *env);
+int			find_env(char **envp, char *name);
+int					make_env(t_env *env);
+int					check_path(char **name, char **args, char **envp);
 #endif
