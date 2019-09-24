@@ -17,6 +17,13 @@ int     dispatch_tree(t_ast **tree, t_stats *ret)
     l_stats.exit = 0;
     if (!*tree)
         return (0);
+    if (ft_strcmp((*tree)->token->name, "exit") == 0)
+    {
+        free(*tree);
+        *tree = NULL;
+        ret->exit = 1;
+        return (0);
+    }
     dispatch_tree(&(*tree)->left, &l_stats);
     printf("at node: -%s-\n", (*tree)->token->name);
     exec_node(*tree, ret, &l_stats);
@@ -32,7 +39,7 @@ int     parse_tree(t_ast **tree)
     stats.exit = 0;
     print_tree(*tree);
     printf("\nparsing tree!\n");
-    //dispatch_tree(tree, &stats);
+    dispatch_tree(tree, &stats);
     return (stats.exit);
 }
 
