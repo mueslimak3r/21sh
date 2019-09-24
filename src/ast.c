@@ -18,10 +18,7 @@ int     dispatch_tree(t_ast **tree, t_stats *ret)
     if (!*tree)
         return (0);
     dispatch_tree(&(*tree)->left, &l_stats);
-    printf("at node: %s | ", (*tree)->token->name);
-    if ((*tree)->token->set == NONE)
-        printf("type is none");
-    printf("\n");
+    printf("at node: -%s-\n", (*tree)->token->name);
     exec_node(*tree, ret, &l_stats);
     free(*tree);
     *tree = NULL;
@@ -35,7 +32,7 @@ int     parse_tree(t_ast **tree)
     stats.exit = 0;
     print_tree(*tree);
     printf("\nparsing tree!\n");
-    dispatch_tree(tree, &stats);
+    //dispatch_tree(tree, &stats);
     return (stats.exit);
 }
 
@@ -43,7 +40,7 @@ void    print_tree(t_ast *tree)
 {
     if (!tree)
         return ;
-    printf("root: -%s- type: |%s|\n", tree->token->name, g_term.symbls[tree->token->set]);
+    printf("root: -%s- type: -%s-\n", tree->token->name, g_term.symbls[tree->token->set]);
     printf("root args:\n");
     for (int i = 0; (tree->token->args)[i]; i++)
         printf("%s\n", (tree->token->args)[i]);

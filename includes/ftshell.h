@@ -40,12 +40,10 @@ enum			e_tokentype
 	AND,
 	RDLESS,
 	RDGREAT,
-	SEMI,
 	OR,
 	PIPE,
-	
+	SEMI,
 	LESS,
-	
 	GREAT,
 	REDIRECT,
 	IO_NUMBER,

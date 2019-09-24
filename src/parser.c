@@ -10,9 +10,9 @@ int			is_operator(char *op, int pos)
 	ret = 0;
 	while (g_term.symbls[i])
 	{
-		if (pos > 0 && ft_strncmp(op + pos - 1, g_term.symbls[i], 2) == 0)
+		if (pos > 0 && ft_strncmp(op + pos - 1, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
 			return (2);
-		if (ft_strncmp(op + pos, g_term.symbls[i], 1) == 0)
+		else if (ft_strncmp(op + pos, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
 			return (i);
 		i++;
 	}
