@@ -42,6 +42,7 @@ typedef struct s_token      t_token;
 typedef struct s_term       t_term;
 typedef struct s_ast        t_ast;
 typedef struct s_shellconf	t_shellconf;
+typedef struct s_stats		t_stats;
 
 struct winsize			g_window_size;
 struct s_term			g_term;
@@ -85,6 +86,12 @@ struct s_shellconf
 	int					cursor[2];
 };
 
+struct s_stats
+{
+	int	ret;
+	int exit;
+};
+
 enum			e_tokentype
 {
 	WORD,
@@ -125,4 +132,5 @@ int				handle_controls(unsigned long code, char *str, t_shellconf *conf);
 char			*ft_readstdin_line(t_shellconf *conf);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int     parse_tree(t_ast **tree);
+int     dispatch_tree(t_ast **tree, t_stats *ret);
 #endif
