@@ -37,13 +37,15 @@ enum			e_tokentype
 {
 	NONE,
 	WORD,
-	SEMI,
 	AND,
+	RDLESS,
+	RDGREAT,
+	SEMI,
 	OR,
 	PIPE,
-	RDLESS,
+	
 	LESS,
-	RDGREAT,
+	
 	GREAT,
 	REDIRECT,
 	IO_NUMBER,

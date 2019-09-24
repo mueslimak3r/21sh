@@ -1,6 +1,6 @@
 # include "ftshell.h"
 
-int			is_operator(char *op)
+int			is_operator(char *op, int pos)
 {
 	int		i;
 	int		ret;
@@ -10,9 +10,10 @@ int			is_operator(char *op)
 	ret = 0;
 	while (g_term.symbls[i])
 	{
-		if (ft_strncmp(op, g_term.symbls[i], 1) == 0 ||
-			ft_strncmp(op, g_term.symbls[i], 2) == 0)
-			ret = i;
+		if (pos > 0 && ft_strncmp(op + pos - 1, g_term.symbls[i], 2) == 0)
+			return (2);
+		if (ft_strncmp(op + pos, g_term.symbls[i], 1) == 0)
+			return (i);
 		i++;
 	}
 	if (op && ret == 0)
@@ -39,7 +40,7 @@ t_token		*make_tree_token(char *text)
 	printf("adding token: -%s-\n", text);
 	new->name = ft_get_word(text, 1);
 	new->args = ft_strsplit_space(text);
-	new->set =	is_operator(text);
+	new->set =	is_operator(text, 0);
 	return (new);
 }
 
@@ -85,16 +86,18 @@ int			get_tokens(t_ast **tree, t_ast *parent, t_ast **head, char *input, int cur
 	if (curr < 0)
 		return (0);
 	int i = curr;
-	if (is_operator(input + i) == 1)
+	if (is_operator(input, i) == 1)
 	{
-		while (i >= 0 && is_operator(input + i) == 1)
+		printf("making r node\n");
+		while (i >= 0 && is_operator(input, i) == 1)
 			i--;
 		r_statement = make_tree_node(input, ++i, curr);
 		curr = --i;
 	}
-	if (is_operator(input + i) > 1)
+	if (is_operator(input, i) > 1)
 	{
-		while (i >= 0 && is_operator(input + i) > 1)
+		printf("making new\n");
+		while (i >= 0 && is_operator(input, i) > 1)
 			i--;
 		new = make_tree_node(input, ++i, curr);
 	}
@@ -110,6 +113,7 @@ int			get_tokens(t_ast **tree, t_ast *parent, t_ast **head, char *input, int cur
 	}
 	else if (should_reparent(new))
 	{
+		printf("reparenting\n");
 		if (r_statement)
 		{
 			r_statement->parent = parent;
