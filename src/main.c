@@ -59,6 +59,7 @@ char		*ft_readstdin_line(t_shellconf *conf)
 	s = NULL;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	ft_putstr_fd(PROMPT, STDERR_FILENO);
+	thing.long_form = 0;
 	while ((ret = read(0, &thing, 8)) > 0)
 	{
 		buf[ret] = '\0';
@@ -107,6 +108,26 @@ void		shell_loop(void)
 	}
 }
 
+void		define_symbols(void)
+{
+	static char	*symbols[14] = { 
+	"NONE",
+	"WORD",
+	";",
+	"&&",
+	"||",
+	"|",
+	"<<",
+	"<",
+	">>",
+	">",
+	"REDIRECT",
+	"IO_NUMBER",
+	"NEWLINE",
+	NULL };
+
+	g_term.symbls = symbols;
+}
 int			main(int ac, char **av)
 {
 	//t_args	*args;
@@ -121,6 +142,7 @@ int			main(int ac, char **av)
 	init_term();
 	set_sighandle();
 	//shell_loop();
+	define_symbols();
 	CLEAR_SCREEN;
 	shell_loop();
 	reset_term();

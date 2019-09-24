@@ -8,22 +8,6 @@
 # include "../libft/libft.h"
 # include <sys/stat.h>
 
-# define REDIR_L "<"
-# define REDIR_R ">"
-# define REDIR_LL "<<"
-# define REDIR_RR ">>"
-# define PIPE "|"
-# define AND "&"
-# define WAIT ";"
-
-# define IS_REDIR_L(s) ((ft_strncmp(s, REDIR_L, 1)) ? (0) : (1))
-# define IS_REDIR_R(s) ((ft_strncmp(s, REDIR_R, 1)) ? (0) : (1))
-# define IS_REDIR_LL(s) ((ft_strncmp(s, REDIR_LL, 2)) ? (0) : (1))
-# define IS_REDIR_RR(s) ((ft_strncmp(s, REDIR_RR, 2)) ? (0) : (1))
-# define IS_PIPE(s) ((ft_strncmp(s, PIPE, 1)) ? (0) : (1))
-# define IS_AND(s) ((ft_strncmp(s, AND, 1)) ? (0) : (1))
-# define IS_WAIT(s) ((ft_strncmp(s, WAIT, 1)) ? (0) : (1))
-
 # define SPACE 0x20
 # define ENTER 0xA
 # define ESCAPE 0x1B
@@ -36,6 +20,8 @@
 
 # define PROMPT "@>"
 
+# define TYPES
+
 int				g_routes[5000];
 
 typedef struct s_token      t_token;
@@ -47,6 +33,23 @@ typedef struct s_stats		t_stats;
 struct winsize			g_window_size;
 struct s_term			g_term;
 
+enum			e_tokentype
+{
+	NONE,
+	WORD,
+	SEMI,
+	AND,
+	OR,
+	PIPE,
+	RDLESS,
+	LESS,
+	RDGREAT,
+	GREAT,
+	REDIRECT,
+	IO_NUMBER,
+	NEWLINE
+};
+
 typedef union
 {
 	unsigned long	long_form;
@@ -57,7 +60,7 @@ struct s_token
 {
     char                *name;
     char                **args;
-    int                 type;
+	enum e_tokentype	set;
     int                 in;
     int                 out;
     int                 err;
@@ -66,6 +69,7 @@ struct s_token
 
 struct s_term
 {
+	char				**symbls;
 	struct termios		old_term;
 	struct termios		new_term;
 	int					rows;
@@ -90,35 +94,6 @@ struct s_stats
 {
 	int	ret;
 	int exit;
-};
-
-enum			e_tokentype
-{
-	WORD,
-	OPERATOR,
-	REDIRECT,
-	IO_NUMBER,
-	NEWLINE
-};
-
-enum			e_operatorlst
-{
-	NONE,
-	DSEMI,
-	SEMI,
-	AND_IF,
-	AND_,
-	OR_IF,
-	PIPE_,
-	DLESS_DASH,
-	DLESS,
-	LESS_AND,
-	LESS_GREAT,
-	LESS,
-	DGREAT,
-	GREAT_AND,
-	CLOBBER,
-	GREAT
 };
 
 void			set_sighandle(void);
