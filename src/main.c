@@ -19,7 +19,7 @@ static bool	validate_term(void)
 
 void		init_term(void)
 {
-	char	buf[2048];
+	char	buf[30];
 	char	*temp;
 
 	temp = buf;
@@ -32,6 +32,7 @@ void		init_term(void)
 		ft_putstr_fd("error: host terminal attr invalid\n", STDERR_FILENO);
 		exit (0);
 	}
+	ft_putstr_fd(tgetstr("vi", &temp), STDERR_FILENO);
 	ft_putstr_fd(tgetstr("ti", &temp), STDERR_FILENO);
 	GET_SCREENSIZE;
 	g_term.rows = 1;
@@ -40,7 +41,7 @@ void		init_term(void)
 void		reset_term(void)
 {
 	char	*temp;
-	char	buf[2048];
+	char	buf[30];
 
 	temp = buf;
 	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
@@ -146,6 +147,7 @@ int			main(int ac, char **av)
 	define_symbols();
 	CLEAR_SCREEN;
 	shell_loop();
+	CLEAR_SCREEN;
 	reset_term();
 	return (0);
 }

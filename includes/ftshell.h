@@ -2,6 +2,7 @@
 # define FTSHELL_H
 
 # include <signal.h>
+#include <sys/wait.h>
 # include <sys/ioctl.h>
 # include <termcap.h>
 # include <termios.h>
@@ -11,7 +12,7 @@
 # include <dirent.h>
 # include <errno.h>
 
-# define PATH_MAX 255
+//# define PATHMAX 255
 
 
 # define SPACE 0x20
