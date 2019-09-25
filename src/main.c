@@ -63,30 +63,13 @@ char		*ft_readstdin_line(t_shellconf *conf)
 	thing.long_form = 0;
 	while ((ret = read(0, buf, 4)) >= 0)
 	{
-		//printf("buf: %s\n", buf);
 		ft_memcpy(thing.arr_form, buf, 4);
 		tmp = ft_strjoin(s, buf);
-			if (s)
-				free(s);
-			s = tmp;
-		//printf("s: %s\n", s);
-		
-		if(!(handle_controls(thing.long_form, buf, s, conf)))
-		{
-			//printf("yo\n");
-			/*
-			if (!handle_controls(thing.long_form, s, conf))
-			{
-				term_write(s, STDERR_FILENO, conf);
-				//tmp = s ? ft_strjoin(s, buf) : ft_strdup(buf);
-			}
-			*/
-			term_write(buf, STDERR_FILENO, conf, ft_strlen(buf));
-		}
-		else
+		if (s)
+			free(s);
+		s = tmp;
+		if (!(handle_controls(thing.long_form, buf, s, conf)))
 			return (s);
-		//else
-		//	term_write(buf, STDERR_FILENO, conf, ft_strlen(buf));
 		ft_memset(buf, 0, BUFF_SIZE + 1);
 	}
 	return (0);
@@ -112,7 +95,7 @@ void		shell_loop(void)
 		if (!line)
 			continue ;
 		else
-			tree = parse_input(line);//ft_printf("%s\n", line);
+			tree = parse_input(line);
 		if (tree)
 			quit = parse_tree(&tree);
 		ft_strdel(&line);
