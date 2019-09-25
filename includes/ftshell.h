@@ -14,7 +14,6 @@
 
 //# define PATHMAX 255
 
-
 # define SPACE 0x20
 # define ENTER 0xA
 # define ESCAPE 0x1B

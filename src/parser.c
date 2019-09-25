@@ -34,6 +34,8 @@ t_token		*make_tree_token(char *text)
 {
 	t_token *new;
 
+	if (!text)
+		return (NULL);
 	new = ft_memalloc(sizeof(t_token));
 	if (!new)
 		return (NULL);
@@ -73,6 +75,8 @@ t_ast		*make_tree_node(char *input, int start, int end)
 		new->left = NULL;
 		new->right = NULL;
 	}
+	else
+		return (NULL);
 	return (new);
 }
 

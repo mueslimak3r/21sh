@@ -21,21 +21,31 @@ int			run_command(char *name, char **args, char **envp)
 	if (pid == 0)
 	{
 		if (execve(name, args, envp) == -1)
-			ft_putstr_fd("don't talk to me like that!\n", 2);
+		{
+			ft_putstr_fd("don't talk to me like that!\n", 1);
+			//*err = 1;
+			//printf("exec err %d\n", *err);
+			exit(EXIT_SUCCESS);
+		}
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
 	{
 		ft_putstr_fd("fork malfunction. Please use spoon\n", 2);
-		exit(EXIT_FAILURE);
+		//*err = 1;
+		//printf("fork err %d\n", *err);
+		exit (EXIT_SUCCESS);
 	}
-	wait(&status);
+	//printf("before wait %d\n", *err);
+	waitpid(pid, &status, WUNTRACED);
+	//printf("after wait %d\n", *err);
 	return (status);
 }
 
 int			run_dispatch(char **args, t_env *env)
 {
 	int		ret;
+	//volatile int		syntax_err = 0;
 	char	*name;
 
 	name = 0;
@@ -46,11 +56,12 @@ int			run_dispatch(char **args, t_env *env)
 	ret = 0;
 	if (check_path(&name, args, env->envp))
 	{
-		ret = run_command(name, args, env->envp);
+		ret = run_command(name, args, env->envp);//, &syntax_err);
 		free(name);
 	}
 	else
-		ret = run_command(args[0], args, env->envp);
+		ret = run_command(args[0], args, env->envp);//, &syntax_err);
+	printf("return: %d\n", ret);
 	return (ret);
 }
 

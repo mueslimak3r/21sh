@@ -61,22 +61,29 @@ char		*ft_readstdin_line(t_shellconf *conf)
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	ft_putstr_fd(PROMPT, STDERR_FILENO);
 	thing.long_form = 0;
-	while ((ret = read(0, &thing, 8)) > 0)
+	while ((ret = read(0, buf, 4)) >= 0)
 	{
-		buf[ret] = '\0';
-		ft_memcpy(buf, thing.arr_form, 8);
-		if (!handle_controls(thing.long_form, s, conf))
+		//printf("buf: %s\n", buf);
+		if (s && ft_strlen(s) > 3)
 		{
-			term_write(buf, STDERR_FILENO, conf);
-			tmp = s ? ft_strjoin(s, buf) : ft_strdup(buf);
+			ft_memcpy(s, thing.arr_form, 4);
+			/*
+			if (!handle_controls(thing.long_form, s, conf))
+			{
+				term_write(s, STDERR_FILENO, conf);
+				//tmp = s ? ft_strjoin(s, buf) : ft_strdup(buf);
+			}
+			*/
+			term_write(s, STDERR_FILENO, conf);
 		}
-		s = tmp;
-		if (ft_strchr(s, '\n'))
-		{
-			tmp = ft_strndup(s, (ft_strchr(s, '\n') - s));
+		tmp = ft_strjoin(s, buf);
+		if (s)
 			free(s);
-			return (tmp);
-		}
+		s = tmp;
+		//printf("s: %s\n", s);
+		if (ft_strchr(s, '\n'))
+			return (s);
+		ft_memset(buf, 0, BUFF_SIZE + 1);
 	}
 	return (0);
 }
@@ -103,9 +110,13 @@ void		shell_loop(void)
 		else
 			tree = parse_input(line);//ft_printf("%s\n", line);
 		if (tree)
-			//print_tree(tree);
 			quit = parse_tree(&tree);
 		ft_strdel(&line);
+	}
+	printf("quitting\n");
+	while (1)
+	{
+		;
 	}
 }
 
@@ -141,9 +152,9 @@ int			main(int ac, char **av)
 	if (!(validate_term()))
 		return (0);
 	if (!make_env(&g_term.env))
+		return (0);
 	init_term();
 	set_sighandle();
-	//shell_loop();
 	define_symbols();
 	CLEAR_SCREEN;
 	shell_loop();

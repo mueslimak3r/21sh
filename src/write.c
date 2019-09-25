@@ -59,5 +59,6 @@ int		handle_controls(unsigned long code, char *str, t_shellconf *conf)
 		return (delete_char(str, conf));
 	if (code == SPACE)
 		ft_printf_fd(STDERR_FILENO, "\nCURSOR POS: [%d,%d]\n", conf->cursor[0], conf->cursor[1]);
+	
 	return (0);
 }
