@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/09/25 06:34:53 by calamber         ###   ########.fr       */
+/*   Updated: 2019/09/25 14:42:45 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ int		delete_char(char *str, t_shellconf *conf)
 		return (1);
 	if (conf->cursor[0] < 1 || ft_strlen(str) < 1)
 		return (1);
+	ft_printf_fd(STDERR_FILENO, " ");
+	ft_putstr_fd("\b", STDERR_FILENO);
 	conf->cursor[0] -= 1;
 	if (conf->cursor[0] < 0)
 	{
@@ -54,9 +56,10 @@ int		delete_char(char *str, t_shellconf *conf)
 	}
 	else
 	{
-		term_write("\b", STDERR_FILENO, conf, 1);
-		term_write(" ", STDERR_FILENO, conf, 1);
-		term_write("\b", STDERR_FILENO, conf, 1);
+		ft_putstr_fd("\b", STDERR_FILENO);
+		ft_putstr_fd("\u2588", STDERR_FILENO);
+		//ft_printf_fd(STDERR_FILENO, " ");
+		ft_putstr_fd("\b", STDERR_FILENO);
 	}
 	str[ft_strlen(str) - 1] = 0;
 	return (1);
