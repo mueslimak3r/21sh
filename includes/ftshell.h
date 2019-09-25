@@ -4,8 +4,6 @@
 # include <signal.h>
 #include <sys/wait.h>
 # include <sys/ioctl.h>
-# include <termcap.h>
-# include <termios.h>
 # include "../libft/libft.h"
 # include <sys/stat.h>
 # include <unistd.h>
@@ -35,6 +33,7 @@ typedef struct s_term       t_term;
 typedef struct s_ast        t_ast;
 typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
+typedef struct s_tbuff		t_tbuff;
 
 struct winsize			g_window_size;
 struct s_term			g_term;
@@ -96,12 +95,22 @@ struct s_ast
     struct s_ast        *right;
 };
 
+struct s_tbuff
+{
+	char				*buff;
+	size_t				size;
+	size_t				pos;
+	struct s_tbuff		*next;
+};
+
 struct s_shellconf
 {
 
 	int					g_routes[5000];
 	int					termsize[2];
 	int					cursor[2];
+	int					curr_c;
+	t_tbuff				*buff;
 };
 
 struct s_stats

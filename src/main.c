@@ -60,6 +60,8 @@ char		*ft_readstdin_line(t_shellconf *conf)
 	s = NULL;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	ft_putstr_fd(PROMPT, STDERR_FILENO);
+	ft_putstr_fd("\u2588", STDERR_FILENO);
+	ft_putstr_fd("\b", STDERR_FILENO);
 	conf->cursor[0] = ft_strlen(PROMPT);
 	thing.long_form = 0;
 	while ((ret = read(0, buf, 4)) >= 0)
@@ -91,6 +93,7 @@ void		shell_loop(void)
 	conf.termsize[1] = g_window_size.ws_row;
 	conf.cursor[0] = ft_strlen(PROMPT);
 	conf.cursor[1] = 0;
+	conf.curr_c = -1;
 	line = NULL;
 	tree = NULL;
 	while (!quit)

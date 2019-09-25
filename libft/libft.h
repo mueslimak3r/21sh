@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/21 16:24:04 by calamber          #+#    #+#             */
-/*   Updated: 2019/09/21 10:51:01 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/09/25 06:14:50 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define LIBFT_H
 
 # include "ft_printf/includes/ft_printf.h"
+# include <termcap.h>
+# include <termios.h>
 # include <unistd.h>
 # include <stdlib.h>
 # define BUFF_SIZE 20
@@ -101,5 +103,5 @@ char				ft_isspace(unsigned char c);
 int					ft_cntwords_space(const char *t);
 char				**ft_strsplit_space(char const *s);
 char    *ft_get_word(char *s, int nb);
-
+void		ft_termcap(char *cmd, int fd);
 #endif

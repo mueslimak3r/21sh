@@ -6,7 +6,7 @@
 #    By: calamber <calamber@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/29 23:01:53 by calamber          #+#    #+#              #
-#    Updated: 2019/07/08 04:39:28 by calamber         ###   ########.fr        #
+#    Updated: 2019/09/25 06:12:08 by calamber         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ ft_putendl_fd.c ft_putnbr_fd.c ft_lstnew.c ft_lstdelone.c ft_lstdel.c \
 ft_lstadd.c ft_lstiter.c ft_lstmap.c ft_cntwords.c ft_isupper.c \
 ft_strcase.c ft_itoa_base.c get_next_line.c ft_arraydel.c ft_makepath.c \
 ft_strndup.c ft_returnfree.c ft_readstdin_line.c ft_checkifc.c ft_realloc.c ft_atoi_base.c \
-ft_isspace.c ft_cntwords_space.c ft_strsplit_space.c ft_get_word.c
+ft_isspace.c ft_cntwords_space.c ft_strsplit_space.c ft_get_word.c ft_termcap.c
 
 OBJ = $(SRC:.c=.o)
 
