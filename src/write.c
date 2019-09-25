@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/09/25 14:42:45 by calamber         ###   ########.fr       */
+/*   Updated: 2019/09/25 16:03:32 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int		term_write(char *str, int fd, t_shellconf *conf, int cmd)
 		conf->cursor[0] += ft_strlen(str);
 		if (conf->cursor[0] >= conf->termsize[0])
 		{
+			ft_printf_fd(STDERR_FILENO, " ");
 			ft_putstr_fd("\n", STDERR_FILENO);
 			conf->cursor[0] = 0;
 			conf->cursor[1]++;
@@ -39,20 +40,20 @@ int		delete_char(char *str, t_shellconf *conf)
 
 	if (!conf)
 		return (1);
-	if (conf->cursor[0] < 1 || ft_strlen(str) < 1)
+	if (conf->cursor[0] < 0 || ft_strlen(str) < 1)
 		return (1);
 	ft_printf_fd(STDERR_FILENO, " ");
 	ft_putstr_fd("\b", STDERR_FILENO);
 	conf->cursor[0] -= 1;
 	if (conf->cursor[0] < 0)
 	{
-		conf->cursor[0] = conf->termsize[0] - 2;
+		conf->cursor[0] = conf->termsize[0];
 		conf->cursor[1]--;
 		ft_printf_fd(STDERR_FILENO, "\033[1A");
-		ft_printf_fd(STDERR_FILENO, "\033[%dC", conf->termsize[0]);
-		ft_printf_fd(STDERR_FILENO, "\033[s");
+		ft_printf_fd(STDERR_FILENO, "\033[%dC", conf->termsize[0] - 1);
 		ft_printf_fd(STDERR_FILENO, " ");
-		ft_printf_fd(STDERR_FILENO, "\033[u");
+		ft_printf_fd(STDERR_FILENO, "\b");
+		ft_printf_fd(STDERR_FILENO, "\u2588");
 	}
 	else
 	{
