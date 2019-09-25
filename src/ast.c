@@ -5,7 +5,8 @@ void    exec_node(t_ast *node, t_stats *ret, t_stats *l_stats)
     t_stats r_stats;
 
     r_stats.exit = 0;
-    run_dispatch(node->token->args, &g_term.env);
+    if (node->token->set == WORD)
+        run_dispatch(node->token->args, &g_term.env);
     dispatch_tree(&node->right, &r_stats);
     if (l_stats->exit || r_stats.exit)
         ret->exit = 1;
