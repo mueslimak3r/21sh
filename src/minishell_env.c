@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   minishell_env.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/24 10:07:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/09/24 06:21:29 by calamber         ###   ########.fr       */
+/*   Updated: 2019/09/25 05:31:47 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int			ft_setenv(char *name, char *val, t_env *env)
 int			ft_env(char **envp)
 {
 	while (*envp)
-		ft_printf("%s\n", *(envp++));
+		ft_printf_fd(STDERR_FILENO, "%s\n", *(envp++));
 	return (0);
 }
 

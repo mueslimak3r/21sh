@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/24 09:56:23 by calamber          #+#    #+#             */
-/*   Updated: 2019/09/25 04:31:04 by calamber         ###   ########.fr       */
+/*   Updated: 2019/09/25 05:31:15 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ int			run_dispatch(char **args, t_env *env)
 	}
 	else
 		ret = run_command(args[0], args, env->envp);//, &syntax_err);
-	ft_putstr_fd("return: ", 1);
-	ft_putnbr_fd(ret, 1);
-	ft_putchar_fd('\n', 1);
+	ft_putstr_fd("return: ", STDERR_FILENO);
+	ft_putnbr_fd(ret, STDERR_FILENO);
+	ft_putchar_fd('\n', STDERR_FILENO);
 	return (ret);
 }
 
