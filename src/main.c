@@ -60,15 +60,19 @@ char		*ft_readstdin_line(t_shellconf *conf)
 	s = NULL;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	ft_putstr_fd(PROMPT, STDERR_FILENO);
+	conf->cursor[0] = ft_strlen(PROMPT);
 	thing.long_form = 0;
 	while ((ret = read(0, buf, 4)) >= 0)
 	{
 		ft_memcpy(thing.arr_form, buf, 4);
-		tmp = ft_strjoin(s, buf);
-		if (s)
-			free(s);
-		s = tmp;
-		if (!(handle_controls(thing.long_form, buf, s, conf)))
+		if ((handle_controls(thing.long_form, buf, s, conf)) < 1)
+		{
+			tmp = ft_strjoin(s, buf);
+			if (s)
+				free(s);
+			s = tmp;
+		}
+		else if (thing.long_form == ENTER)
 			return (s);
 		ft_memset(buf, 0, BUFF_SIZE + 1);
 	}

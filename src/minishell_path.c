@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/24 09:56:23 by calamber          #+#    #+#             */
-/*   Updated: 2019/09/25 03:14:02 by calamber         ###   ########.fr       */
+/*   Updated: 2019/09/25 04:31:04 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int			run_dispatch(char **args, t_env *env)
 	//if ((ret = run_builtins(args, env)) != 2)
 	//	return (ret);
 	ret = 0;
+	ft_printf_fd(STDERR_FILENO, "%s\n", *args);
 	if (check_path(&name, args, env->envp))
 	{
 		ret = run_command(name, args, env->envp);//, &syntax_err);
