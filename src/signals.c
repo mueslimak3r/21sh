@@ -7,6 +7,8 @@ static void		sig_resume(int nb)
 		init_term();
 		set_sighandle();
 		CLEAR_SCREEN;
+		term_write(PROMPT, STDERR_FILENO, 1);
+		term_write(g_term.line_in, STDERR_FILENO, 0);
 	}
 }
 
