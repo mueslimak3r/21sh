@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/09/26 05:55:31 by calamber         ###   ########.fr       */
+/*   Updated: 2019/09/26 06:39:34 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,14 @@ int		term_write(char *str, int fd, int cmd)
 		
 		if (g_term.conf.cursor[0] + ft_strlen(str) >= g_term.conf.termsize[0])
 		{
-			if (g_term.conf.termsize[0] - g_term.conf.cursor[0] > 0)
-				write(des, str, g_term.conf.termsize[0] - g_term.conf.cursor[0]);
+			//if (g_term.conf.termsize[0] - g_term.conf.cursor[0] > 0)
+			//	write(des, str, g_term.conf.termsize[0] - g_term.conf.cursor[0]);
+			write(des, str, ft_strlen(str));
 			ft_putstr_fd(" \n", STDERR_FILENO);
-			if (ft_strlen(str) - g_term.conf.termsize[0] + g_term.conf.cursor[0] > 0)
-				write(des, str, ft_strlen(str) - g_term.conf.termsize[0] + g_term.conf.cursor[0]);
-			g_term.conf.cursor[0] = ft_strlen(str) - g_term.conf.termsize[0] + g_term.conf.cursor[0] > 0;
+			//if (ft_strlen(str) - g_term.conf.termsize[0] + g_term.conf.cursor[0] > 0)
+			//	write(des, str + g_term.conf.termsize[0] - g_term.conf.cursor[0], ft_strlen(str) - g_term.conf.termsize[0] + g_term.conf.cursor[0]);
+			//g_term.conf.cursor[0] = ft_strlen(str) - g_term.conf.termsize[0] + g_term.conf.cursor[0];
+			g_term.conf.cursor[0] = ft_strlen(str);
 			g_term.conf.cursor[1]++;
 		}
 		else
