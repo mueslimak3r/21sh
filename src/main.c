@@ -49,33 +49,30 @@ void		reset_term(void)
 	ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
 }
 
-char		*ft_readstdin_line(t_shellconf *conf)
+int			ft_readstdin_line(void)
 {
 	char	buf[BUFF_SIZE + 1];
 	char	*tmp;
-	char	*s;
 	int		ret;
 	u_input	thing;
 
-	s = NULL;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
-	ft_putstr_fd(PROMPT, STDERR_FILENO);
-	ft_putstr_fd("\u2588", STDERR_FILENO);
-	ft_putstr_fd("\b", STDERR_FILENO);
-	conf->cursor[0] = ft_strlen(PROMPT);
+	term_write(PROMPT, STDERR_FILENO, 1);
+	term_write("\u2588\b", STDERR_FILENO, 0);
+	//conf->cursor[0] = ft_strlen(PROMPT);
 	thing.long_form = 0;
 	while ((ret = read(0, buf, 4)) >= 0)
 	{
 		ft_memcpy(thing.arr_form, buf, 4);
-		if ((handle_controls(thing.long_form, buf, s, conf)) < 1)
+		if ((handle_controls(thing.long_form, buf, g_term.line_in)) < 1)
 		{
-			tmp = ft_strjoin(s, buf);
-			if (s)
-				free(s);
-			s = tmp;
+			tmp = ft_strjoin(g_term.line_in, buf);
+			if (g_term.line_in)
+				free(g_term.line_in);
+			g_term.line_in = tmp;
 		}
 		else if (thing.long_form == ENTER)
-			return (s);
+			return (1);
 		ft_memset(buf, 0, BUFF_SIZE + 1);
 	}
 	return (0);
@@ -83,29 +80,24 @@ char		*ft_readstdin_line(t_shellconf *conf)
 
 void		shell_loop(void)
 {
-	char		*line;
 	t_ast		*tree;
 	int			quit;
-	t_shellconf	conf;
-
 	quit = 0;
-	conf.termsize[0] = g_window_size.ws_col;
-	conf.termsize[1] = g_window_size.ws_row;
-	conf.cursor[0] = ft_strlen(PROMPT);
-	conf.cursor[1] = 0;
-	conf.curr_c = -1;
-	line = NULL;
+	g_term.conf.termsize[0] = g_window_size.ws_col;
+	g_term.conf.termsize[1] = g_window_size.ws_row;
+	g_term.conf.cursor[0] = 0;
+	g_term.conf.cursor[1] = 0;
+	g_term.conf.curr_c = -1;
+	g_term.line_in = NULL;
 	tree = NULL;
 	while (!quit)
 	{
-		line = ft_readstdin_line(&conf);
-		if (!line)
+		if (!ft_readstdin_line())
 			continue ;
 		else
-			tree = parse_input(line);
+			tree = parse_input();
 		if (tree)
 			quit = parse_tree(&tree);
-		ft_strdel(&line);
 	}
 }
 

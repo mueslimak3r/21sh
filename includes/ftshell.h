@@ -78,15 +78,6 @@ typedef struct	s_env
 	int			size;
 }				t_env;
 
-struct s_term
-{
-	struct s_env		env;
-	char				**symbls;
-	struct termios		old_term;
-	struct termios		new_term;
-	int					rows;
-};
-
 struct s_ast
 {
     struct s_token      *token;
@@ -113,6 +104,17 @@ struct s_shellconf
 	t_tbuff				*buff;
 };
 
+struct s_term
+{
+	struct s_env		env;
+	char				*line_in;
+	char				**symbls;
+	t_shellconf			conf;
+	struct termios		old_term;
+	struct termios		new_term;
+	int					rows;
+};
+
 struct s_stats
 {
 	int	ret;
@@ -122,15 +124,17 @@ struct s_stats
 void			set_sighandle(void);
 void		    reset_term(void);
 void            init_term(void);
-t_ast			*parse_input(char *input);
+t_ast			*parse_input(void);
 void			parse_tokens(t_token *tokens);
 void			print_tree(t_ast *tree);
-int				term_write(char *str, int fd, t_shellconf *conf, int len);
-int				handle_controls(unsigned long code, char *str, char *saved, t_shellconf *conf);
-char			*ft_readstdin_line(t_shellconf *conf);
+int				term_write(char *str, int fd, int len);
+int				handle_controls(unsigned long code, char *str, char *saved);
+int				ft_readstdin_line(void);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int     parse_tree(t_ast **tree);
 int     dispatch_tree(t_ast **tree, t_stats *ret);
+void		shell_loop(void);
+
 
 int			run_dispatch(char **args, t_env *env);
 int			find_env(char **envp, char *name);

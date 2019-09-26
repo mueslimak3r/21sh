@@ -138,14 +138,18 @@ int			get_tokens(t_ast **tree, t_ast *parent, t_ast **head, char *input, int cur
 	return (1);
 }
 
-t_ast		*parse_input(char *input)
+t_ast		*parse_input(void)
 {
 	t_ast	*tree;
-	int		len = ft_strlen(input);
+	int		len = ft_strlen(g_term.line_in);
 	tree = NULL;
 	if (len < 1)
+	{
+		ft_strdel(&g_term.line_in);
 		return (tree);
+	}
 	//printf("s: %s - len: %d\n", input, len);
-	get_tokens(&tree, NULL, &tree, input, len - 1);
+	get_tokens(&tree, NULL, &tree, g_term.line_in, len - 1);
+	ft_strdel(&g_term.line_in);
 	return (tree);
 }
