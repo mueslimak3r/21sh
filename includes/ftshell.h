@@ -86,11 +86,18 @@ struct s_ast
     struct s_ast        *right;
 };
 
-struct s_tbuff
+struct s_tbuff_buff
 {
-	char				*buff;
+	char				buff[200];
 	size_t				size;
 	size_t				pos;
+	struct s_tbuff_buff	*next;
+};
+
+struct s_tbuff
+{
+	struct s_tfuff_buff	*buff;
+	size_t				size;
 	struct s_tbuff		*next;
 };
 
