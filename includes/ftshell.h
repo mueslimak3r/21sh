@@ -108,7 +108,8 @@ struct s_shellconf
 	int					termsize[2];
 	int					cursor[2];
 	int					curr_c;
-	t_tbuff				*buff;
+	t_tbuff				*buff_first;
+	t_tbuff				*buff_last;
 };
 
 struct s_term
