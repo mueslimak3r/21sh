@@ -83,6 +83,7 @@ struct s_ast
     struct s_token      *token;
 	struct s_ast		*parent;
     struct s_ast        *left;
+	struct s_ast        *middle;
     struct s_ast        *right;
 };
 

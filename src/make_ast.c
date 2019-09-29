@@ -83,9 +83,10 @@ t_ast		*make_tree_node(char *input, int start, int end)
 int			get_tokens(t_ast **tree, t_ast *parent, t_ast **head, char *input, int curr)
 {
 	t_ast	*new;
-	t_ast	*r_statement;
+	t_ast	*l_statement;
+	int		len = ft_strlen(input);
 
-	r_statement = NULL;
+	l_statement = NULL;
 	new = NULL;
 	if (curr < 0)
 		return (0);
@@ -93,29 +94,42 @@ int			get_tokens(t_ast **tree, t_ast *parent, t_ast **head, char *input, int cur
 	if (is_operator(input, i) == 1)
 	{
 		//printf("making r node\n");
-		while (i >= 0 && is_operator(input, i) == 1)
-			i--;
-		r_statement = make_tree_node(input, ++i, curr);
-		curr = --i;
+		while (i < len && is_operator(input, i) == 1)
+			i++;
+		l_statement = make_tree_node(input, curr, --i);
+		curr = ++i;
 	}
 	if (is_operator(input, i) > 1)
 	{
 		//printf("making new\n");
-		while (i >= 0 && is_operator(input, i) > 1)
-			i--;
-		new = make_tree_node(input, ++i, curr);
+		while (i < len && is_operator(input, i) > 1)
+			i++;
+		new = make_tree_node(input, curr, --i);
+		if (!new)
+		{
+			if (!l_statement)
+				return (0);
+			//printf("swapping\n");
+			new = l_statement;
+			if (!*tree)
+				*tree = new;
+			new->parent = parent;
+		}
+		else
+		{
+			new->left = l_statement;
+			if (is_operator(input, i + 1) == 1)
+			{
+				//printf("making r node\n");
+				i++;
+				while (i < len && is_operator(input, i) == 1)
+					i++;
+				new->right = make_tree_node(input, curr, --i);
+			}
+		}
 	}
-	if (!new)
-	{
-		if (!r_statement)
-			return (0);
-		//printf("swapping\n");
-		new = r_statement;
-		if (!*tree)
-			*tree = new;
-		new->parent = parent;
-	}
-	else if (should_reparent(new))
+	/*
+	if (should_reparent(new))
 	{
 		//printf("reparenting\n");
 		if (r_statement)
@@ -126,15 +140,14 @@ int			get_tokens(t_ast **tree, t_ast *parent, t_ast **head, char *input, int cur
 		new->right = *head;
 		*head = new;
 	}
-	else
-	{
-		new->right = r_statement;
-		new->parent = parent;
-		if (!*tree)
-			*tree = new;
-	}
+	*/
+	
+	
+	new->parent = parent;
+	if (!*tree)
+		*tree = new;
 	new->left = NULL;
-	get_tokens(&new->left, new, head, input, i - 1);
+	get_tokens(&new->left, new, head, input, i + 1);
 	return (1);
 }
 
@@ -149,7 +162,7 @@ t_ast		*parse_input(void)
 		return (tree);
 	}
 	//printf("s: %s - len: %d\n", input, len);
-	get_tokens(&tree, NULL, &tree, g_term.line_in, len - 1);
+	get_tokens(&tree, NULL, &tree, g_term.line_in, 0);
 	ft_strdel(&g_term.line_in);
 	return (tree);
 }

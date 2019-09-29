@@ -3,7 +3,7 @@
 void    exec_node(t_ast *node, t_stats *ret, t_stats *l_stats)
 {
     t_stats r_stats;
-
+    int     fd_backup[2];
     r_stats.exit = 0;
     if (!l_stats->exit)
     {
