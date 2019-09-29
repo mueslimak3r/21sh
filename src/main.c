@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
+/*   Updated: 2019/09/28 22:58:34 by alkozma          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ftshell.h"
 
 static bool	validate_term(void)
@@ -59,7 +71,7 @@ int			ft_readstdin_line(void)
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	term_write(PROMPT, STDERR_FILENO, 1);
 	term_write("\u2588\b", STDERR_FILENO, 0);
-	//conf->cursor[0] = ft_strlen(PROMPT);
+	g_term.conf.cursor[0] = ft_strlen(PROMPT);
 	thing.long_form = 0;
 	while ((ret = read(0, buf, 4)) >= 0)
 	{
