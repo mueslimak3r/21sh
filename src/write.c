@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/09/28 22:58:36 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/09/28 23:09:32 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int		term_write(char *str, int fd, int cmd)
 			//g_term.conf.cursor[0] = ft_strlen(str) - g_term.conf.termsize[0] + g_term.conf.cursor[0];
 			g_term.conf.cursor[0] = ft_strlen(str);
 			g_term.conf.cursor[1]++;
+			g_term.conf.curlines++;
 		}
 		else
 		{
@@ -75,11 +76,12 @@ int		delete_char(char *str)
 	ft_printf_fd(STDERR_FILENO, " ");
 	ft_putstr_fd("\b", STDERR_FILENO);
 	g_term.conf.cursor[0] -= 1;
-	rem_from_buf(str, g_term.conf.cursor[0] - 2);
+	rem_from_buf(str, g_term.conf.cursor[0] + ((g_term.conf.curlines - 1) * (g_window_size.ws_col - 1)) - 2);
 	if (g_term.conf.cursor[0] <= 0)
 	{
 		g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
 		g_term.conf.cursor[1]--;
+		g_term.conf.curlines--;
 		ft_printf_fd(STDERR_FILENO, "\033[1A");
 		ft_printf_fd(STDERR_FILENO, "\033[%dC", g_term.conf.termsize[0] - 3);
 		ft_printf_fd(STDERR_FILENO, "\u2588");

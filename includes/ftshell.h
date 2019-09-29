@@ -110,6 +110,7 @@ struct s_shellconf
 	int					curr_c;
 	t_tbuff				*buff_first;
 	t_tbuff				*buff_last;
+	int					curlines;
 };
 
 struct s_term

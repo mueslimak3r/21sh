@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/09/28 22:58:34 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/09/28 23:09:31 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int			ft_readstdin_line(void)
 	int		ret;
 	u_input	thing;
 
+	g_term.conf.curlines = 1;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	term_write(PROMPT, STDERR_FILENO, 1);
 	term_write("\u2588\b", STDERR_FILENO, 0);
