@@ -68,6 +68,7 @@ struct s_lexeme
 {
 	enum e_tokentype	set;
 	char				*data;
+	int					pos;
 	struct s_lexeme		*next;
 };
 
