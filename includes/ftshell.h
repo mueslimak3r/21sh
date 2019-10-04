@@ -35,6 +35,8 @@ typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
 typedef struct s_tbuff		t_tbuff;
 
+typedef struct s_lexeme		t_lexeme;
+
 struct winsize			g_window_size;
 struct s_term			g_term;
 
@@ -60,6 +62,14 @@ typedef union
 	unsigned long	long_form;
 	char			arr_form[4];
 } u_input;
+
+// USE THIS FOR TOKENIZER (LEXER)
+struct s_lexeme
+{
+	enum e_tokentype	set;
+	char				*data;
+	struct s_lexeme		*next;
+};
 
 struct s_token
 {
