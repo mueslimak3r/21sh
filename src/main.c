@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/09/30 11:10:51 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/04 05:43:49 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void		shell_loop(void)
 			tree = parse_input();
 		if (tree)
 			quit = parse_tree(&tree);
+		lexer();
 	}
 }
 

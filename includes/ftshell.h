@@ -36,6 +36,7 @@ typedef struct s_stats		t_stats;
 typedef struct s_tbuff		t_tbuff;
 
 typedef struct s_lexeme		t_lexeme;
+typedef struct s_node		t_node;
 
 struct winsize			g_window_size;
 struct s_term			g_term;
@@ -57,6 +58,15 @@ enum			e_tokentype
 	NEWLINE
 };
 
+enum			e_nodetype
+{
+	BASE,
+	EXPR,
+	EXEC,
+	ARG,
+	MOD
+};
+
 typedef union
 {
 	unsigned long	long_form;
@@ -69,7 +79,17 @@ struct s_lexeme
 	enum e_tokentype	set;
 	char				*data;
 	int					pos;
+	enum e_nodetype		designation;
 	struct s_lexeme		*next;
+};
+
+struct s_node
+{
+	enum e_nodetype	set;
+	struct s_lexeme	*lexeme;
+	struct s_node	*parent;
+	struct s_node	*children;
+	struct s_node	*next;
 };
 
 struct s_token
@@ -160,4 +180,11 @@ int			run_dispatch(char **args, t_env *env);
 int			find_env(char **envp, char *name);
 int					make_env(t_env *env);
 int					check_path(char **name, char **args, char **envp);
+
+void	lexer(void);
+enum e_nodetype	classify(t_lexeme *lexeme);
+int		is_mod(t_lexeme *lexeme);
+int		is_arg(t_lexeme *lexeme);
+int		is_exec(t_lexeme *lexeme);
+
 #endif
