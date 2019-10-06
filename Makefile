@@ -13,7 +13,7 @@ INC = -I includes
 
 CC = gcc
 
-FLAGS = #-Wall -Wextra -Werror #-g -fsanitize=address
+FLAGS = -g -fsanitize=address #-Wall -Wextra -Werror #-g -fsanitize=address
 
 all: $(NAME)
 

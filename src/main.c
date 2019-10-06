@@ -31,7 +31,7 @@ static bool	validate_term(void)
 
 void		init_term(void)
 {
-	char	buf[30];
+	char	buf[150];
 	char	*temp;
 
 	temp = buf;
@@ -53,7 +53,7 @@ void		init_term(void)
 void		reset_term(void)
 {
 	char	*temp;
-	char	buf[30];
+	char	buf[150];
 
 	temp = buf;
 	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
@@ -107,10 +107,13 @@ void		shell_loop(void)
 	{
 		if (!ft_readstdin_line())
 			continue ;
-		else
-			tree = parse_input();
+		//else
+		//	tree = parse_input();
 		if (tree)
-			quit = parse_tree(&tree);
+		{
+			;
+		}
+		//	quit = parse_tree(&tree);
 		lexer();
 	}
 }

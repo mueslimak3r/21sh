@@ -119,6 +119,14 @@ void	plant_tree(t_lexeme *lexemes)
 			ft_printf_fd(STDERR_FILENO, "ERR ");
 		lexemes = lexemes->next;
 	}
+	/*
+	while (head)
+	{
+		t_node *t = head;
+		head = head->next;
+		free(t);
+	}
+	*/
 	ft_printf_fd(STDERR_FILENO, "\n");
 	return ;
 }
@@ -154,5 +162,13 @@ void	lexer(void)
 	test->next->next->next->next->next->next = NULL;
 
 	plant_tree(test);
+	/*
+	while (test)
+	{
+		t_lexeme *tmp = test;
+		test = test->next;
+		free (tmp);
+	}
+	*/
 	ft_printf_fd(STDERR_FILENO, "i tried\n");
 }
