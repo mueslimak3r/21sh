@@ -6,11 +6,17 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/07 12:50:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/07 15:00:46 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
+
+/*
+** new_node
+** Creates a new node with a passed type, lexeme and parent.
+** Will add to parent's list of children.
+*/
 
 t_node	*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 {
@@ -35,6 +41,11 @@ t_node	*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 	return (new);
 }
 
+/*
+** classify
+** Searches input for context and applies a type based on that context.
+*/
+
 enum e_nodetype	classify(t_lexeme *lexeme)
 {
 	if (!lexeme)
@@ -49,6 +60,10 @@ enum e_nodetype	classify(t_lexeme *lexeme)
 		return (MOD);
 	return (2);
 }
+
+/*
+** classify helpers
+*/
 
 int	is_mod(t_lexeme *lexeme)
 {
@@ -93,6 +108,13 @@ int	is_exec(t_lexeme *lexeme)
 	return (0);
 }
 
+/*
+** abstract
+** Creates a new empty EXPR node and makes itself the parent of the
+** 		passed node.
+** Replaces passed node's position in parent's list of children.
+*/
+
 t_node	*abstract(t_node *node)
 {
 	t_node	*parent;
@@ -113,7 +135,10 @@ t_node	*abstract(t_node *node)
 	new->next = node->next;
 	new->children = node;
 	if (!node->parent)
+	{
 		node->parent = new;
+		new->parent = NULL;
+	}
 	parent = node->parent;
 	tmp = parent->children;
 	if (tmp && tmp != node)
@@ -134,10 +159,12 @@ void	parser(t_node *head)
 	while (head)
 	{
 		if (head->lexeme)
-			ft_printf_fd(STDERR_FILENO, "%s\n", head->lexeme->data);
+			ft_printf_fd(STDERR_FILENO, "[%s] ", head->lexeme->data);
 		tmp = head->children;
 		if (tmp)
 			parser(tmp);
+		if (!head->lexeme)
+			ft_printf_fd(STDERR_FILENO, "\nv\n");
 		head = head->next;
 	}
 }
@@ -170,7 +197,7 @@ void	lexer(void)
 	test->pos = 0;
 	test->designation = BASE;
 	test->next = malloc(sizeof(t_lexeme));
-	test->next->data = "test";
+	test->next->data = "test func";
 	test->next->set = WORD;
 	test->next->pos = 0;
 	test->next->designation = BASE;
@@ -190,11 +217,21 @@ void	lexer(void)
 	test->next->next->next->next->pos = 0;
 	test->next->next->next->next->designation = BASE;
 	test->next->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->next->data = "-s";
-	test->next->next->next->next->next->set = WORD;
+	test->next->next->next->next->next->data = "|";
+	test->next->next->next->next->next->set = PIPE;
 	test->next->next->next->next->next->pos = 0;
 	test->next->next->next->next->next->designation = BASE;
-	test->next->next->next->next->next->next = NULL;
+	test->next->next->next->next->next->next = malloc(sizeof(t_lexeme));
+	test->next->next->next->next->next->next->data = "grep";
+	test->next->next->next->next->next->next->set = WORD;
+	test->next->next->next->next->next->next->pos = 0;
+	test->next->next->next->next->next->next->designation = BASE;
+	test->next->next->next->next->next->next->next = malloc(sizeof(t_lexeme));
+	test->next->next->next->next->next->next->next->data = "func";
+	test->next->next->next->next->next->next->next->set = WORD;
+	test->next->next->next->next->next->next->next->pos = 0;
+	test->next->next->next->next->next->next->next->designation = BASE;
+	test->next->next->next->next->next->next->next->next = NULL;
 
 	plant_tree(test);
 	/*
