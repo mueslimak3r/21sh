@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/07 11:50:36 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/07 12:50:46 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 t_node	*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 {
 	t_node	*new;
+	t_node	*tmp;
 
 	new = malloc(sizeof(t_node));
 	new->set = set;
@@ -22,22 +23,16 @@ t_node	*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 	new->parent = parent;
 	new->next = NULL;
 	new->children = NULL;
-	return (new);
-}
-
-void	add_child(t_node **parent, t_node *child)
-{
-	t_node	*tmp;
-	t_node	*tmpc;
-
-	tmp = *parent;
-	tmpc = tmp->children;
-	while (tmpc && tmpc->next)
-		tmpc = tmpc->next;
-	if (tmpc)
-		tmpc->next = child;
+	if (!parent)
+		return (new);
+	tmp = parent->children;
+	while (tmp && tmp->next)
+		tmp = tmp->next;
+	if (tmp)
+		tmp->next = new;
 	else
-		*parent = child;
+		parent->children = new;
+	return (new);
 }
 
 enum e_nodetype	classify(t_lexeme *lexeme)
@@ -117,6 +112,8 @@ t_node	*abstract(t_node *node)
 	}
 	new->next = node->next;
 	new->children = node;
+	if (!node->parent)
+		node->parent = new;
 	parent = node->parent;
 	tmp = parent->children;
 	if (tmp && tmp != node)
@@ -148,15 +145,15 @@ void	parser(t_node *head)
 void	plant_tree(t_lexeme *lexemes)
 {
 	t_node	*head;
-	t_node	*tmp;
+	enum e_nodetype	classification;
 
 	head = new_node(EXPR, NULL, NULL);
 	while (lexemes)
 	{
-		tmp = new_node(classify(lexemes), lexemes, head);
-		if (tmp->set == MOD)
+		classification = classify(lexemes);
+		if (classification == MOD)
 			head = abstract(head);
-		add_child(&head, tmp);
+		new_node(classification, lexemes, head);
 		lexemes = lexemes->next;
 	}
 	parser(head);

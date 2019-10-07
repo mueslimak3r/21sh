@@ -2,7 +2,7 @@
 # define FTSHELL_H
 
 # include <signal.h>
-#include <sys/wait.h>
+# include <sys/wait.h>
 # include <sys/ioctl.h>
 # include "../libft/libft.h"
 # include <sys/stat.h>
