@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/07 09:25:52 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/07 11:50:36 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,53 @@ int	is_exec(t_lexeme *lexeme)
 	return (0);
 }
 
+t_node	*abstract(t_node *node)
+{
+	t_node	*parent;
+	t_node	*tmp;
+	t_node	*child;
+	t_node	*new;
+
+	new = malloc(sizeof(t_node));
+	new->set = EXPR;
+	new->lexeme = NULL;
+	if (!node)
+	{
+		new->next = NULL;
+		new->children = NULL;
+		new->parent = NULL;
+		return (new);
+	}
+	new->next = node->next;
+	new->children = node;
+	parent = node->parent;
+	tmp = parent->children;
+	if (tmp && tmp != node)
+	{
+		while (tmp->next && tmp->next != node)
+			tmp = tmp->next;
+		if (tmp)
+			tmp->next = new;
+	}
+	node->next = NULL;
+	return (new);
+}
+
+void	parser(t_node *head)
+{
+	t_node	*tmp;
+
+	while (head)
+	{
+		if (head->lexeme)
+			ft_printf_fd(STDERR_FILENO, "%s\n", head->lexeme->data);
+		tmp = head->children;
+		if (tmp)
+			parser(tmp);
+		head = head->next;
+	}
+}
+
 void	plant_tree(t_lexeme *lexemes)
 {
 	t_node	*head;
@@ -107,27 +154,12 @@ void	plant_tree(t_lexeme *lexemes)
 	while (lexemes)
 	{
 		tmp = new_node(classify(lexemes), lexemes, head);
-		if (tmp->set == EXPR)
-			ft_printf_fd(STDERR_FILENO, "EXPR ");
-		else if (tmp->set == EXEC)
-			ft_printf_fd(STDERR_FILENO, "EXEC ");
-		else if (tmp->set == ARG)
-			ft_printf_fd(STDERR_FILENO, "ARG ");
-		else if (tmp->set == MOD)
-			ft_printf_fd(STDERR_FILENO, "MOD ");
-		else
-			ft_printf_fd(STDERR_FILENO, "ERR ");
+		if (tmp->set == MOD)
+			head = abstract(head);
+		add_child(&head, tmp);
 		lexemes = lexemes->next;
 	}
-	/*
-	while (head)
-	{
-		t_node *t = head;
-		head = head->next;
-		free(t);
-	}
-	*/
-	ft_printf_fd(STDERR_FILENO, "\n");
+	parser(head);
 	return ;
 }
 
@@ -161,7 +193,7 @@ void	lexer(void)
 	test->next->next->next->next->pos = 0;
 	test->next->next->next->next->designation = BASE;
 	test->next->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->next->data = "-e";
+	test->next->next->next->next->next->data = "-s";
 	test->next->next->next->next->next->set = WORD;
 	test->next->next->next->next->next->pos = 0;
 	test->next->next->next->next->next->designation = BASE;
