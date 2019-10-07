@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/04 05:43:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/07 09:25:52 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,26 +139,32 @@ void	lexer(void)
 	test->data = "echo";
 	test->set = WORD;
 	test->pos = 0;
+	test->designation = BASE;
 	test->next = malloc(sizeof(t_lexeme));
 	test->next->data = "test";
 	test->next->set = WORD;
 	test->next->pos = 0;
+	test->next->designation = BASE;
 	test->next->next = malloc(sizeof(t_lexeme));
 	test->next->next->data = "|";
 	test->next->next->set = PIPE;
 	test->next->next->pos = 0;
+	test->next->next->designation = BASE;
 	test->next->next->next = malloc(sizeof(t_lexeme));
 	test->next->next->next->data = "cat";
 	test->next->next->next->set = WORD;
 	test->next->next->next->pos = 0;
+	test->next->next->next->designation = BASE;
 	test->next->next->next->next = malloc(sizeof(t_lexeme));
 	test->next->next->next->next->data = "-e";
 	test->next->next->next->next->set = WORD;
 	test->next->next->next->next->pos = 0;
+	test->next->next->next->next->designation = BASE;
 	test->next->next->next->next->next = malloc(sizeof(t_lexeme));
 	test->next->next->next->next->next->data = "-e";
 	test->next->next->next->next->next->set = WORD;
 	test->next->next->next->next->next->pos = 0;
+	test->next->next->next->next->next->designation = BASE;
 	test->next->next->next->next->next->next = NULL;
 
 	plant_tree(test);
