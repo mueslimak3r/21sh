@@ -250,9 +250,22 @@ void	plant_tree(t_lexeme *lexemes)
 	return ;
 }
 
+void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
+{
+	
+}
+
 void	lexer(void)
 {
-	t_lexeme	*test;
+	//t_lexeme	*front;
+	//t_lexeme	*back;
+
+	//front = NULL;
+	//back = NULL;
+	//if (!g_term.line_in)
+	//	return ;
+	//line_lexer(&front, &back, g_term.line_in, 0);
+	t_lexeme *test;
 
 	test = malloc(sizeof(t_lexeme));
 	test->data = "echo";
@@ -296,7 +309,7 @@ void	lexer(void)
 	test->next->next->next->next->next->next->next->designation = BASE;
 	test->next->next->next->next->next->next->next->next = NULL;
 
-	plant_tree(test);
+	
 	/*
 	while (test)
 	{
@@ -305,5 +318,7 @@ void	lexer(void)
 		free (tmp);
 	}
 	*/
+	plant_tree(test);
+
 	ft_printf_fd(STDERR_FILENO, "i tried\n");
 }
