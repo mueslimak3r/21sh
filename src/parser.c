@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/07 15:00:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/07 17:05:49 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,20 +152,61 @@ t_node	*abstract(t_node *node)
 	return (new);
 }
 
+void	exec_node_parse(t_node *node)
+{
+	char	**disp;
+	t_env	*env;
+	t_node	*tmp;
+	int		sz;
+	int		i;
+
+	if (!node)
+		return ;
+	env = malloc(sizeof(t_env));
+	ft_printf_fd(STDERR_FILENO, "PARSING\n");
+	make_env(env);
+	tmp = node->children;
+	disp = NULL;
+	sz = 0;
+	while (tmp)
+	{
+		sz += tmp->lexeme ? 1 : 0;
+		tmp = tmp->next;
+	}
+	tmp = node->children;
+	disp = malloc(sizeof(char*) * (sz + 1));
+	i = 0;
+	while (tmp)
+	{
+		if (tmp->lexeme && tmp->lexeme->data)
+			disp[i++] = ft_strdup(tmp->lexeme->data);
+		tmp = tmp->next;
+	}
+	disp[i++] = 0;
+	ft_printf_fd(STDERR_FILENO, "%d\n", i);
+	run_dispatch(disp, env);
+	ft_printf_fd(STDERR_FILENO, "EXECUTED NODE: %s\n", disp[0]);
+	free(disp);
+}
+
 void	parser(t_node *head)
 {
 	t_node	*tmp;
+	t_node	*h2;
 
-	while (head)
+	h2 = head;
+	while (h2)
 	{
-		if (head->lexeme)
-			ft_printf_fd(STDERR_FILENO, "[%s] ", head->lexeme->data);
-		tmp = head->children;
+		if (h2->lexeme)
+			ft_printf_fd(STDERR_FILENO, "[%s] ", h2->lexeme->data);
+		tmp = h2->children;
 		if (tmp)
 			parser(tmp);
-		if (!head->lexeme)
+		if (tmp && tmp->set == EXEC)
+			exec_node_parse(tmp->parent);
+		if (!h2->lexeme)
 			ft_printf_fd(STDERR_FILENO, "\nv\n");
-		head = head->next;
+		h2 = h2->next;
 	}
 }
 
@@ -179,11 +220,30 @@ void	plant_tree(t_lexeme *lexemes)
 	{
 		classification = classify(lexemes);
 		if (classification == MOD)
-			head = abstract(head);
+		{
+			if (!head->parent)
+				head = abstract(head);
+			else
+				head = head->parent;
+		}
+		else if (classification == EXEC)
+			head = new_node(EXPR, NULL, head);
 		new_node(classification, lexemes, head);
 		lexemes = lexemes->next;
 	}
+	while (head->parent)
+		head = head->parent;
 	parser(head);
+	while (head->children)
+	{
+		ft_printf_fd(STDERR_FILENO, "[%s]", head->children->lexeme ? head->children->lexeme->data : "NULL");
+		while (head->children->children)
+		{
+			ft_printf_fd(STDERR_FILENO, "(%s)", head->children->children->lexeme ? head->children->children->lexeme->data : "NULL");
+			head->children->children = head->children->children->next;
+		}
+		head->children = head->children->next;
+	}
 	return ;
 }
 
