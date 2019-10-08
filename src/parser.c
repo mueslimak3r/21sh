@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/07 17:05:49 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/07 18:44:15 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,20 +155,20 @@ t_node	*abstract(t_node *node)
 void	exec_node_parse(t_node *node)
 {
 	char	**disp;
-	t_env	*env;
+	//t_env	*env;
 	t_node	*tmp;
 	int		sz;
 	int		i;
 
 	if (!node)
 		return ;
-	env = malloc(sizeof(t_env));
+	//env = malloc(sizeof(t_env));
 	ft_printf_fd(STDERR_FILENO, "PARSING\n");
-	make_env(env);
+	//make_env(env);
 	tmp = node->children;
 	disp = NULL;
 	sz = 0;
-	while (tmp)
+	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
 	{
 		sz += tmp->lexeme ? 1 : 0;
 		tmp = tmp->next;
@@ -176,7 +176,7 @@ void	exec_node_parse(t_node *node)
 	tmp = node->children;
 	disp = malloc(sizeof(char*) * (sz + 1));
 	i = 0;
-	while (tmp)
+	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
 	{
 		if (tmp->lexeme && tmp->lexeme->data)
 			disp[i++] = ft_strdup(tmp->lexeme->data);
@@ -184,7 +184,7 @@ void	exec_node_parse(t_node *node)
 	}
 	disp[i++] = 0;
 	ft_printf_fd(STDERR_FILENO, "%d\n", i);
-	run_dispatch(disp, env);
+	run_dispatch(disp, &g_term.env);
 	ft_printf_fd(STDERR_FILENO, "EXECUTED NODE: %s\n", disp[0]);
 	free(disp);
 }
@@ -204,7 +204,7 @@ void	parser(t_node *head)
 			parser(tmp);
 		if (tmp && tmp->set == EXEC)
 			exec_node_parse(tmp->parent);
-		if (!h2->lexeme)
+		if (!h2->lexeme || h2->set == MOD)
 			ft_printf_fd(STDERR_FILENO, "\nv\n");
 		h2 = h2->next;
 	}
@@ -234,6 +234,8 @@ void	plant_tree(t_lexeme *lexemes)
 	while (head->parent)
 		head = head->parent;
 	parser(head);
+
+	/*
 	while (head->children)
 	{
 		ft_printf_fd(STDERR_FILENO, "[%s]", head->children->lexeme ? head->children->lexeme->data : "NULL");
@@ -244,6 +246,7 @@ void	plant_tree(t_lexeme *lexemes)
 		}
 		head->children = head->children->next;
 	}
+	*/
 	return ;
 }
 
@@ -267,12 +270,12 @@ void	lexer(void)
 	test->next->next->pos = 0;
 	test->next->next->designation = BASE;
 	test->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->data = "cat";
+	test->next->next->next->data = "ls";
 	test->next->next->next->set = WORD;
 	test->next->next->next->pos = 0;
 	test->next->next->next->designation = BASE;
 	test->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->data = "-e";
+	test->next->next->next->next->data = "-l";
 	test->next->next->next->next->set = WORD;
 	test->next->next->next->next->pos = 0;
 	test->next->next->next->next->designation = BASE;
@@ -282,12 +285,12 @@ void	lexer(void)
 	test->next->next->next->next->next->pos = 0;
 	test->next->next->next->next->next->designation = BASE;
 	test->next->next->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->next->next->data = "grep";
+	test->next->next->next->next->next->next->data = "ls";
 	test->next->next->next->next->next->next->set = WORD;
 	test->next->next->next->next->next->next->pos = 0;
 	test->next->next->next->next->next->next->designation = BASE;
 	test->next->next->next->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->next->next->next->data = "func";
+	test->next->next->next->next->next->next->next->data = "-la";
 	test->next->next->next->next->next->next->next->set = WORD;
 	test->next->next->next->next->next->next->next->pos = 0;
 	test->next->next->next->next->next->next->next->designation = BASE;
