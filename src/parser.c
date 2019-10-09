@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/09 14:28:04 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/09 16:14:18 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,8 +197,6 @@ void	exec_node_parse(t_node *node)
 {
 	char	**disp;
 	t_node	*tmp;
-	int		sz;
-	int		i;
 
 	if (!node || node->evaluated)
 		return ;
@@ -207,11 +205,15 @@ void	exec_node_parse(t_node *node)
 	{
 		exec_pipe(node, node->next->next);
 		node->evaluated = 1;
-		node->next->next->evaluated = 1;
+		tmp = node;
+		while (tmp->next && tmp->next->lexeme && tmp->next->lexeme->set == PIPE)
+		{
+			tmp = tmp->next->next;
+			tmp->evaluated = 1;
+		}
 	}
 	else if (run_builtins(disp, &g_term.env) == 2)
 		run_dispatch(disp, &g_term.env);
-	//ft_printf_fd(STDERR_FILENO, "EXECUTED NODE: %s\n", disp[0]);
 	free(disp);
 }
 

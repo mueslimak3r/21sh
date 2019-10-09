@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/09 14:27:59 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/09 16:14:23 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 int		exec_pipe(t_node *a, t_node *b)
 {
-	int		ret;
 	char	*name_a;
 	char	*name_b;
 	char	**args_a;
@@ -45,10 +44,15 @@ int		exec_pipe(t_node *a, t_node *b)
 		{
 			dup2(fd[0], STDIN_FILENO);
 			close(fd[1]);
-			if (execve(name_b, args_b, g_term.env.envp) == -1)
+			if (b->next && b->next->lexeme && b->next->lexeme->set == PIPE)
+				exec_pipe(b, b->next->next);
+			else
 			{
-				ft_printf_fd(STDERR_FILENO, "flug\n");
-				exit(EXIT_SUCCESS);
+				if (execve(name_b, args_b, g_term.env.envp) == -1)
+				{
+					ft_printf_fd(STDERR_FILENO, "flug\n");
+					exit(EXIT_SUCCESS);
+				}
 			}
 			close(fd[0]);
 			exit(0);
