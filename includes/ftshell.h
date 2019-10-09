@@ -181,6 +181,7 @@ int			find_env(char **envp, char *name);
 int					make_env(t_env *env);
 int					check_path(char **name, char **args, char **envp);
 
+void	parser(t_lexeme *lexemes);
 void	lexer(void);
 enum e_nodetype	classify(t_lexeme *lexeme);
 int		is_mod(t_lexeme *lexeme);

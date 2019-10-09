@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/07 18:44:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/09 09:31:37 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ void	exec_node_parse(t_node *node)
 	free(disp);
 }
 
-void	parser(t_node *head)
+void	recurse(t_node *head)
 {
 	t_node	*tmp;
 	t_node	*h2;
@@ -201,7 +201,7 @@ void	parser(t_node *head)
 		//	ft_printf_fd(STDERR_FILENO, "[%s] ", h2->lexeme->data);
 		tmp = h2->children;
 		if (tmp)
-			parser(tmp);
+			recurse(tmp);
 		if (tmp && tmp->set == EXEC)
 			exec_node_parse(tmp->parent);
 		//if (!h2->lexeme || h2->set == MOD)
@@ -210,7 +210,7 @@ void	parser(t_node *head)
 	}
 }
 
-void	plant_tree(t_lexeme *lexemes)
+void	parser(t_lexeme *lexemes)
 {
 	t_node	*head;
 	enum e_nodetype	classification;
@@ -233,115 +233,6 @@ void	plant_tree(t_lexeme *lexemes)
 	}
 	while (head->parent)
 		head = head->parent;
-	parser(head);
-
-	/*
-	while (head->children)
-	{
-		ft_printf_fd(STDERR_FILENO, "[%s]", head->children->lexeme ? head->children->lexeme->data : "NULL");
-		while (head->children->children)
-		{
-			ft_printf_fd(STDERR_FILENO, "(%s)", head->children->children->lexeme ? head->children->children->lexeme->data : "NULL");
-			head->children->children = head->children->children->next;
-		}
-		head->children = head->children->next;
-	}
-	*/
+	recurse(head);
 	return ;
-}
-
-void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_tokentype set)
-{
-	t_lexeme *new;
-
-
-	if (!str)
-		return ;
-	if (!(new = ft_memalloc(sizeof(t_lexeme))))
-		return ;
-	if (*back)
-		(*back)->next = new;
-	else
-		*front = new;
-	*back = new;
-	new->data = str;
-	new->set = set;
-}
-
-void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
-{
-	int i = pos;
-	int len;
-
-	if (!line)
-		return ;
-	if (!line[i])
-		return ;
-	while (line[i])
-	{
-		int op = 0;
-		if (ft_isspace(line[i]))
-		{
-			if (i > pos)
-			{
-				len = i - pos;
-				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
-				line_lexer(front, back, line, i);
-				return ;
-			}
-			i++;
-			pos++;
-			continue ;
-		}
-		if ((op = is_operator(line, i)) > 1)
-		{
-			if (i > pos)
-			{
-				len = i - pos;
-				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
-				line_lexer(front, back, line, i);
-				return ;
-			}
-			else
-			{
-				len = ft_strlen(g_term.symbls[op]);
-				lexer_queue_push(front, back, ft_strndup(line + i, len), op);
-				line_lexer(front, back, line, i + len);
-				return ;
-			}
-		}
-		i++;
-	}
-	if (i > pos)
-	{
-		len = i - pos;
-		lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
-		line_lexer(front, back, line, i);
-		return ;
-	}
-}
-
-void	lexer(void)
-{
-	t_lexeme	*front;
-	t_lexeme	*back;
-
-	front = NULL;
-	back = NULL;
-	if (!g_term.line_in)
-		return ;
-	line_lexer(&front, &back, g_term.line_in, 0);
-	
-	t_lexeme *tmp = front;
-	
-	/*
-	while (tmp)
-	{
-		ft_printf_fd(STDERR_FILENO, "TYPE: %s, STR: %s\n", g_term.symbls[tmp->set], tmp->data);
-		tmp = tmp->next;
-	}
-	*/
-	plant_tree(front);
-	free(g_term.line_in);
-	g_term.line_in = NULL;
 }

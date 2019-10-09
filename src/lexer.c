@@ -1,0 +1,109 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
+/*   Updated: 2019/10/09 09:31:36 by alkozma          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "ftshell.h"
+
+void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_tokentype set)
+{
+	t_lexeme *new;
+
+
+	if (!str)
+		return ;
+	if (!(new = ft_memalloc(sizeof(t_lexeme))))
+		return ;
+	if (*back)
+		(*back)->next = new;
+	else
+		*front = new;
+	*back = new;
+	new->data = str;
+	new->set = set;
+}
+
+void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
+{
+	int i = pos;
+	int len;
+
+	if (!line)
+		return ;
+	if (!line[i])
+		return ;
+	while (line[i])
+	{
+		int op = 0;
+		if (ft_isspace(line[i]))
+		{
+			if (i > pos)
+			{
+				len = i - pos;
+				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
+				line_lexer(front, back, line, i);
+				return ;
+			}
+			i++;
+			pos++;
+			continue ;
+		}
+		if ((op = is_operator(line, i)) > 1)
+		{
+			if (i > pos)
+			{
+				len = i - pos;
+				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
+				line_lexer(front, back, line, i);
+				return ;
+			}
+			else
+			{
+				len = ft_strlen(g_term.symbls[op]);
+				lexer_queue_push(front, back, ft_strndup(line + i, len), op);
+				line_lexer(front, back, line, i + len);
+				return ;
+			}
+		}
+		i++;
+	}
+	if (i > pos)
+	{
+		len = i - pos;
+		lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
+		line_lexer(front, back, line, i);
+		return ;
+	}
+}
+
+void	lexer(void)
+{
+	t_lexeme	*front;
+	t_lexeme	*back;
+
+	front = NULL;
+	back = NULL;
+	if (!g_term.line_in)
+		return ;
+	line_lexer(&front, &back, g_term.line_in, 0);
+	
+	t_lexeme *tmp = front;
+	
+	/*
+	while (tmp)
+	{
+		ft_printf_fd(STDERR_FILENO, "TYPE: %s, STR: %s\n", g_term.symbls[tmp->set], tmp->data);
+		tmp = tmp->next;
+	}
+	*/
+	parser(front);
+	free(g_term.line_in);
+	g_term.line_in = NULL;
+}
