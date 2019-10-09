@@ -90,6 +90,7 @@ struct s_node
 	struct s_node	*parent;
 	struct s_node	*children;
 	struct s_node	*next;
+	int				evaluated;
 };
 
 struct s_token
@@ -187,7 +188,9 @@ enum e_nodetype	classify(t_lexeme *lexeme);
 int		is_mod(t_lexeme *lexeme);
 int		is_arg(t_lexeme *lexeme);
 int		is_exec(t_lexeme *lexeme);
+char	**concat_node(t_node *node);
 
 int		run_builtins(char **args, t_env *env);
 
+int		exec_pipe(t_node *a, t_node *b);
 #endif

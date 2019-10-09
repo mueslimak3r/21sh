@@ -1,3 +1,4 @@
+//FIXME: Clean up/take out this old code.
 # include "ftshell.h"
 
 int			is_operator(char *op, int pos)

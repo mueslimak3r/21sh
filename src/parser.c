@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/09 10:31:09 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/09 14:28:04 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_node	*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 	new->lexeme = lexeme;
 	new->parent = parent;
 	new->next = NULL;
+	new->evaluated = 0;
 	new->children = NULL;
 	if (!parent)
 		return (new);
@@ -153,6 +154,41 @@ t_node	*abstract(t_node *node)
 }
 
 /*
+** concat_node
+** Given a node, returns a string array of the data of the children's lexemes.
+*/
+
+char	**concat_node(t_node *node)
+{
+	char	**ret;
+	t_node	*tmp;
+	int		sz;
+	int		i;
+
+	if (!node)
+		return (NULL);
+	tmp = node->children;
+	ret = NULL;
+	sz = 0;
+	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
+	{
+		sz += tmp->lexeme ? 1 : 0;
+		tmp = tmp->next;
+	}
+	tmp = node->children;
+	ret = malloc(sizeof(char*) * (sz + 1));
+	i = 0;
+	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
+	{
+		if (tmp->lexeme && tmp->lexeme->data)
+			ret[i++] = ft_strdup(tmp->lexeme->data);
+		tmp = tmp->next;
+	}
+	ret[i] = 0;
+	return (ret);
+}
+
+/*
 ** exec_node_parse
 ** Executes a given node with children.
 */
@@ -164,28 +200,16 @@ void	exec_node_parse(t_node *node)
 	int		sz;
 	int		i;
 
-	if (!node)
+	if (!node || node->evaluated)
 		return ;
-	tmp = node->children;
-	disp = NULL;
-	sz = 0;
-	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
+	disp = concat_node(node);
+	if (node->next && node->next->lexeme->set == PIPE)
 	{
-		sz += tmp->lexeme ? 1 : 0;
-		tmp = tmp->next;
+		exec_pipe(node, node->next->next);
+		node->evaluated = 1;
+		node->next->next->evaluated = 1;
 	}
-	tmp = node->children;
-	disp = malloc(sizeof(char*) * (sz + 1));
-	i = 0;
-	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
-	{
-		if (tmp->lexeme && tmp->lexeme->data)
-			disp[i++] = ft_strdup(tmp->lexeme->data);
-		tmp = tmp->next;
-	}
-	disp[i++] = 0;
-	//ft_printf_fd(STDERR_FILENO, "%d\n", i);
-	if (run_builtins(disp, &g_term.env) == 2)
+	else if (run_builtins(disp, &g_term.env) == 2)
 		run_dispatch(disp, &g_term.env);
 	//ft_printf_fd(STDERR_FILENO, "EXECUTED NODE: %s\n", disp[0]);
 	free(disp);
