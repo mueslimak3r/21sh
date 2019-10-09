@@ -250,14 +250,75 @@ void	plant_tree(t_lexeme *lexemes)
 	return ;
 }
 
-void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str)
+void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_tokentype set)
 {
+	t_lexeme *new;
 
+
+	if (!str)
+		return ;
+	if (!(new = ft_memalloc(sizeof(t_lexeme))))
+		return ;
+	if (*back)
+		(*back)->next = new;
+	else
+		*front = new;
+	*back = new;
+	new->data = str;
+	new->set = set;
 }
 
 void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
 {
-	
+	int i = pos;
+	int len;
+
+	if (!line)
+		return ;
+	if (!line[i])
+		return ;
+	while (line[i])
+	{
+		int op = 0;
+		if (ft_isspace(line[i]))
+		{
+			if (i > pos)
+			{
+				len = i - pos;
+				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
+				line_lexer(front, back, line, i);
+				return ;
+			}
+			i++;
+			pos++;
+			continue ;
+		}
+		if ((op = is_operator(line, i)) > 1)
+		{
+			if (i > pos)
+			{
+				len = i - pos;
+				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
+				line_lexer(front, back, line, i);
+				return ;
+			}
+			else
+			{
+				len = ft_strlen(g_term.symbls[op]);
+				lexer_queue_push(front, back, ft_strndup(line + i, len), op);
+				line_lexer(front, back, line, i + len);
+				return ;
+			}
+		}
+		i++;
+	}
+	if (i > pos)
+	{
+		len = i - pos;
+		lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
+		line_lexer(front, back, line, i);
+		return ;
+	}
 }
 
 void	lexer(void)
@@ -271,52 +332,14 @@ void	lexer(void)
 		return ;
 	line_lexer(&front, &back, g_term.line_in, 0);
 	
-	/*t_lexeme *test;
+	t_lexeme *tmp = front;
+	while (tmp)
+	{
+		ft_printf_fd(STDERR_FILENO, "TYPE: %s, STR: %s\n", g_term.symbls[tmp->set], tmp->data);
+		tmp = tmp->next;
+	}
 
-	test = malloc(sizeof(t_lexeme));
-	test->data = "echo";
-	test->set = WORD;
-	test->pos = 0;
-	test->designation = BASE;
-	test->next = malloc(sizeof(t_lexeme));
-	test->next->data = "test func";
-	test->next->set = WORD;
-	test->next->pos = 0;
-	test->next->designation = BASE;
-	test->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->data = "|";
-	test->next->next->set = PIPE;
-	test->next->next->pos = 0;
-	test->next->next->designation = BASE;
-	test->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->data = "ls";
-	test->next->next->next->set = WORD;
-	test->next->next->next->pos = 0;
-	test->next->next->next->designation = BASE;
-	test->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->data = "-l";
-	test->next->next->next->next->set = WORD;
-	test->next->next->next->next->pos = 0;
-	test->next->next->next->next->designation = BASE;
-	test->next->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->next->data = "|";
-	test->next->next->next->next->next->set = PIPE;
-	test->next->next->next->next->next->pos = 0;
-	test->next->next->next->next->next->designation = BASE;
-	test->next->next->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->next->next->data = "ls";
-	test->next->next->next->next->next->next->set = WORD;
-	test->next->next->next->next->next->next->pos = 0;
-	test->next->next->next->next->next->next->designation = BASE;
-	test->next->next->next->next->next->next->next = malloc(sizeof(t_lexeme));
-	test->next->next->next->next->next->next->next->data = "-la";
-	test->next->next->next->next->next->next->next->set = WORD;
-	test->next->next->next->next->next->next->next->pos = 0;
-	test->next->next->next->next->next->next->next->designation = BASE;
-	test->next->next->next->next->next->next->next->next = NULL;
-
-	
-	
+	/*
 	while (test)
 	{
 		t_lexeme *tmp = test;
@@ -325,6 +348,7 @@ void	lexer(void)
 	}
 	*/
 	plant_tree(front);
-
+	free(g_term.line_in);
+	g_term.line_in = NULL;
 	ft_printf_fd(STDERR_FILENO, "i tried\n");
 }

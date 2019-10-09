@@ -174,7 +174,7 @@ int				ft_printf_fd(int fd, const char *fmt, ...);
 int     parse_tree(t_ast **tree);
 int     dispatch_tree(t_ast **tree, t_stats *ret);
 void		shell_loop(void);
-
+int			is_operator(char *op, int pos);
 
 int			run_dispatch(char **args, t_env *env);
 int			find_env(char **envp, char *name);
