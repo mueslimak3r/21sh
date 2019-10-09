@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/09 09:31:37 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/09 10:31:09 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,19 +152,20 @@ t_node	*abstract(t_node *node)
 	return (new);
 }
 
+/*
+** exec_node_parse
+** Executes a given node with children.
+*/
+
 void	exec_node_parse(t_node *node)
 {
 	char	**disp;
-	//t_env	*env;
 	t_node	*tmp;
 	int		sz;
 	int		i;
 
 	if (!node)
 		return ;
-	//env = malloc(sizeof(t_env));
-	//ft_printf_fd(STDERR_FILENO, "PARSING\n");
-	//make_env(env);
 	tmp = node->children;
 	disp = NULL;
 	sz = 0;
@@ -184,10 +185,46 @@ void	exec_node_parse(t_node *node)
 	}
 	disp[i++] = 0;
 	//ft_printf_fd(STDERR_FILENO, "%d\n", i);
-	run_dispatch(disp, &g_term.env);
+	if (run_builtins(disp, &g_term.env) == 2)
+		run_dispatch(disp, &g_term.env);
 	//ft_printf_fd(STDERR_FILENO, "EXECUTED NODE: %s\n", disp[0]);
 	free(disp);
 }
+
+/*
+** clean_tree
+** Recursively frees the tree and associated lexemes.
+*/
+
+void	clean_tree(t_node *head)
+{
+	t_node	*tmp;
+	t_node	*tmp2;
+	t_node	*h2;
+
+	h2 = head;
+	while (h2)
+	{
+		tmp = h2->children;
+		if (tmp)
+			clean_tree(tmp);
+		tmp2 = h2;
+		h2 = h2->next;
+		if (tmp2->lexeme)
+		{
+			free(tmp2->lexeme->data);
+			free(tmp2->lexeme);
+			tmp2->lexeme = NULL;
+		}
+		free(tmp2);
+		tmp2 = NULL;
+	}
+}
+
+/*
+** recurse
+** Main function for tree evaluation.
+*/
 
 void	recurse(t_node *head)
 {
@@ -197,15 +234,11 @@ void	recurse(t_node *head)
 	h2 = head;
 	while (h2)
 	{
-		//if (h2->lexeme)
-		//	ft_printf_fd(STDERR_FILENO, "[%s] ", h2->lexeme->data);
 		tmp = h2->children;
 		if (tmp)
 			recurse(tmp);
 		if (tmp && tmp->set == EXEC)
 			exec_node_parse(tmp->parent);
-		//if (!h2->lexeme || h2->set == MOD)
-		//	ft_printf_fd(STDERR_FILENO, "\nv\n");
 		h2 = h2->next;
 	}
 }
@@ -234,5 +267,6 @@ void	parser(t_lexeme *lexemes)
 	while (head->parent)
 		head = head->parent;
 	recurse(head);
+	clean_tree(head);
 	return ;
 }

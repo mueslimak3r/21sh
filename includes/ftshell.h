@@ -188,4 +188,6 @@ int		is_mod(t_lexeme *lexeme);
 int		is_arg(t_lexeme *lexeme);
 int		is_exec(t_lexeme *lexeme);
 
+int		run_builtins(char **args, t_env *env);
+
 #endif

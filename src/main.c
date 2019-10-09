@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/07 18:17:43 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/09 10:31:13 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ int			ft_readstdin_line(void)
 	g_term.conf.curlines = 1;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	term_write(PROMPT, STDERR_FILENO, 1);
-	term_write("\u2588\b", STDERR_FILENO, 0);
 	g_term.conf.cursor[0] = ft_strlen(PROMPT);
 	thing.long_form = 0;
 	while ((ret = read(0, buf, 4)) >= 0)
@@ -95,6 +94,7 @@ void		shell_loop(void)
 {
 	t_ast		*tree;
 	int			quit;
+	
 	quit = 0;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
 	g_term.conf.termsize[1] = g_window_size.ws_row;
