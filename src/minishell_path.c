@@ -54,7 +54,7 @@ int			run_dispatch(char **args, t_env *env)
 	//if ((ret = run_builtins(args, env)) != 2)
 	//	return (ret);
 	ret = 0;
-	ft_printf_fd(STDERR_FILENO, "%s\n", *args);
+	//ft_printf_fd(STDERR_FILENO, "%s\n", *args);
 	if (check_path(&name, args, env->envp))
 	{
 		ret = run_command(name, args, env->envp);//, &syntax_err);
@@ -62,9 +62,12 @@ int			run_dispatch(char **args, t_env *env)
 	}
 	else
 		ret = run_command(args[0], args, env->envp);//, &syntax_err);
-	ft_putstr_fd("return: ", STDERR_FILENO);
-	ft_putnbr_fd(ret, STDERR_FILENO);
-	ft_putchar_fd('\n', STDERR_FILENO);
+	if (ret != 0)
+	{
+		ft_putstr_fd("return: ", STDERR_FILENO);
+		ft_putnbr_fd(ret, STDERR_FILENO);
+		ft_putchar_fd('\n', STDERR_FILENO);
+	}
 	return (ret);
 }
 

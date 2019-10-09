@@ -163,7 +163,7 @@ void	exec_node_parse(t_node *node)
 	if (!node)
 		return ;
 	//env = malloc(sizeof(t_env));
-	ft_printf_fd(STDERR_FILENO, "PARSING\n");
+	//ft_printf_fd(STDERR_FILENO, "PARSING\n");
 	//make_env(env);
 	tmp = node->children;
 	disp = NULL;
@@ -183,9 +183,9 @@ void	exec_node_parse(t_node *node)
 		tmp = tmp->next;
 	}
 	disp[i++] = 0;
-	ft_printf_fd(STDERR_FILENO, "%d\n", i);
+	//ft_printf_fd(STDERR_FILENO, "%d\n", i);
 	run_dispatch(disp, &g_term.env);
-	ft_printf_fd(STDERR_FILENO, "EXECUTED NODE: %s\n", disp[0]);
+	//ft_printf_fd(STDERR_FILENO, "EXECUTED NODE: %s\n", disp[0]);
 	free(disp);
 }
 
@@ -197,15 +197,15 @@ void	parser(t_node *head)
 	h2 = head;
 	while (h2)
 	{
-		if (h2->lexeme)
-			ft_printf_fd(STDERR_FILENO, "[%s] ", h2->lexeme->data);
+		//if (h2->lexeme)
+		//	ft_printf_fd(STDERR_FILENO, "[%s] ", h2->lexeme->data);
 		tmp = h2->children;
 		if (tmp)
 			parser(tmp);
 		if (tmp && tmp->set == EXEC)
 			exec_node_parse(tmp->parent);
-		if (!h2->lexeme || h2->set == MOD)
-			ft_printf_fd(STDERR_FILENO, "\nv\n");
+		//if (!h2->lexeme || h2->set == MOD)
+		//	ft_printf_fd(STDERR_FILENO, "\nv\n");
 		h2 = h2->next;
 	}
 }
@@ -333,22 +333,15 @@ void	lexer(void)
 	line_lexer(&front, &back, g_term.line_in, 0);
 	
 	t_lexeme *tmp = front;
+	
+	/*
 	while (tmp)
 	{
 		ft_printf_fd(STDERR_FILENO, "TYPE: %s, STR: %s\n", g_term.symbls[tmp->set], tmp->data);
 		tmp = tmp->next;
 	}
-
-	/*
-	while (test)
-	{
-		t_lexeme *tmp = test;
-		test = test->next;
-		free (tmp);
-	}
 	*/
 	plant_tree(front);
 	free(g_term.line_in);
 	g_term.line_in = NULL;
-	ft_printf_fd(STDERR_FILENO, "i tried\n");
 }
