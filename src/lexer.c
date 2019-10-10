@@ -12,6 +12,27 @@
 
 #include "ftshell.h"
 
+int			is_operator(char *op, int pos)
+{
+	int		i;
+	int		ret;
+	
+
+	i = 3;
+	ret = 0;
+	while (g_term.symbls[i])
+	{
+		//if (pos > 0 && ft_strncmp(op + pos - 1, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
+		//	return (2);
+		if (ft_strncmp(op + pos, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
+			return (i);
+		i++;
+	}
+	if (op && ret == 0)
+		return (1);
+	return (ret);
+}
+
 void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_tokentype set)
 {
 	t_lexeme *new;
@@ -28,6 +49,16 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 	*back = new;
 	new->data = str;
 	new->set = set;
+}
+
+void	parse_exp(t_lexeme **front, t_lexeme **back, char *line, int pos, int i, int len)
+{
+	//if (ft_isnumber(line + pos, len))
+	//	lexer_queue_push(front, back, ft_strndup(line + pos, len), NUMBER);
+	//else
+	lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
+	line_lexer(front, back, line, i);
+	return ;
 }
 
 void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
@@ -47,21 +78,19 @@ void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
 			if (i > pos)
 			{
 				len = i - pos;
-				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
-				line_lexer(front, back, line, i);
+				parse_exp(front, back, line, pos, i, len);
 				return ;
 			}
 			i++;
 			pos++;
 			continue ;
 		}
-		if ((op = is_operator(line, i)) > 1)
+		if ((op = is_operator(line, i)) > 2)
 		{
 			if (i > pos)
 			{
 				len = i - pos;
-				lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
-				line_lexer(front, back, line, i);
+				parse_exp(front, back, line, pos, i, len);
 				return ;
 			}
 			else
@@ -77,8 +106,7 @@ void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
 	if (i > pos)
 	{
 		len = i - pos;
-		lexer_queue_push(front, back, ft_strndup(line + pos, len), WORD);
-		line_lexer(front, back, line, i);
+		parse_exp(front, back, line, pos, i, len);
 		return ;
 	}
 }
@@ -96,13 +124,13 @@ void	lexer(void)
 	
 	t_lexeme *tmp = front;
 	
-	/*
+	
 	while (tmp)
 	{
 		ft_printf_fd(STDERR_FILENO, "TYPE: %s, STR: %s\n", g_term.symbls[tmp->set], tmp->data);
 		tmp = tmp->next;
 	}
-	*/
+	
 	parser(front);
 	free(g_term.line_in);
 	g_term.line_in = NULL;

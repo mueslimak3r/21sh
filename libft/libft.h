@@ -104,4 +104,5 @@ int					ft_cntwords_space(const char *t);
 char				**ft_strsplit_space(char const *s);
 char    *ft_get_word(char *s, int nb);
 void		ft_termcap(char *cmd, int fd);
+int     ft_isnumber(char *str, int len);
 #endif

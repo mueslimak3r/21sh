@@ -120,9 +120,10 @@ void		shell_loop(void)
 
 void		define_symbols(void)
 {
-	static char	*symbols[14] = { 
+	static char	*symbols[15] = { 
 	"NONE",
 	"WORD",
+	"NUMBER",
 	"&&",
 	"<<",
 	">>",

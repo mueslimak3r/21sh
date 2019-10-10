@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "ftshell.h"
-
+//#define TREE_DEBUG
 /*
 ** new_node
 ** Creates a new node with a passed type, lexeme and parent.
@@ -254,19 +254,37 @@ void	clean_tree(t_node *head)
 
 void	recurse(t_node *head)
 {
+#ifdef TREE_DEBUG
+	static int st = 0;
+#endif
 	t_node	*tmp;
 	t_node	*h2;
 
 	h2 = head;
+#ifdef TREE_DEBUG
+	st++;
+#endif
 	while (h2)
 	{
 		tmp = h2->children;
+#ifdef TREE_DEBUG
+		if (h2 && h2->lexeme) {
+			write(STDERR_FILENO, "            ", st * 2);
+			ft_printf_fd(STDERR_FILENO, "[IN TREE || TYPE: %s, STR: %s]\n", g_term.symbls[h2->lexeme->set], h2->lexeme->data);
+		} else if (h2) {
+			write(STDERR_FILENO, "            ", st * 2);
+			ft_printf_fd(STDERR_FILENO, "[IN TREE || TYPE: parent, STR: N/A]\n");
+		}
+#endif
 		if (tmp)
 			recurse(tmp);
 		if (tmp && tmp->set == EXEC)
 			exec_node_parse(tmp->parent);
 		h2 = h2->next;
 	}
+#ifdef TREE_DEBUG
+	st--;
+#endif
 }
 
 void	parser(t_lexeme *lexemes)
@@ -296,3 +314,4 @@ void	parser(t_lexeme *lexemes)
 	clean_tree(head);
 	return ;
 }
+#undef TREE_DEBUG

@@ -45,6 +45,7 @@ enum			e_tokentype
 {
 	NONE,
 	WORD,
+	NUMBER,
 	AND,
 	RDLESS,
 	RDGREAT,
@@ -175,6 +176,7 @@ int				ft_printf_fd(int fd, const char *fmt, ...);
 int     parse_tree(t_ast **tree);
 int     dispatch_tree(t_ast **tree, t_stats *ret);
 void		shell_loop(void);
+void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos);
 int			is_operator(char *op, int pos);
 
 int			run_dispatch(char **args, t_env *env);

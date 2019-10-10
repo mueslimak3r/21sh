@@ -1,26 +1,7 @@
 //FIXME: Clean up/take out this old code.
 # include "ftshell.h"
 
-int			is_operator(char *op, int pos)
-{
-	int		i;
-	int		ret;
-	
 
-	i = 2;
-	ret = 0;
-	while (g_term.symbls[i])
-	{
-		//if (pos > 0 && ft_strncmp(op + pos - 1, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
-		//	return (2);
-		if (ft_strncmp(op + pos, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
-			return (i);
-		i++;
-	}
-	if (op && ret == 0)
-		return (1);
-	return (ret);
-}
 
 int			should_reparent(t_ast *node)
 {
