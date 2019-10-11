@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 14:05:43 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/11 16:18:19 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ char	**concat_node(t_node *node)
 ** Executes a given node with children.
 */
 
-void	exec_node_parse(t_node *node)
+void	exec_node_parse(t_node *node, int in, int out)
 {
 	char	**disp;
 	t_node	*tmp;
@@ -207,7 +207,7 @@ void	exec_node_parse(t_node *node)
 	if (!node || node->evaluated)
 		return ;
 	disp = concat_node(node);
-	if (node->next && node->next->lexeme->set == PIPE)
+	/*if (node->next && node->next->lexeme->set == PIPE)
 	{
 		exec_pipe(node, node->next->next);
 		node->evaluated = 1;
@@ -217,9 +217,10 @@ void	exec_node_parse(t_node *node)
 			tmp = tmp->next->next;
 			tmp->evaluated = 1;
 		}
-	}
-	else if (run_builtins(disp, &g_term.env) == 2)
-		run_dispatch(disp, &g_term.env);
+	}*/
+	execute_command(node, in, out);
+	/*else if (run_builtins(disp, &g_term.env) == 2)
+		run_dispatch(disp, &g_term.env);*/
 	free(disp);
 }
 
@@ -265,11 +266,14 @@ void	recurse(t_node *head)
 #endif
 	t_node	*tmp;
 	t_node	*h2;
+	int		main_pipe[2];
+	int		in;
 
 	h2 = head;
 #ifdef TREE_DEBUG
 	st++;
 #endif
+	in = 0;
 	while (h2)
 	{
 		tmp = h2->children;
@@ -284,10 +288,22 @@ void	recurse(t_node *head)
 #endif
 		if (tmp)
 			recurse(tmp);
+		if (h2->lexeme && h2->set == MOD && h2->lexeme->set != PIPE)
+			empty_buffer(main_pipe);
 		if (tmp && tmp->set == EXEC)
-			exec_node_parse(tmp->parent);
+		{
+			pipe(main_pipe);
+			exec_node_parse(tmp->parent, in, main_pipe[1]);
+			close(main_pipe[1]);
+			in = main_pipe[0];
+		}
 		h2 = h2->next;
 	}
+	if (in != 0)
+		empty_buffer(main_pipe);
+	//if (in != 0)
+		//dup2(in, 0);
+	//close(in);
 #ifdef TREE_DEBUG
 	st--;
 #endif

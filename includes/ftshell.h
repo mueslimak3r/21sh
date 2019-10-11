@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ftshell.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/11 15:39:28 by alkozma           #+#    #+#             */
+/*   Updated: 2019/10/11 15:39:41 by alkozma          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FTSHELL_H
 # define FTSHELL_H
 
@@ -201,4 +213,6 @@ char	**concat_node(t_node *node);
 int		run_builtins(char **args, t_env *env);
 
 int		exec_pipe(t_node *a, t_node *b);
+int		empty_buffer(int fd[2]);
+int		execute_command(t_node *a, int in, int out);
 #endif
