@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/09 09:31:36 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/10 10:03:31 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,28 @@ void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos)
 {
 	int i = pos;
 	int len;
+	int	q;
 
-	if (!line)
-		return ;
-	if (!line[i])
+	q = 0;
+	len = 0;
+	if (!line || !line[i])
 		return ;
 	while (line[i])
 	{
 		int op = 0;
+		if (line[i] == '"')
+		{
+			q = 1;
+			pos++;
+			while (q == 1 && line[i])
+			{
+				i++;
+				q = line[i] == '"' ? 0 : 1;
+			}
+			len = i - pos;
+			parse_exp(front, back, line, pos, i, len);
+			return ;
+		}
 		if (ft_isspace(line[i]))
 		{
 			if (i > pos)
