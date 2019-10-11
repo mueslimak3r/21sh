@@ -45,7 +45,7 @@ enum			e_tokentype
 {
 	NONE,
 	WORD,
-	NUMBER,
+	EXPANSION,
 	AND,
 	RDLESS,
 	RDGREAT,
@@ -184,8 +184,11 @@ int			find_env(char **envp, char *name);
 int					make_env(t_env *env);
 int					check_path(char **name, char **args, char **envp);
 
-void	parser(t_lexeme *lexemes);
-void	lexer(void);
+t_node	*parser(t_lexeme *lexemes);
+t_node	*lexer(char *input);
+void	recurse(t_node *head);
+void	clean_tree(t_node *head);
+
 enum e_nodetype	classify(t_lexeme *lexeme);
 int		is_mod(t_lexeme *lexeme);
 int		is_arg(t_lexeme *lexeme);

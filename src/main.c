@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/09 10:31:13 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/11 04:06:09 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ int			ft_readstdin_line(void)
 
 void		shell_loop(void)
 {
-	t_ast		*tree;
 	int			quit;
+	t_node		*tree;
 	
 	quit = 0;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
@@ -107,14 +107,11 @@ void		shell_loop(void)
 	{
 		if (!ft_readstdin_line())
 			continue ;
-		//else
-		//	tree = parse_input();
-		if (tree)
-		{
-			;
-		}
-		//quit = parse_tree(&tree);
-		lexer();
+		tree = lexer(g_term.line_in);
+		free(g_term.line_in);
+		g_term.line_in = NULL;
+		recurse(tree);
+		clean_tree(tree);
 	}
 }
 
@@ -123,7 +120,7 @@ void		define_symbols(void)
 	static char	*symbols[15] = { 
 	"NONE",
 	"WORD",
-	"NUMBER",
+	"EXPANSION",
 	"&&",
 	"<<",
 	">>",

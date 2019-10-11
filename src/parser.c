@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/09 16:14:18 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/11 03:51:12 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,7 +287,7 @@ void	recurse(t_node *head)
 #endif
 }
 
-void	parser(t_lexeme *lexemes)
+t_node	*parser(t_lexeme *lexemes)
 {
 	t_node	*head;
 	enum e_nodetype	classification;
@@ -310,8 +310,9 @@ void	parser(t_lexeme *lexemes)
 	}
 	while (head->parent)
 		head = head->parent;
-	recurse(head);
-	clean_tree(head);
-	return ;
+	return (head);
+	//recurse(head);
+	//clean_tree(head);
+	//return ;
 }
 #undef TREE_DEBUG
