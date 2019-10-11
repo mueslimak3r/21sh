@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 03:51:12 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/11 14:05:43 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,18 @@ t_node	*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 
 enum e_nodetype	classify(t_lexeme *lexeme)
 {
+	int		res;
+
 	if (!lexeme)
 		return (1);
 	if (lexeme->designation != BASE)
 		return (lexeme->designation);
-	if (is_exec(lexeme))
-		return (EXEC);
-	else if (is_arg(lexeme))
-		return (ARG);
-	else if (is_mod(lexeme))
-		return (MOD);
+	if ((res = is_exec(lexeme)))
+		return (res > 0 ? EXEC : ERR);
+	else if ((res = is_arg(lexeme)))
+		return (res > 0 ? ARG : ERR);
+	else if ((res = is_mod(lexeme)))
+		return (res > 0 ? MOD : ERR);
 	return (2);
 }
 
@@ -71,7 +73,11 @@ int	is_mod(t_lexeme *lexeme)
 	if (!lexeme)
 		return (0);
 	if (lexeme->set >= AND && lexeme->set <= IO_NUMBER)
-		return (1);
+	{
+		if (lexeme->next && !is_mod(lexeme->next))
+			return (1);
+		return (-1);
+	}
 	return (0);
 }
 
@@ -82,7 +88,7 @@ int	is_arg(t_lexeme *lexeme)
 	if (!lexeme)
 		return (0);
 	if (lexeme->set == WORD &&
-			(!lexeme->next || (is_arg(lexeme->next) || is_mod(lexeme->next))))
+			(!lexeme->next || (is_arg(lexeme->next) || is_mod(lexeme->next) > 0)))
 	{
 		if (is_arg(lexeme->next))
 			lexeme->next->designation = ARG;
@@ -98,7 +104,7 @@ int	is_exec(t_lexeme *lexeme)
 	if (!lexeme)
 		return (0);
 	if (lexeme->set == WORD && 
-			(!lexeme->next || (is_arg(lexeme->next) || is_mod(lexeme->next))))
+			(!lexeme->next || (is_arg(lexeme->next) || is_mod(lexeme->next) > 0)))
 	{
 		if (is_arg(lexeme->next))
 			lexeme->next->designation = ARG;
@@ -298,21 +304,28 @@ t_node	*parser(t_lexeme *lexemes)
 		classification = classify(lexemes);
 		if (classification == MOD)
 		{
-			if (!head->parent)
-				head = abstract(head);
+			if (head->children)
+				head = head->parent ? head->parent : abstract(head);
 			else
-				head = head->parent;
+			{
+				parse_error(head, lexemes);
+				return (NULL);
+			}
 		}
 		else if (classification == EXEC)
 			head = new_node(EXPR, NULL, head);
+		else if (classification == ERR)
+		{
+			while (head && head->parent)
+				head = head->parent;
+			parse_error(head, lexemes);
+			return (NULL);
+		}
 		new_node(classification, lexemes, head);
 		lexemes = lexemes->next;
 	}
 	while (head->parent)
 		head = head->parent;
 	return (head);
-	//recurse(head);
-	//clean_tree(head);
-	//return ;
 }
 #undef TREE_DEBUG

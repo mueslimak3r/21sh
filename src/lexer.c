@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 04:25:35 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/11 13:09:33 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 {
 	t_lexeme *new;
 
-
 	if (!str)
 		return ;
 	if (!(new = ft_memalloc(sizeof(t_lexeme))))
@@ -49,6 +48,7 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 	*back = new;
 	new->data = str;
 	new->set = set;
+	new->next = NULL;
 }
 
 void	parse_expression(t_lexeme **front, t_lexeme **back, char *line, int pos, int i, int len)

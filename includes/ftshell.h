@@ -65,7 +65,8 @@ enum			e_nodetype
 	EXPR,
 	EXEC,
 	ARG,
-	MOD
+	MOD,
+	ERR
 };
 
 typedef union
@@ -183,6 +184,8 @@ int			run_dispatch(char **args, t_env *env);
 int			find_env(char **envp, char *name);
 int					make_env(t_env *env);
 int					check_path(char **name, char **args, char **envp);
+
+int		parse_error(t_node *head, t_lexeme *error);
 
 t_node	*parser(t_lexeme *lexemes);
 t_node	*lexer(char *input);

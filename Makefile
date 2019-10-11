@@ -1,7 +1,7 @@
 NAME = 21sh
 
 SRC = main.c signals.c make_ast.c parse_ast.c write.c utils.c \
-	minishell_path.c minishell_env.c parser.c lexer.c exec.c
+	minishell_path.c minishell_env.c parser.c lexer.c exec.c error.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -13,7 +13,7 @@ INC = -I includes
 
 CC = gcc
 
-FLAGS = -g #-fsanitize=address #-Wall -Wextra -Werror #-g -fsanitize=address
+FLAGS = -g -fsanitize=address #-Wall -Wextra -Werror #-g -fsanitize=address
 
 all: $(NAME)
 
