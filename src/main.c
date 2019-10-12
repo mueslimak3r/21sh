@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 04:06:09 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/11 18:02:51 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,7 @@ int			main(int ac, char **av)
 	set_sighandle();
 	define_symbols();
 	CLEAR_SCREEN;
+	print_banner(STDERR_FILENO);
 	shell_loop();
 	CLEAR_SCREEN;
 	reset_term();

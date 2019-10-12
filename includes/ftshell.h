@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/11 15:39:28 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 15:39:41 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/11 18:02:53 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <unistd.h>
 # include <dirent.h>
 # include <errno.h>
+# include <fcntl.h>
 
 //# define PATHMAX 255
 
@@ -182,6 +183,7 @@ void            init_term(void);
 t_ast			*parse_input(void);
 void			parse_tokens(t_token *tokens);
 void			print_tree(t_ast *tree);
+void			print_banner(int fd);
 int				term_write(char *str, int fd, int len);
 int				handle_controls(unsigned long code, char *str, char *saved);
 int				ft_readstdin_line(void);
@@ -212,7 +214,6 @@ char	**concat_node(t_node *node);
 
 int		run_builtins(char **args, t_env *env);
 
-int		exec_pipe(t_node *a, t_node *b);
 int		empty_buffer(int fd[2]);
 int		execute_command(t_node *a, int in, int out);
 #endif

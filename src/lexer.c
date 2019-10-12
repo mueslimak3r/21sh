@@ -6,11 +6,12 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 13:09:33 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/11 17:46:05 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
+//#define LEX_DEBUG
 
 int			is_operator(char *op, int pos)
 {
@@ -46,7 +47,15 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 	else
 		*front = new;
 	*back = new;
-	new->data = str;
+	if (ft_strlen(str) >= 2 && str[0] == '$' && str[1] != '(')
+	{
+		if (find_env(g_term.env.envp, str + 1) > 0)
+			new->data = ft_strdup(ft_strchr(g_term.env.envp[find_env(g_term.env.envp, str + 1)], '=') + 1);
+		else
+			new->data = NULL;
+	}
+	else
+		new->data = str;
 	new->set = set;
 	new->next = NULL;
 }
@@ -181,10 +190,12 @@ t_node	*lexer(char *input)
 	line_lexer(&front, &back, input, 0);
 
 	t_lexeme *tmp = front;
+#ifdef LEX_DEBUG
 	while (tmp)
 	{
 		ft_printf_fd(STDERR_FILENO, "TYPE: %s, STR: %s\n", g_term.symbls[tmp->set], tmp->data);
 		tmp = tmp->next;
 	}
+#endif
 	return(parser(front));
 }
