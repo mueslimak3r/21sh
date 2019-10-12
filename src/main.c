@@ -93,6 +93,7 @@ int			ft_readstdin_line(void)
 void		shell_loop(void)
 {
 	int			quit;
+	t_stats		stats;
 	t_node		*tree;
 	
 	quit = 0;
@@ -107,10 +108,13 @@ void		shell_loop(void)
 	{
 		if (!ft_readstdin_line())
 			continue ;
+		stats.f_d[0] = 0;
+		stats.f_d[1] = 1;
 		tree = lexer(g_term.line_in);
 		free(g_term.line_in);
 		g_term.line_in = NULL;
-		recurse(tree);
+		recurse(tree, &stats);
+		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}
 }

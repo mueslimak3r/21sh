@@ -173,6 +173,7 @@ struct s_term
 
 struct s_stats
 {
+	int f_d[2];
 	int	ret;
 	int exit;
 };
@@ -203,7 +204,7 @@ int		parse_error(t_node *head, t_lexeme *error);
 
 t_node	*parser(t_lexeme *lexemes);
 t_node	*lexer(char *input);
-void	recurse(t_node *head);
+void	recurse(t_node *head, t_stats *stats);
 void	clean_tree(t_node *head);
 
 enum e_nodetype	classify(t_lexeme *lexeme);

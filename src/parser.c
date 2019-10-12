@@ -259,13 +259,14 @@ void	clean_tree(t_node *head)
 ** Main function for tree evaluation.
 */
 
-void	recurse(t_node *head)
+void	recurse(t_node *head, t_stats *stats)
 {
 #ifdef TREE_DEBUG
 	static int st = 0;
 #endif
 	t_node	*tmp;
 	t_node	*h2;
+	//t_stats new_stats;
 	int		main_pipe[2];
 	int		in;
 
@@ -287,9 +288,12 @@ void	recurse(t_node *head)
 		}
 #endif
 		if (tmp)
-			recurse(tmp);
+			recurse(tmp, stats);
 		if (h2->lexeme && h2->set == MOD && h2->lexeme->set != PIPE)
-			empty_buffer(main_pipe);
+		{
+			ft_printf_fd(STDERR_FILENO, "%s\n", "yo");
+			//empty_buffer(main_pipe);
+		}
 		if (tmp && tmp->set == EXEC)
 		{
 			pipe(main_pipe);
@@ -300,7 +304,11 @@ void	recurse(t_node *head)
 		h2 = h2->next;
 	}
 	if (in != 0)
-		empty_buffer(main_pipe);
+	{
+		stats->f_d[0] = in;
+		//ft_printf_fd(STDERR_FILENO, "%s\n", "in equ zero");
+		//empty_buffer(main_pipe);
+	}
 	//if (in != 0)
 		//dup2(in, 0);
 	//close(in);
