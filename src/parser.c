@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 17:45:02 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/12 00:49:47 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	is_mod(t_lexeme *lexeme)
 		return (0);
 	if (lexeme->set >= AND && lexeme->set <= IO_NUMBER)
 	{
-		if (lexeme->next && !is_mod(lexeme->next))
+		if (!lexeme->next || (lexeme->next && !is_mod(lexeme->next)))
 			return (1);
 		return (-1);
 	}
@@ -291,8 +291,8 @@ void	recurse(t_node *head, t_stats *stats)
 			recurse(tmp, stats);
 		if (h2->lexeme && h2->set == MOD && h2->lexeme->set != PIPE)
 		{
-			ft_printf_fd(STDERR_FILENO, "%s\n", "yo");
-			//empty_buffer(main_pipe);
+			empty_buffer(stats->f_d);
+			empty_buffer(main_pipe);
 		}
 		if (tmp && tmp->set == EXEC)
 		{
@@ -332,6 +332,7 @@ t_node	*parser(t_lexeme *lexemes)
 				head = head->parent ? head->parent : abstract(head);
 			else
 			{
+				ft_printf_fd(STDERR_FILENO, "error: mod with not children\n");
 				parse_error(head, lexemes);
 				return (NULL);
 			}
@@ -340,6 +341,7 @@ t_node	*parser(t_lexeme *lexemes)
 			head = new_node(EXPR, NULL, head);
 		else if (classification == ERR)
 		{
+			ft_printf_fd(STDERR_FILENO, "classifier returned error\n");
 			while (head && head->parent)
 				head = head->parent;
 			parse_error(head, lexemes);
