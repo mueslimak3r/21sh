@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftshell.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/11 15:39:28 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 18:02:53 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/12 02:35:22 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,8 +192,12 @@ int				ft_printf_fd(int fd, const char *fmt, ...);
 int     parse_tree(t_ast **tree);
 int     dispatch_tree(t_ast **tree, t_stats *ret);
 void		shell_loop(void);
-void	line_lexer(t_lexeme **front, t_lexeme **back, char *line, int pos);
+void	line_lexer(t_lexeme **front, t_lexeme **back, char *line);
 int			is_operator(char *op, int pos);
+
+
+int				sh_count_words(char *line);
+char			*sh_next_word(char *line, int *j);
 
 int			run_dispatch(char **args, t_env *env);
 int			find_env(char **envp, char *name);
