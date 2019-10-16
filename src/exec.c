@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 17:28:01 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 15:09:11 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int		execute_command(t_node *a, int in, int out)
 	pid_t	pid;
 	
 	args = concat_node(a);
+	args[0] = find_alias(args[0]);
 	if (check_path(&name, args, g_term.env.envp))
 	{
 		if ((pid = fork()) == 0)

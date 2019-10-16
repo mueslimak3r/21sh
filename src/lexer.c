@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/12 02:53:23 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/16 12:07:28 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ int			is_operator(char *op, int pos)
 
 void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_tokentype set)
 {
-	t_lexeme *new;
+	t_lexeme	*new;
+	char		*rep;
 
 	if (!str)
 		return ;
@@ -49,8 +50,8 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 	*back = new;
 	if (ft_strlen(str) >= 2 && str[0] == '$' && str[1] != '(')
 	{
-		if (find_env(g_term.env.envp, str + 1) > 0)
-			new->data = ft_strdup(ft_strchr(g_term.env.envp[find_env(g_term.env.envp, str + 1)], '=') + 1);
+		if ((rep = find_env2(str + 1)))
+			new->data = ft_strdup(rep);
 		else
 			new->data = NULL;
 	}

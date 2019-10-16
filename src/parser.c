@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/12 00:49:47 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/16 15:05:01 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,21 +206,10 @@ void	exec_node_parse(t_node *node, int in, int out)
 
 	if (!node || node->evaluated)
 		return ;
+	load_envp();
 	disp = concat_node(node);
-	/*if (node->next && node->next->lexeme->set == PIPE)
-	{
-		exec_pipe(node, node->next->next);
-		node->evaluated = 1;
-		tmp = node;
-		while (tmp->next && tmp->next->lexeme && tmp->next->lexeme->set == PIPE)
-		{
-			tmp = tmp->next->next;
-			tmp->evaluated = 1;
-		}
-	}*/
-	execute_command(node, in, out);
-	/*else if (run_builtins(disp, &g_term.env) == 2)
-		run_dispatch(disp, &g_term.env);*/
+	if (run_builtins(disp, &g_term.env) == 2)
+		execute_command(node, in, out);
 	free(disp);
 }
 

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/11 15:39:28 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/12 02:35:22 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/16 15:01:26 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@
 
 # define TYPES
 
+# define HT_OVERHEAD 5000
+
 int				g_routes[5000];
 
 typedef struct s_token      t_token;
@@ -51,8 +53,13 @@ typedef struct s_tbuff		t_tbuff;
 typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
 
-struct winsize			g_window_size;
-struct s_term			g_term;
+typedef struct s_ht			t_ht;
+
+struct winsize				g_window_size;
+struct s_term				g_term;
+
+t_ht						*g_env[HT_OVERHEAD];
+t_ht						*g_alias[HT_OVERHEAD];
 
 enum			e_tokentype
 {
@@ -88,7 +95,14 @@ typedef union
 	char			arr_form[4];
 } u_input;
 
-// USE THIS FOR TOKENIZER (LEXER)
+struct s_ht
+{
+	void		*content;
+	void		*content_name;
+	size_t		content_size;
+	struct s_ht	*next;
+};
+
 struct s_lexeme
 {
 	enum e_tokentype	set;
@@ -221,4 +235,17 @@ int		run_builtins(char **args, t_env *env);
 
 int		empty_buffer(int fd[2]);
 int		execute_command(t_node *a, int in, int out);
+
+unsigned long	djb2(char *str);
+char			*find_env2(char *name);
+int				ft_unsetenv2(char *name);
+int				ft_setenv2(char *name, char *val);
+int				init_env(void);
+int				ft_export(char *str);
+int				load_envp(void);
+
+char			*find_alias(char *name);
+int				ft_alias(char *str);
+
+int				read_rcfile(void);
 #endif

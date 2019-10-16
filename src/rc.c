@@ -1,30 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   flavor.c                                           :+:      :+:    :+:   */
+/*   rc.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/11 17:57:05 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 13:23:23 by alkozma          ###   ########.fr       */
+/*   Created: 2019/10/16 13:23:57 by alkozma           #+#    #+#             */
+/*   Updated: 2019/10/16 13:33:57 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-void	print_banner(int fd)
+int		read_rcfile(void)
 {
-	char	buf[42];
-	int		file;
-	int		read_bytes;
+	int		fd;
+	char	*line;
+	t_stats	stats;
+	t_node	*tree;
 
-	file = open("banner", O_RDONLY);
-	while ((read_bytes = read(file, &buf, 41)) >= 0)
+	fd = open(".ftshrc", O_RDONLY);
+	line = NULL;
+	while (get_next_line(fd, &line) > 0)
 	{
-		buf[read_bytes] = 0;
-		ft_printf_fd(fd, "%s", buf);
-		if (read_bytes == 0)
-			break ;
+		stats.f_d[0] = 0;
+		stats.f_d[1] = 1;
+		tree = lexer(line);
+		recurse(tree, &stats);
+		empty_buffer(stats.f_d);
+		clean_tree(tree);
 	}
-	close(file);
+	close(fd);
+	return (1);
 }

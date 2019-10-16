@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/24 10:07:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/11 17:46:08 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 15:09:10 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,9 @@ int			run_builtins(char **args, t_env *env)
 		return (1);
 	else if (ft_strcmp(args[0], "env") == 0)
 		return (ft_env(env->envp));
-	else if (ft_strcmp(args[0], "setenv") == 0)
-		return (ft_setenv(args[1] ? args[1] : 0, (args[2] ? args[2] : 0), env));
-	else if (ft_strcmp(args[0], "unsetenv") == 0)
-		return (ft_unsetenv(args[1], env));
+	else if (ft_strcmp(args[0], "export") == 0)
+		return (ft_export(args[1]));
+	else if (ft_strcmp(args[0], "alias") == 0)
+		return (ft_alias(args[1]));
 	return (2);
 }

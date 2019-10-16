@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/11 18:02:51 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 14:54:57 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void		shell_loop(void)
 	g_term.conf.curr_c = -1;
 	g_term.line_in = NULL;
 	tree = NULL;
+	read_rcfile();
 	while (!quit)
 	{
 		if (!ft_readstdin_line())
@@ -157,6 +158,8 @@ int			main(int ac, char **av)
 	set_sighandle();
 	define_symbols();
 	CLEAR_SCREEN;
+	init_env();
+	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
 	print_banner(STDERR_FILENO);
 	shell_loop();
 	CLEAR_SCREEN;
