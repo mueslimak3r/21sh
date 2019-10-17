@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/24 09:56:23 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/09 14:28:00 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 16:22:51 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int					get_env(char **envp, char *name, char **env_var)
 
 	if (!name || !envp)
 		return (0);
-	if ((find_env(envp, name)) == -1)
+	if (!(find_env2(name)))
 		return (0);
 	size = ft_strlen(name);
 	while (*envp && ft_strncmp(*envp, name, size) != 0)

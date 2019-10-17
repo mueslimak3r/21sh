@@ -6,13 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/24 10:07:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/16 15:09:10 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 16:23:45 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-int			find_env(char **envp, char *name)
+/*int			find_env(char **envp, char *name)
 {
 	size_t	size;
 	int		i;
@@ -73,7 +73,7 @@ int			ft_setenv(char *name, char *val, t_env *env)
 	ft_arraydel(env->envp);
 	env->envp = new;
 	return (0);
-}
+}*/
 
 int			ft_env(char **envp)
 {
