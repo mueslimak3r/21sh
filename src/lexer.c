@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 12:07:28 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 19:01:36 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,7 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 	t_lexeme	*new;
 	char		*rep;
 
-	if (!str)
-		return ;
-	if (!(new = ft_memalloc(sizeof(t_lexeme))))
+	if (!str || !(new = ft_memalloc(sizeof(t_lexeme))))
 		return ;
 	if (*back)
 		(*back)->next = new;
@@ -49,12 +47,7 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 		*front = new;
 	*back = new;
 	if (ft_strlen(str) >= 2 && str[0] == '$' && str[1] != '(')
-	{
-		if ((rep = find_env2(str + 1)))
-			new->data = ft_strdup(rep);
-		else
-			new->data = NULL;
-	}
+		new->data = (rep = find_env(str + 1)) ? ft_strdup(rep) : NULL;
 	else
 		new->data = str;
 	new->set = set;
@@ -63,15 +56,17 @@ void	lexer_queue_push(t_lexeme **front, t_lexeme **back, char *str, enum e_token
 
 void	line_lexer(t_lexeme **front, t_lexeme **back, char *line)
 {
-	int words = sh_count_words(line);
-	int j = 0;
+	int words;
+	int j;
+	int	i;
 
-	for (int i = 0; i < words; i++)
+	j = 0;
+	i = 0;
+	words = sh_count_words(line);
+	while (i++ < words)
 	{
 		char *word = sh_next_word(line, &j);
-		if (!word)
-			break ;
-		if (!*word)
+		if (!word || !*word)
 		{
 			ft_printf_fd(STDERR_FILENO, "syntax error!\n");
 			break ;
@@ -90,7 +85,6 @@ t_node	*lexer(char *input)
 	if (!input)
 		return (NULL);
 	line_lexer(&front, &back, input);
-
 	t_lexeme *tmp = front;
 #ifdef LEX_DEBUG
 	while (tmp)

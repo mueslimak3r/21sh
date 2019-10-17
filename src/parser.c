@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 15:05:01 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 18:47:48 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,7 @@ void	exec_node_parse(t_node *node, int in, int out)
 
 	if (!node || node->evaluated)
 		return ;
-	load_envp();
+	//load_envp();
 	disp = concat_node(node);
 	if (run_builtins(disp, &g_term.env) == 2)
 		execute_command(node, in, out);

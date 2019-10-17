@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 17:57:03 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 18:47:41 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,13 +152,11 @@ int			main(int ac, char **av)
 
 	if (!(validate_term()))
 		return (0);
-	if (!make_env(&g_term.env))
-		return (0);
+	init_env();
 	init_term();
 	set_sighandle();
 	define_symbols();
 	CLEAR_SCREEN;
-	init_env();
 	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
 	print_banner(STDERR_FILENO);
 	shell_loop();

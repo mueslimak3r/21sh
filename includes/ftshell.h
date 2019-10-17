@@ -193,9 +193,9 @@ int				read_rcfile(void);
 ** ENVIRONMENT
 */
 
-char			*find_env2(char *name);
-int				ft_unsetenv2(char *name);
-int				ft_setenv2(char *name, char *val);
+char			*find_env(char *name);
+int				ft_unsetenv(char *name);
+int				ft_setenv(char *name, char *val);
 int				init_env(void);
 int				ft_export(char *str);
 int				load_envp(void);
@@ -244,10 +244,4 @@ int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);
 unsigned long	djb2(char *str);
 
-/*
-** DEPRECATE
-*/
-
-int				find_env(char **envp, char *name);
-int				make_env(t_env *env);
 #endif

@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 17:48:17 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 19:01:35 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ unsigned long	djb2(char *str)
 	return (hash);
 }
 
-char			*find_env2(char *name)
+char			*find_env(char *name)
 {
 	t_ht			*tmp;
 	unsigned long	hash;
@@ -35,7 +35,7 @@ char			*find_env2(char *name)
 	return (tmp ? (char*)(tmp->content) : NULL);
 }
 
-int				ft_unsetenv2(char *name)
+int				ft_unsetenv(char *name)
 {
 	unsigned long	hash;
 	t_ht			*tmp;
@@ -50,10 +50,11 @@ int				ft_unsetenv2(char *name)
 		free(tmp);
 		tmp = NULL;
 	}
+	load_envp();
 	return (1);
 }
 
-int				ft_setenv2(char *name, char *val)
+int				ft_setenv(char *name, char *val)
 {
 	unsigned long	hash;
 	t_ht			*tmp;
@@ -87,6 +88,7 @@ int				ft_setenv2(char *name, char *val)
 	}
 	new->next = g_env[hash % HT_OVERHEAD];
 	g_env[hash % HT_OVERHEAD] = new;
+	load_envp();
 	return (1);
 }
 
@@ -99,7 +101,7 @@ int				ft_export(char *str)
 	split = ft_strsplit(str, '=');
 	if (!split[0] || !split[1])
 		return (0);
-	ft_setenv2(split[0], split[1]);
+	ft_setenv(split[0], split[1]);
 	free(split[0]);
 	free(split[1]);
 	free(split);
