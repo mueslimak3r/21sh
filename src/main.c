@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 14:54:57 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 17:57:03 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int			ft_readstdin_line(void)
 	char	buf[BUFF_SIZE + 1];
 	char	*tmp;
 	int		ret;
-	u_input	thing;
+	t_input	thing;
 
 	g_term.conf.curlines = 1;
 	ft_memset(buf, 0, BUFF_SIZE + 1);

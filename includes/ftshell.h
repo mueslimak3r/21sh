@@ -82,11 +82,11 @@ enum						e_nodetype
 	ERR
 };
 
-typedef union
+typedef union				u_input
 {
 	unsigned long			long_form;
 	char					arr_form[4];
-}							u_input;
+}							t_input;
 
 struct						s_ht
 {

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/24 22:02:06 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/12 02:37:12 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/16 17:59:54 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static char		*handle_quotes(char *line, int *j, char type)
 		return (ft_strndup(line + *j - size - 1, size));
 	}
 	else
-		return (ft_strdup(""));
+		return (ft_strnew(1));
 }
 
 char			*sh_next_word(char *line, int *j)
