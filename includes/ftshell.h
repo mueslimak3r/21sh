@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ftshell.h                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/11 15:39:28 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 16:19:45 by alkozma          ###   ########.fr       */
-/*                                                                            */
+/*																			  */
+/*														  :::	   ::::::::   */
+/*	 ftshell.h											:+:		 :+:	:+:   */
+/*													  +:+ +:+		  +:+	  */
+/*	 By: calamber <calamber@student.42.fr>			+#+  +:+	   +#+		  */
+/*												  +#+#+#+#+#+	+#+			  */
+/*	 Created: 2019/10/11 15:39:28 by alkozma		   #+#	  #+#			  */
+/*	 Updated: 2019/10/16 17:18:38 by alkozma		  ###	########.fr		  */
+/*																			  */
 /* ************************************************************************** */
 
 #ifndef FTSHELL_H
@@ -36,19 +36,13 @@
 # define GET_SCREENSIZE ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 
 # define PROMPT "@>"
-
 # define TYPES
-
 # define HT_OVERHEAD 5000
 
-int				g_routes[5000];
-
-typedef struct s_token      t_token;
-typedef struct s_term       t_term;
-typedef struct s_ast        t_ast;
+typedef struct s_term		t_term;
 typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
-typedef struct s_tbuff		t_tbuff;
+//typedef struct s_tbuff	t_tbuff;
 
 typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
@@ -57,11 +51,10 @@ typedef struct s_ht			t_ht;
 
 struct winsize				g_window_size;
 struct s_term				g_term;
+struct s_ht					*g_env[HT_OVERHEAD];
+struct s_ht					*g_alias[HT_OVERHEAD];
 
-t_ht						*g_env[HT_OVERHEAD];
-t_ht						*g_alias[HT_OVERHEAD];
-
-enum			e_tokentype
+enum						e_tokentype
 {
 	NONE,
 	WORD,
@@ -79,7 +72,7 @@ enum			e_tokentype
 	NEWLINE
 };
 
-enum			e_nodetype
+enum						e_nodetype
 {
 	BASE,
 	EXPR,
@@ -91,63 +84,44 @@ enum			e_nodetype
 
 typedef union
 {
-	unsigned long	long_form;
-	char			arr_form[4];
-} u_input;
+	unsigned long			long_form;
+	char					arr_form[4];
+}							u_input;
 
-struct s_ht
+struct						s_ht
 {
-	void		*content;
-	void		*content_name;
-	size_t		content_size;
-	struct s_ht	*next;
+	void					*content;
+	void					*content_name;
+	size_t					content_size;
+	struct s_ht				*next;
 };
 
-struct s_lexeme
+struct						s_lexeme
 {
-	enum e_tokentype	set;
-	char				*data;
-	int					pos;
-	enum e_nodetype		designation;
-	struct s_lexeme		*next;
+	enum e_tokentype		set;
+	char					*data;
+	int						pos;
+	enum e_nodetype			designation;
+	struct s_lexeme			*next;
 };
 
-struct s_node
+struct						s_node
 {
-	enum e_nodetype	set;
-	struct s_lexeme	*lexeme;
-	struct s_node	*parent;
-	struct s_node	*children;
-	struct s_node	*next;
-	int				evaluated;
+	enum e_nodetype			set;
+	struct s_lexeme			*lexeme;
+	struct s_node			*parent;
+	struct s_node			*children;
+	struct s_node			*next;
+	int						evaluated;
 };
 
-struct s_token
+typedef struct				s_env
 {
-    char                *name;
-    char                **args;
-	enum e_tokentype	set;
-    int                 in;
-    int                 out;
-    int                 err;
-    struct s_token	*next;
-};
+	char					**envp;
+	int						size;
+}							t_env;
 
-typedef struct	s_env
-{
-	char		**envp;
-	int			size;
-}				t_env;
-
-struct s_ast
-{
-    struct s_token      *token;
-	struct s_ast		*parent;
-    struct s_ast        *left;
-    struct s_ast        *right;
-};
-
-struct s_tbuff_buff
+/*struct s_tbuff_buff
 {
 	char				buff[200];
 	size_t				size;
@@ -160,92 +134,120 @@ struct s_tbuff
 	struct s_tfuff_buff	*buff;
 	size_t				size;
 	struct s_tbuff		*next;
-};
+};*/
 
-struct s_shellconf
+struct						s_shellconf
 {
 
-	int					g_routes[5000];
-	int					termsize[2];
-	int					cursor[2];
-	int					curr_c;
-	t_tbuff				*buff_first;
-	t_tbuff				*buff_last;
-	int					curlines;
+	int						g_routes[5000];
+	int						termsize[2];
+	int						cursor[2];
+	int						curr_c;
+	//t_tbuff				*buff_first;
+	//t_tbuff				*buff_last;
+	int						curlines;
 };
 
-struct s_term
+struct						s_term
 {
-	struct s_env		env;
-	char				*line_in;
-	char				**symbls;
-	t_shellconf			conf;
-	struct termios		old_term;
-	struct termios		new_term;
-	int					rows;
+	struct s_env			env;
+	char					*line_in;
+	char					**symbls;
+	t_shellconf				conf;
+	struct termios			old_term;
+	struct termios			new_term;
+	int						rows;
 };
 
-struct s_stats
+struct						s_stats
 {
-	int f_d[2];
-	int	ret;
-	int exit;
+	int						f_d[2];
+	int						ret;
+	int						exit;
 };
+
+/*
+** TERMCAPS
+*/
+
+void			reset_term(void);
+void			init_term(void);
+int				term_write(char *str, int fd, int len);
+
+/*
+** SIGNALS
+*/
 
 void			set_sighandle(void);
-void		    reset_term(void);
-void            init_term(void);
-t_ast			*parse_input(void);
-void			parse_tokens(t_token *tokens);
-void			print_tree(t_ast *tree);
-void			print_banner(int fd);
-int				term_write(char *str, int fd, int len);
 int				handle_controls(unsigned long code, char *str, char *saved);
+
+/*
+** SHELL
+*/
+
+void			shell_loop(void);
 int				ft_readstdin_line(void);
-int				ft_printf_fd(int fd, const char *fmt, ...);
-int     parse_tree(t_ast **tree);
-int     dispatch_tree(t_ast **tree, t_stats *ret);
-void		shell_loop(void);
-void	line_lexer(t_lexeme **front, t_lexeme **back, char *line);
-int			is_operator(char *op, int pos);
+int				read_rcfile(void);
 
+/*
+** ENVIRONMENT
+*/
 
-int				sh_count_words(char *line);
-char			*sh_next_word(char *line, int *j);
-
-int			run_dispatch(char **args, t_env *env);
-int			find_env(char **envp, char *name);
-int					make_env(t_env *env);
-int					check_path(char **name, char **args, char **envp);
-
-int		parse_error(t_node *head, t_lexeme *error);
-
-t_node	*parser(t_lexeme *lexemes);
-t_node	*lexer(char *input);
-void	recurse(t_node *head, t_stats *stats);
-void	clean_tree(t_node *head);
-
-enum e_nodetype	classify(t_lexeme *lexeme);
-int		is_mod(t_lexeme *lexeme);
-int		is_arg(t_lexeme *lexeme);
-int		is_exec(t_lexeme *lexeme);
-char	**concat_node(t_node *node);
-
-int		run_builtins(char **args, t_env *env);
-
-int		empty_buffer(int fd[2]);
-int		execute_command(t_node *a, int in, int out);
-
-unsigned long	djb2(char *str);
 char			*find_env2(char *name);
 int				ft_unsetenv2(char *name);
 int				ft_setenv2(char *name, char *val);
 int				init_env(void);
 int				ft_export(char *str);
 int				load_envp(void);
+int				run_builtins(char **args, t_env *env);
+int				check_path(char **name, char **args, char **envp);
+int				run_dispatch(char **args, t_env *env);
+
+/*
+** LEXER
+*/
+
+void			line_lexer(t_lexeme **front, t_lexeme **back, char *line);
+t_node			*lexer(char *input);
+int				sh_count_words(char *line);
+char			*sh_next_word(char *line, int *j);
+int				is_operator(char *op, int pos);
+
+/*
+** PARSER
+*/
+
+t_node			*parser(t_lexeme *lexemes);
+void			recurse(t_node *head, t_stats *stats);
+void			clean_tree(t_node *head);
+enum e_nodetype	classify(t_lexeme *lexeme);
+int				is_mod(t_lexeme *lexeme);
+int				is_arg(t_lexeme *lexeme);
+int				is_exec(t_lexeme *lexeme);
+char			**concat_node(t_node *node);
+
+/*
+** ALIASING
+*/
 
 char			*find_alias(char *name);
 int				ft_alias(char *str);
 
-int				read_rcfile(void);
+/*
+** HELPERS
+*/
+
+int				empty_buffer(int fd[2]);
+int				execute_command(t_node *a, int in, int out);
+void			print_banner(int fd);
+int				ft_printf_fd(int fd, const char *fmt, ...);
+int				parse_error(t_node *head, t_lexeme *error);
+unsigned long	djb2(char *str);
+
+/*
+** DEPRECATE
+*/
+
+int				find_env(char **envp, char *name);
+int				make_env(t_env *env);
 #endif

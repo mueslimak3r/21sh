@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 15:09:13 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 17:48:17 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,4 +149,24 @@ int				init_env(void)
 		i++;
 	}
 	return (1);
+}
+
+int			ft_env(char **envp)
+{
+	while (*envp)
+		ft_printf_fd(STDERR_FILENO, "%s\n", *(envp++));
+	return (0);
+}
+
+int			run_builtins(char **args, t_env *env)
+{
+	if (ft_strcmp(args[0], "exit") == 0)
+		return (1);
+	else if (ft_strcmp(args[0], "env") == 0)
+		return (ft_env(env->envp));
+	else if (ft_strcmp(args[0], "export") == 0)
+		return (ft_export(args[1]));
+	else if (ft_strcmp(args[0], "alias") == 0)
+		return (ft_alias(args[1]));
+	return (2);
 }

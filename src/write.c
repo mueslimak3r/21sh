@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/09/30 11:10:53 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/16 17:15:45 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int		term_write(char *str, int fd, int cmd)
 {
 	int		des;
 
-	des = g_routes[fd] ? g_routes[fd] : fd;
+	des = fd;
 	if (ft_strlen(str) < 1)
 		return (1);
 	if (!cmd)
