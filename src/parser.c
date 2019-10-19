@@ -6,12 +6,12 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 18:47:48 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/19 13:54:56 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-//#define TREE_DEBUG
+#define TREE_DEBUG
 /*
 ** new_node
 ** Creates a new node with a passed type, lexeme and parent.
@@ -74,6 +74,8 @@ int	is_mod(t_lexeme *lexeme)
 		return (0);
 	if (lexeme->set >= AND && lexeme->set <= IO_NUMBER)
 	{
+		if (lexeme->next && lexeme->set == LESS)
+			lexeme->next->designation = FD;
 		if (!lexeme->next || (lexeme->next && !is_mod(lexeme->next)))
 			return (1);
 		return (-1);
@@ -206,6 +208,11 @@ void	exec_node_parse(t_node *node, int in, int out)
 
 	if (!node || node->evaluated)
 		return ;
+	if (node->children->set == FD)
+	{
+		readfd(open(node->children->lexeme->data, O_RDONLY), out);
+		return ;
+	}
 	//load_envp();
 	disp = concat_node(node);
 	if (run_builtins(disp, &g_term.env) == 2)
@@ -278,12 +285,13 @@ void	recurse(t_node *head, t_stats *stats)
 #endif
 		if (tmp)
 			recurse(tmp, stats);
-		if (h2->lexeme && h2->set == MOD && h2->lexeme->set != PIPE)
+		if (h2->lexeme && h2->set == MOD && h2->lexeme->set != PIPE
+				&& h2->lexeme->set != LESS)
 		{
 			empty_buffer(stats->f_d);
 			empty_buffer(main_pipe);
 		}
-		if (tmp && tmp->set == EXEC)
+		if (tmp && (tmp->set == EXEC || tmp->set == FD))
 		{
 			pipe(main_pipe);
 			exec_node_parse(tmp->parent, in, main_pipe[1]);
@@ -306,17 +314,59 @@ void	recurse(t_node *head, t_stats *stats)
 #endif
 }
 
+void	print_list(t_node *head)
+{
+	t_node	*tmp;
+
+	tmp = head->children;
+	ft_printf_fd(STDERR_FILENO, "DEBUG PRINT====\n");
+	while (tmp)
+	{
+		ft_printf_fd(STDERR_FILENO, "%s\n", tmp->lexeme ? tmp->lexeme->data : "NULL");
+		tmp = tmp->next;
+	}
+}
+
+t_node	*invertify(t_node *head)
+{
+	t_node	*tmp;
+	t_node	*lst;
+	t_node	*nxt;
+
+	if (!head || !head->children)
+		return (NULL);
+	print_list(head);
+	ft_printf_fd(STDERR_FILENO, "INVERT\n");
+	tmp = head->children;
+	nxt = NULL;
+	lst = NULL;
+	while (tmp)
+	{
+		nxt = tmp->next;
+		tmp->next = lst;
+		lst = tmp;
+		tmp = nxt;
+	}
+	head->children = lst;
+	print_list(head);
+	return (head->parent ? head->parent : abstract(head));
+}
+
 t_node	*parser(t_lexeme *lexemes)
 {
 	t_node	*head;
 	enum e_nodetype	classification;
+	int		invert;
 
+	invert = 0;
 	head = new_node(EXPR, NULL, NULL);
 	while (lexemes)
 	{
 		classification = classify(lexemes);
 		if (classification == MOD)
 		{
+			if (invert)
+				head = invertify(head->parent);
 			if (head->children)
 				head = head->parent ? head->parent : abstract(head);
 			else
@@ -325,8 +375,9 @@ t_node	*parser(t_lexeme *lexemes)
 				parse_error(head, lexemes);
 				return (NULL);
 			}
+			invert = lexemes->set == LESS ? 1 : 0;
 		}
-		else if (classification == EXEC)
+		else if (classification == EXEC || classification == FD)
 			head = new_node(EXPR, NULL, head);
 		else if (classification == ERR)
 		{
@@ -339,6 +390,8 @@ t_node	*parser(t_lexeme *lexemes)
 		new_node(classification, lexemes, head);
 		lexemes = lexemes->next;
 	}
+	if (invert)
+		head = invertify(head->parent);
 	while (head->parent)
 		head = head->parent;
 	return (head);

@@ -1,0 +1,24 @@
+total 328
+-rwxr-xr-x  1 alkozma  2018_october  45992 Oct 17 13:52 21sh
+-rw-r--r--  1 alkozma  2018_october    693 Oct 16 19:01 Makefile
+-rw-r--r--  1 alkozma  2018_october     31 Sep  2 02:41 README.md
+-rw-r--r--  1 alkozma  2018_october   5836 Oct 17 13:52 alias.o
+-rw-r--r--  1 alkozma  2018_october      9 Sep  2 02:41 author
+-rw-r--r--  1 alkozma  2018_october    594 Oct 11 18:00 banner
+-rw-r--r--  1 alkozma  2018_october   9740 Oct 17 13:52 env.o
+-rw-r--r--  1 alkozma  2018_october   5220 Oct 17 13:52 error.o
+-rw-r--r--  1 alkozma  2018_october  10808 Oct 17 13:52 exec.o
+-rw-r--r--  1 alkozma  2018_october   4760 Oct 17 13:52 flavor.o
+drwxr-xr-x  2 alkozma  2018_october   4096 Oct 17 15:05 includes
+-rw-r--r--  1 alkozma  2018_october   7548 Oct 17 13:52 lexer.o
+drwxr-xr-x  3 alkozma  2018_october   4096 Oct 17 13:52 libft
+-rw-r--r--  1 alkozma  2018_october  11064 Oct 17 13:52 main.o
+-rw-r--r--  1 alkozma  2018_october  14216 Oct 17 13:52 parser.o
+-rw-r--r--  1 alkozma  2018_october   5560 Oct 17 13:52 rc.o
+-rw-r--r--  1 alkozma  2018_october   6432 Oct 17 13:52 signals.o
+drwxr-xr-x  2 alkozma  2018_october   4096 Oct 17 15:05 src
+-rw-r--r--  1 alkozma  2018_october   7876 Oct 17 13:52 string_parser.o
+-rw-r--r--  1 alkozma  2018_october      0 Oct 19 12:46 thing.txt
+-rw-r--r--  1 alkozma  2018_october      6 Oct 17 16:08 thing2.txt
+-rw-r--r--  1 alkozma  2018_october   5808 Oct 17 13:52 utils.o
+-rw-r--r--  1 alkozma  2018_october   7584 Oct 17 13:52 write.o

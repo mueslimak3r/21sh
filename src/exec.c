@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 19:01:37 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/19 13:54:58 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,4 +136,15 @@ int					check_path(char **name, char **args, char **envp)
 	if (!(find_exec(*args, ft_strjoin(env_var, ":"), name)))
 		return (ft_returnfree(&env_var, 0));
 	return (ft_returnfree(&env_var, 1));
+}
+
+int					readfd(int fd1, int fd2)
+{
+	char	buf[42];
+	int		bytes;
+	
+	while ((bytes = read(fd1, &buf, 42)) > 0)
+		write(fd2, &buf, bytes);
+	close(fd1);
+	return (1);
 }
