@@ -43,7 +43,7 @@
 typedef struct s_term		t_term;
 typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
-//typedef struct s_tbuff	t_tbuff;
+typedef struct s_tbuff		t_tbuff;
 
 typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
@@ -124,21 +124,24 @@ typedef struct				s_env
 	char					**envp;
 	int						size;
 }							t_env;
-
-/*struct s_tbuff_buff
+/*
+struct s_tbuff_queue
 {
-	char				buff[200];
-	size_t				size;
-	size_t				pos;
-	struct s_tbuff_buff	*next;
+	char					buff[200];
+	size_t					size;
+	size_t					pos;
+	struct s_tbuff_queue	*next;
 };
-
+*/
 struct s_tbuff
 {
-	struct s_tfuff_buff	*buff;
+	//struct s_tbuff_queue	*first;
+	//struct s_tfuff_queue	*last;
+	char				*s;
 	size_t				size;
 	struct s_tbuff		*next;
-};*/
+	struct s_tbuff		*prev;
+};
 
 struct						s_shellconf
 {
@@ -147,8 +150,7 @@ struct						s_shellconf
 	int						termsize[2];
 	int						cursor[2];
 	int						curr_c;
-	//t_tbuff				*buff_first;
-	//t_tbuff				*buff_last;
+	t_tbuff					*buff_first;
 	int						curlines;
 };
 
