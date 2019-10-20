@@ -13,6 +13,7 @@
 #ifndef FTSHELL_H
 # define FTSHELL_H
 
+# include <string.h>
 # include <signal.h>
 # include <sys/wait.h>
 # include <sys/ioctl.h>
@@ -79,7 +80,9 @@ enum						e_nodetype
 	EXEC,
 	ARG,
 	MOD,
-	FD,
+	FD_R,
+	FD_W,
+	FD_A,
 	ERR
 };
 
@@ -245,6 +248,6 @@ void			print_banner(int fd);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);
 unsigned long	djb2(char *str);
-int				readfd(int fd1, int fd2);
+int				readfd(int fd1, int fd2, int cd2);
 
 #endif

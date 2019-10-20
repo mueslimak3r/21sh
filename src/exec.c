@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/19 23:40:58 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/20 04:14:14 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,13 +162,15 @@ int					check_path(char **name, char **args, char **envp)
 	return (ft_returnfree(&env_var, 1));
 }
 
-int					readfd(int fd1, int fd2)
+int					readfd(int fd1, int fd2, int c2)
 {
 	char	buf[42];
 	int		bytes;
 	
+	if (fd2 == -1)
+		ft_printf_fd(STDERR_FILENO, "%s\n", strerror(errno));
 	while ((bytes = read(fd1, &buf, 42)) > 0)
 		write(fd2, &buf, bytes);
-	close(fd1);
+	close(c2 ? fd2 : fd1);
 	return (1);
 }
