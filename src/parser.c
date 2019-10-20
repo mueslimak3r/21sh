@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/20 04:14:11 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/20 05:37:51 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,17 +271,13 @@ void	recurse(t_node *head, t_stats *stats)
 #endif
 	t_node	*tmp;
 	t_node	*h2;
-	//t_stats new_stats;
 	int		main_pipe[2];
-	//int		in;
 	int		out;
-	//int		saved = 0;
 
 	h2 = head;
 #ifdef TREE_DEBUG
 	st++;
 #endif
-	//in = stats->f_d[0];
 	out = 1;
 	while (h2)
 	{
@@ -309,51 +305,12 @@ void	recurse(t_node *head, t_stats *stats)
 		if (tmp && (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)))
 		{
 			pipe(main_pipe);
-
-#ifdef TREE_DEBUG
-			/*if (tmp && tmp->parent && tmp->parent->children && tmp->parent->children->lexeme) {
-				int tmpfd[2];
-				tmpfd[0] = stats->f_d[0];//in;
-				write(STDERR_FILENO, "            ", st * 2);
-				ft_printf_fd(STDERR_FILENO, "[PRE PRINT FD: %d || TYPE: %s, STR: %s]\n", stats->f_d[0], g_term.symbls[tmp->parent->children->lexeme->set], tmp->parent->children->lexeme->data);
-				print_buffer(tmpfd);
-				stats->f_d[0] = tmpfd[0];
-			}*/
-#endif
-
 			exec_node_parse(tmp->parent, stats->f_d[0], main_pipe[1]);
 			close(main_pipe[1]);
-			//saved = 1;
 			stats->f_d[0] = main_pipe[0];
-			
-#ifdef TREE_DEBUG
-			/*if (tmp && tmp->parent && tmp->parent->children && tmp->parent->children->lexeme) {
-				int tmpfd[2];
-				tmpfd[0] = stats->f_d[0];
-				write(STDERR_FILENO, "            ", st * 2);
-				ft_printf_fd(STDERR_FILENO, "[POST PRINT FD: %d || TYPE: %s, STR: %s]\n", stats->f_d[0], g_term.symbls[tmp->parent->children->lexeme->set], tmp->parent->children->lexeme->data);
-				print_buffer(tmpfd);
-				stats->f_d[0] = tmpfd[0];
-			}*/
-#endif
-			//stats->f_d[0] = in;
 		}
 		h2 = h2->next;
 	}
-	/*
-	if (saved != 0)
-	{
-		ft_printf_fd(STDERR_FILENO, "saving FD\n");
-		stats->f_d[0] = in;
-		//ft_printf_fd(STDERR_FILENO, "%s\n", "in equ zero");
-		//empty_buffer(main_pipe);
-	}
-	*/
-	//else
-
-	//if (in != 0)
-		//dup2(in, 0);
-	//close(in);
 #ifdef TREE_DEBUG
 	st--;
 #endif

@@ -211,10 +211,7 @@ int				run_dispatch(char **args, t_env *env);
 ** LEXER
 */
 
-void			line_lexer(t_lexeme **front, t_lexeme **back, char *line);
 t_node			*lexer(char *input);
-int				sh_count_words(char *line);
-char			*sh_next_word(char *line, int *j);
 int				is_operator(char *op, int pos);
 
 /*
