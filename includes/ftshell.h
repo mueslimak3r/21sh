@@ -239,6 +239,7 @@ int				ft_alias(char *str);
 */
 
 int				empty_buffer(int fd[2]);
+int		print_buffer(int fd[2]);
 int				execute_command(t_node *a, int in, int out);
 void			print_banner(int fd);
 int				ft_printf_fd(int fd, const char *fmt, ...);

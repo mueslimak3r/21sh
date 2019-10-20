@@ -6,12 +6,12 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/19 13:54:56 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/19 23:42:09 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-#define TREE_DEBUG
+//#define TREE_DEBUG
 /*
 ** new_node
 ** Creates a new node with a passed type, lexeme and parent.
@@ -264,13 +264,16 @@ void	recurse(t_node *head, t_stats *stats)
 	t_node	*h2;
 	//t_stats new_stats;
 	int		main_pipe[2];
-	int		in;
+	//int		in;
+	int		out;
+	//int		saved = 0;
 
 	h2 = head;
 #ifdef TREE_DEBUG
 	st++;
 #endif
-	in = 0;
+	//in = stats->f_d[0];
+	out = 1;
 	while (h2)
 	{
 		tmp = h2->children;
@@ -285,27 +288,59 @@ void	recurse(t_node *head, t_stats *stats)
 #endif
 		if (tmp)
 			recurse(tmp, stats);
+		//in = stats->f_d[0];
 		if (h2->lexeme && h2->set == MOD && h2->lexeme->set != PIPE
 				&& h2->lexeme->set != LESS)
 		{
+			ft_printf_fd(STDERR_FILENO, "EMPTYING BUFFER\n");
 			empty_buffer(stats->f_d);
 			empty_buffer(main_pipe);
 		}
 		if (tmp && (tmp->set == EXEC || tmp->set == FD))
 		{
 			pipe(main_pipe);
-			exec_node_parse(tmp->parent, in, main_pipe[1]);
+
+#ifdef TREE_DEBUG
+			if (tmp && tmp->parent && tmp->parent->children && tmp->parent->children->lexeme) {
+				int tmpfd[2];
+				tmpfd[0] = stats->f_d[0];//in;
+				write(STDERR_FILENO, "            ", st * 2);
+				ft_printf_fd(STDERR_FILENO, "[PRE PRINT FD: %d || TYPE: %s, STR: %s]\n", stats->f_d[0], g_term.symbls[tmp->parent->children->lexeme->set], tmp->parent->children->lexeme->data);
+				print_buffer(tmpfd);
+				stats->f_d[0] = tmpfd[0];
+			}
+#endif
+
+			exec_node_parse(tmp->parent, stats->f_d[0], main_pipe[1]);
 			close(main_pipe[1]);
-			in = main_pipe[0];
+			//saved = 1;
+			stats->f_d[0] = main_pipe[0];
+			
+#ifdef TREE_DEBUG
+			if (tmp && tmp->parent && tmp->parent->children && tmp->parent->children->lexeme) {
+				int tmpfd[2];
+				tmpfd[0] = stats->f_d[0];
+				write(STDERR_FILENO, "            ", st * 2);
+				ft_printf_fd(STDERR_FILENO, "[POST PRINT FD: %d || TYPE: %s, STR: %s]\n", stats->f_d[0], g_term.symbls[tmp->parent->children->lexeme->set], tmp->parent->children->lexeme->data);
+				print_buffer(tmpfd);
+				stats->f_d[0] = tmpfd[0];
+			}
+#endif
+			//stats->f_d[0] = in;
 		}
 		h2 = h2->next;
 	}
-	if (in != 0)
+	/*
+	if (saved != 0)
 	{
+		ft_printf_fd(STDERR_FILENO, "saving FD\n");
 		stats->f_d[0] = in;
 		//ft_printf_fd(STDERR_FILENO, "%s\n", "in equ zero");
 		//empty_buffer(main_pipe);
 	}
+	*/
+	//else
+
 	//if (in != 0)
 		//dup2(in, 0);
 	//close(in);

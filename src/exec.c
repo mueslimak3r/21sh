@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/19 13:54:58 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/19 23:40:58 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,30 @@ int		execute_command(t_node *a, int in, int out)
 		}
 		waitpid(pid, 0, 0);
 	}
+	return (1);
+}
+
+int		print_buffer(int fd[2])
+{
+	char	buf[42];
+	int		tmpfd[2];
+	int		read_bytes;
+
+	if (fd[0] == 0)
+		return (0);
+	if (pipe(tmpfd) == -1)
+		return (0);
+	while ((read_bytes = read(fd[0], &buf, 41)) > 0)
+	{
+		buf[read_bytes] = 0;
+		ft_printf_fd(STDERR_FILENO, "PRINTBUF: %s", buf);
+		ft_printf_fd(tmpfd[1], "%s", buf);
+		if (read_bytes == 0)
+			break;
+	}
+	close(tmpfd[1]);
+	close(fd[0]);
+	fd[0] = tmpfd[0];
 	return (1);
 }
 
