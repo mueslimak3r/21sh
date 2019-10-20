@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/20 02:49:50 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/20 04:20:23 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,9 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 	new->next = NULL;
 	if (data[0] == '$' && data[1] != '(')
 	{
-		if ((env = find_env(data + 1)))
-		{
-			new->data = ft_strdup(env);
-			free(data);
-		}
+		env = find_env(data + 1);
+		new->data = env ? ft_strdup(env) : NULL;
+		free(data);
 	}
 	if (!tmp)
 		return ((*head = new));
@@ -129,18 +127,6 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 		tmp = tmp->next;
 	}
 	return (tmp);
-}
-
-void		printthings(t_lexeme *ref)
-{
-	t_lexeme *tmp;
-
-	tmp = ref;
-	while (tmp)
-	{
-		ft_printf_fd(STDERR_FILENO, "lexeme data: [%s]\n", tmp->data);
-		tmp = tmp->next;
-	}
 }
 
 int			handle_quote(char *input)
@@ -219,6 +205,5 @@ t_node		*lexer(char *input)
 			input += ft_strlen(g_term.symbls[op]);
 		}
 	}
-	//printthings(ref);
 	return (parser(ref));
 }
