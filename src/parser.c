@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/19 23:42:09 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/20 02:50:35 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -370,8 +370,8 @@ t_node	*invertify(t_node *head)
 
 	if (!head || !head->children)
 		return (NULL);
-	print_list(head);
-	ft_printf_fd(STDERR_FILENO, "INVERT\n");
+	//print_list(head);
+	//ft_printf_fd(STDERR_FILENO, "INVERT\n");
 	tmp = head->children;
 	nxt = NULL;
 	lst = NULL;
@@ -383,7 +383,7 @@ t_node	*invertify(t_node *head)
 		tmp = nxt;
 	}
 	head->children = lst;
-	print_list(head);
+	//print_list(head);
 	return (head->parent ? head->parent : abstract(head));
 }
 

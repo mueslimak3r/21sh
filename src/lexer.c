@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 19:01:36 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/20 02:49:50 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	line_lexer(t_lexeme **front, t_lexeme **back, char *line)
 	}
 }
 
-t_node	*lexer(char *input)
+/*t_node	*lexer(char *input)
 {
 	t_lexeme	*front;
 	t_lexeme	*back;
@@ -94,4 +94,131 @@ t_node	*lexer(char *input)
 	}
 #endif
 	return(parser(front));
+}*/
+
+t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
+{
+	t_lexeme	*new;
+	t_lexeme	*tmp;
+	char		*env;
+
+	tmp = *head;
+	new = malloc(sizeof(t_lexeme));
+	new->set = type;
+	new->data = data;
+	new->pos = 0;
+	new->designation = BASE;
+	new->next = NULL;
+	if (data[0] == '$' && data[1] != '(')
+	{
+		if ((env = find_env(data + 1)))
+		{
+			new->data = ft_strdup(env);
+			free(data);
+		}
+	}
+	if (!tmp)
+		return ((*head = new));
+	while (tmp)
+	{
+		if (!tmp->next)
+		{
+			tmp->next = new;
+			return (tmp);
+		}
+		tmp = tmp->next;
+	}
+	return (tmp);
+}
+
+void		printthings(t_lexeme *ref)
+{
+	t_lexeme *tmp;
+
+	tmp = ref;
+	while (tmp)
+	{
+		ft_printf_fd(STDERR_FILENO, "lexeme data: [%s]\n", tmp->data);
+		tmp = tmp->next;
+	}
+}
+
+int			handle_quote(char *input)
+{
+	int	i;
+	int match_single;
+	int	match_double;
+	int	ret;
+
+	i = 0;
+	match_single = -1;
+	match_double = -1;
+	while (input[i])
+	{
+		if ((match_single == 1 && input[i + 1] == '\'') || (match_double == 1 && input[i + 1] == '\"'))
+		{
+			input[i] = input[i + 2];
+			ret = i;
+			while (input[i + 1])
+			{
+				input[i + 1] = input[i + 2];
+				i++;
+			}
+			input[i] = 0;
+			return (ft_isspace(input[ret]) ? ret - 1 : ret);
+		}
+		match_single = input[i] == '\'' ? -match_single : match_single;
+		match_double = input[i] == '\"' ? -match_double : match_double;
+		if (match_single == 1 && match_double == 1)
+			return (-1);
+		if (match_single == 1 || match_double == 1)
+			input[i] = input[i + 1];
+		i++;
+	}
+	return (1);
+}
+
+t_node		*lexer(char *input)
+{
+	t_lexeme	*ref;
+	int			i;
+	int			op;
+	int			tmp;
+
+	ref = NULL;
+	op = 0;
+	while (*input)
+	{
+		i = 0;
+		while (*input && ft_isspace(*input))
+			input++;
+		while (*(input + i) && !ft_isspace(*(input + i)))
+		{
+			if (*(input + i) == '\'' || *(input + i) == '\"')
+				i += handle_quote(input + i);
+			op = is_operator(input, i);
+			if (op > 1)
+				break ;
+			if (*(input + i) == '\\')
+			{
+				tmp = i;
+				while (input[i])
+				{
+					input[i] = input[i + 1];
+					i++;
+				}
+				i = tmp;
+			}
+			i++;
+		}
+		i ? new_lex(ft_strndup(input, i), 1, &ref) : 0;
+		input += i;
+		if (op > 1)
+		{
+			new_lex(ft_strndup(input, ft_strlen(g_term.symbls[op])), op, &ref);
+			input += ft_strlen(g_term.symbls[op]);
+		}
+	}
+	//printthings(ref);
+	return (parser(ref));
 }
