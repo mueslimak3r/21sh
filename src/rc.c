@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 13:23:57 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 13:33:57 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/20 04:27:31 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,15 @@ int		read_rcfile(void)
 	line = NULL;
 	while (get_next_line(fd, &line) > 0)
 	{
-		stats.f_d[0] = 0;
-		stats.f_d[1] = 1;
-		tree = lexer(line);
-		recurse(tree, &stats);
-		empty_buffer(stats.f_d);
-		clean_tree(tree);
+		if (line[0] != '#')
+		{
+			stats.f_d[0] = 0;
+			stats.f_d[1] = 1;
+			tree = lexer(line);
+			recurse(tree, &stats);
+			empty_buffer(stats.f_d);
+			clean_tree(tree);
+		}
 	}
 	close(fd);
 	return (1);

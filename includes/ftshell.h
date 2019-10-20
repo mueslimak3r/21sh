@@ -249,5 +249,7 @@ int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);
 unsigned long	djb2(char *str);
 int				readfd(int fd1, int fd2, int cd2);
+int				ft_cd(char *path);
+int				ft_env(char **envp);
 
 #endif

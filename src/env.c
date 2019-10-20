@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/20 02:50:38 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/20 05:21:29 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,12 +163,14 @@ int			ft_env(char **envp)
 int			run_builtins(char **args, t_env *env)
 {
 	if (ft_strcmp(args[0], "exit") == 0)
-		return (1);
+		exit(0);
 	else if (ft_strcmp(args[0], "env") == 0)
 		return (ft_env(env->envp));
 	else if (ft_strcmp(args[0], "export") == 0)
 		return (ft_export(args[1]));
 	else if (ft_strcmp(args[0], "alias") == 0)
 		return (ft_alias(args[1]));
+	else if (ft_strcmp(args[0], "cd") == 0)
+		return(ft_cd(args[1]));
 	return (2);
 }
