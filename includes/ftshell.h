@@ -150,7 +150,6 @@ struct						s_shellconf
 	int						termsize[2];
 	int						cursor[2];
 	int						curr_c;
-	t_tbuff					*buff_first;
 	int						curlines;
 };
 
@@ -159,6 +158,7 @@ struct						s_term
 	struct s_env			env;
 	char					*line_in;
 	char					**symbls;
+	t_tbuff					*buff;
 	t_shellconf				conf;
 	struct termios			old_term;
 	struct termios			new_term;
@@ -194,6 +194,14 @@ int				handle_controls(unsigned long code, char *str, char *saved);
 void			shell_loop(void);
 int				ft_readstdin_line(void);
 int				read_rcfile(void);
+
+/*
+** INPUT BUFFER
+*/
+
+void        	tbuff_push(t_tbuff **buff, char *s);
+char			*tbuff_peek(t_tbuff *buff);
+void			tbuff_free(t_tbuff **buff);
 
 /*
 ** ENVIRONMENT
