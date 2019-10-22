@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/20 05:37:51 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/21 20:51:23 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,6 +259,24 @@ void	clean_tree(t_node *head)
 	}
 }
 
+int		count_pipes(t_node *node)
+{
+	t_node	*tmp;
+	int		ret;
+
+	ret = 0;
+	tmp = node;
+	while (node)
+	{
+		if (node->lexeme && (node->lexeme->set == PIPE || node->lexeme->set == LESS
+								|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT
+								|| node->lexeme->set == SEMI))
+			ret++;
+		node = node->next;
+	}
+	return (ret);
+}
+
 /*
 ** recurse
 ** Main function for tree evaluation.
@@ -273,6 +291,7 @@ void	recurse(t_node *head, t_stats *stats)
 	t_node	*h2;
 	int		main_pipe[2];
 	int		out;
+	static int	pipes;
 
 	h2 = head;
 #ifdef TREE_DEBUG
@@ -282,6 +301,7 @@ void	recurse(t_node *head, t_stats *stats)
 	while (h2)
 	{
 		tmp = h2->children;
+		pipes += (count_pipes(tmp) ? count_pipes(tmp) + 1 : 0);
 #ifdef TREE_DEBUG
 		if (h2 && h2->lexeme) {
 			write(STDERR_FILENO, "            ", st * 2);
@@ -304,8 +324,9 @@ void	recurse(t_node *head, t_stats *stats)
 		}
 		if (tmp && (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)))
 		{
-			pipe(main_pipe);
-			exec_node_parse(tmp->parent, stats->f_d[0], main_pipe[1]);
+			if (pipes)
+				pipe(main_pipe);
+			exec_node_parse(tmp->parent, stats->f_d[0], (pipes = pipes ? pipes - 1 : 0) ? main_pipe[1] : stats->f_d[1]);
 			close(main_pipe[1]);
 			stats->f_d[0] = main_pipe[0];
 		}
