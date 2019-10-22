@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 23:21:15 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/22 00:19:05 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,31 @@ void		reset_term(void)
 	//ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
 }
 
-int			ft_readstdin_line(void)
+int			has_hd(char *thing, char *hd)
+{
+	char	**split;
+	int		i;
+	int		ret;
+
+	if (!thing)
+		return (0);
+	split = ft_strsplit(thing, '\n');
+	i = 0;
+	ret = 0;
+	while (split[i])
+	{
+		if (ft_strcmp(split[i], hd) == 0)
+			ret = 1;
+		free(split[i]);
+		split[i] = NULL;
+		i++;
+	}
+	free(split);
+	split = NULL;
+	return (ret);
+}
+
+int			ft_readstdin_line(int hd, char *stop)
 {
 	char	buf[BUFF_SIZE + 1];
 	char	*tmp;
@@ -70,10 +94,15 @@ int			ft_readstdin_line(void)
 
 	g_term.conf.curlines = 1;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
-	term_write(PROMPT, STDERR_FILENO, 1);
-	g_term.conf.cursor[0] = ft_strlen(PROMPT);
+	term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
+	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
 	thing.long_form = 0;
-	while ((ret = read(0, buf, 4)) >= 0)
+	if (g_term.line_in)
+	{
+		free(g_term.line_in);
+		g_term.line_in = 0;
+	}
+	while ((ret = read(0, &buf, 4)) >= 0)
 	{
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf, g_term.line_in)) < 1)
@@ -83,10 +112,20 @@ int			ft_readstdin_line(void)
 				free(g_term.line_in);
 			g_term.line_in = tmp;
 		}
-		else if (thing.long_form == ENTER)
+		else if (thing.long_form == ENTER && !hd)
 		{
 			tbuff_push(&g_term.buff, g_term.line_in);
 			return (1);
+		}
+		else if (thing.long_form == ENTER)
+		{
+			tmp = ft_strjoin(g_term.line_in, buf);
+			if (g_term.line_in)
+				free(g_term.line_in);
+			g_term.line_in = tmp;
+			if (has_hd(tmp, stop))
+				return (1);
+			term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
 		}
 		ft_memset(buf, 0, BUFF_SIZE + 1);
 	}
@@ -111,7 +150,7 @@ void		shell_loop(void)
 	read_rcfile();
 	while (!quit)
 	{
-		if (!ft_readstdin_line())
+		if (!ft_readstdin_line(0, NULL))
 			continue ;
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;

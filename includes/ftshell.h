@@ -37,6 +37,7 @@
 # define GET_SCREENSIZE ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 
 # define PROMPT "@>"
+# define HDPROMPT " >"
 # define TYPES
 # define HT_OVERHEAD 5000
 
@@ -82,6 +83,7 @@ enum						e_nodetype
 	MOD,
 	FD_R,
 	FD_W,
+	FD_H,
 	FD_A,
 	ERR
 };
@@ -192,7 +194,7 @@ int				handle_controls(unsigned long code, char *str, char *saved);
 */
 
 void			shell_loop(void);
-int				ft_readstdin_line(void);
+int				ft_readstdin_line(int hd, char *stop);
 int				read_rcfile(void);
 
 /*

@@ -6,12 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 23:21:30 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/22 00:19:06 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 //#define TREE_DEBUG
+
 /*
 ** new_node
 ** Creates a new node with a passed type, lexeme and parent.
@@ -74,8 +75,9 @@ int	is_mod(t_lexeme *lexeme)
 		return (0);
 	if (lexeme->set >= AND && lexeme->set <= IO_NUMBER)
 	{
-		if (lexeme->next && (lexeme->set == LESS || lexeme->set == GREAT || lexeme->set == RDGREAT))
+		if (lexeme->next && (lexeme->set == LESS || lexeme->set == GREAT || lexeme->set == RDGREAT || lexeme->set == RDLESS))
 		{
+			lexeme->next->designation = lexeme->set == RDLESS ? FD_H : lexeme->next->designation;
 			lexeme->next->designation = lexeme->set == LESS ? FD_R : lexeme->next->designation;
 			lexeme->next->designation = lexeme->set == GREAT ? FD_W : lexeme->next->designation;
 			lexeme->next->designation = lexeme->set == RDGREAT ? FD_A : lexeme->next->designation;
@@ -219,8 +221,13 @@ void	exec_node_parse(t_node *node, int in, int out)
 			readfd(open(node->children->lexeme->data, O_RDONLY), out, 0);
 		else if (node->children->set == FD_W)
 			readfd(in, open(node->children->lexeme->data, O_WRONLY|O_CREAT|O_TRUNC, 0644), 1);
-		else
+		else if (node->children->set == FD_A)
 			readfd(in, open(node->children->lexeme->data, O_WRONLY|O_CREAT|O_APPEND, 0644), 1);
+		else
+		{
+			ft_readstdin_line(1, node->children->lexeme->data);
+			write(out, g_term.line_in, ft_strlen(g_term.line_in));
+		}
 		return ;
 	}
 	//load_envp();
@@ -274,7 +281,7 @@ int		count_pipes(t_node *node)
 	{
 		if (node->lexeme && (node->lexeme->set == PIPE || node->lexeme->set == LESS
 								|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT
-								|| node->lexeme->set == SEMI))
+								|| node->lexeme->set == SEMI || node->lexeme->set == RDLESS))
 			ret++;
 		node = node->next;
 	}
@@ -318,9 +325,7 @@ void	recurse(t_node *head, t_stats *stats)
 		if (tmp)
 			recurse(tmp, stats);
 		//in = stats->f_d[0];
-		if (h2->lexeme && h2->set == MOD && h2->lexeme->set != PIPE
-				&& h2->lexeme->set != LESS && h2->lexeme->set != GREAT
-				&& h2->lexeme->set != RDGREAT)
+		if (h2->lexeme && h2->lexeme->set == SEMI)
 		{
 			ft_printf_fd(STDERR_FILENO, "EMPTYING BUFFER\n");
 			empty_buffer(stats->f_d);
@@ -402,10 +407,9 @@ t_node	*parser(t_lexeme *lexemes)
 				parse_error(head, lexemes);
 				return (NULL);
 			}
-			invert = lexemes->set == LESS ? 1 : 0;
+			invert = lexemes->set == LESS || lexemes->set == RDLESS ? 1 : 0;
 		}
-		else if (classification == EXEC || classification == FD_R
-				|| classification == FD_W || classification == FD_A)
+		else if (classification == EXEC || (classification >= FD_R && classification <= FD_A))
 			head = new_node(EXPR, NULL, head);
 		else if (classification == ERR)
 		{
