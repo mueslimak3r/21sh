@@ -84,7 +84,10 @@ int			ft_readstdin_line(void)
 			g_term.line_in = tmp;
 		}
 		else if (thing.long_form == ENTER)
+		{
+			tbuff_push(&g_term.buff, g_term.line_in);
 			return (1);
+		}
 		ft_memset(buf, 0, BUFF_SIZE + 1);
 	}
 	return (0);
@@ -95,7 +98,7 @@ void		shell_loop(void)
 	int			quit;
 	t_stats		stats;
 	t_node		*tree;
-	
+
 	quit = 0;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
 	g_term.conf.termsize[1] = g_window_size.ws_row;
@@ -103,6 +106,7 @@ void		shell_loop(void)
 	g_term.conf.cursor[1] = 0;
 	g_term.conf.curr_c = -1;
 	g_term.line_in = NULL;
+	g_term.buff = NULL;
 	tree = NULL;
 	read_rcfile();
 	while (!quit)
@@ -118,6 +122,7 @@ void		shell_loop(void)
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}
+	tbuff_free(&g_term.buff);
 }
 
 void		define_symbols(void)
