@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   alias.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 14:23:18 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 15:09:08 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/21 23:06:17 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ char	*find_alias(char *name)
 	while (tmp)
 	{
 		if ((unsigned long)(tmp->content_size) == hash)
-			return ((char*)(tmp->content));
+		{
+			free(name);
+			return (ft_strdup((char*)(tmp->content)));
+		}
 		tmp = tmp->next;
 	}
 	return (name);
@@ -34,12 +37,21 @@ int		ft_alias(char *str)
 	t_ht			*tmp;
 	t_ht			*new;
 	char			**split;
+	int				i;
 
 	if (!str)
 		return (0);
 	split = ft_strsplit(str, '=');
 	if (!split[0] || !split[1])
+	{
+		if (split[0])
+		{
+			free(split[0]);
+			split[0] = NULL;
+		}
+		split ? free(split) : 0;
 		return (0);
+	}
 	hash = djb2(split[0]);
 	tmp = g_alias[hash % HT_OVERHEAD];
 	new = malloc(sizeof(t_ht));
@@ -65,6 +77,13 @@ int		ft_alias(char *str)
 		}
 		tmp = tmp->next;
 	}
+	i = 0;
+	while (split[i])
+	{
+		free(split[i]);
+		split[i++] = NULL;
+	}
+	free(split);
 	g_alias[hash % HT_OVERHEAD] = new;
 	return (1);
 }

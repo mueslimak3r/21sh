@@ -121,7 +121,7 @@ struct						s_node
 
 typedef struct				s_env
 {
-	char					**envp;
+	char					*envp[HT_OVERHEAD];
 	int						size;
 }							t_env;
 /*
@@ -250,7 +250,7 @@ int				ft_alias(char *str);
 
 int				empty_buffer(int fd[2]);
 int		print_buffer(int fd[2]);
-int				execute_command(t_node *a, int in, int out);
+int				execute_command(t_node *a, int in, int out, char **args);
 void			print_banner(int fd);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);

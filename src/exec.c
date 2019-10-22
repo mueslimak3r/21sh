@@ -6,19 +6,17 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 20:51:27 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/21 23:03:22 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-int		execute_command(t_node *a, int in, int out)
+int		execute_command(t_node *a, int in, int out, char **args)
 {
 	char	*name;
-	char	**args;
 	pid_t	pid;
 	
-	args = concat_node(a);
 	args[0] = find_alias(args[0]);
 	if (check_path(&name, args, g_term.env.envp))
 	{
@@ -40,6 +38,7 @@ int		execute_command(t_node *a, int in, int out)
 		}
 		waitpid(pid, 0, 0);
 	}
+	free(name);
 	return (1);
 }
 

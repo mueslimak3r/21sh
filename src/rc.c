@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rc.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 13:23:57 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/20 04:27:31 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/21 21:54:17 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ int		read_rcfile(void)
 			empty_buffer(stats.f_d);
 			clean_tree(tree);
 		}
+		free(line);
+		line = NULL;
 	}
 	close(fd);
 	return (1);
