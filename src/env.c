@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/20 05:21:29 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/21 21:41:17 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,10 +120,16 @@ int				load_envp(void)
 	int		i;
 	int		b;
 	char	*new[HT_OVERHEAD];
-	t_env	ret;
 
 	i = 0;
 	b = 0;
+	while (g_term.env.envp && g_term.env.envp[i])
+	{
+		free(g_term.env.envp[i]);
+		g_term.env.envp[i++] = NULL;
+	}
+	g_term.env.envp = NULL;
+	i = 0;
 	while (i < HT_OVERHEAD)
 	{
 		if (g_env[i])
@@ -131,9 +137,8 @@ int				load_envp(void)
 		i++;
 	}
 	new[b] = 0;
-	ret.envp = new;
-	ret.size = b;
-	g_term.env = ret;
+	g_term.env.envp = new;
+	g_term.env.size = b;
 	return (1);
 }
 
