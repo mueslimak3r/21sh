@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 20:51:25 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/21 23:21:15 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void		init_term(void)
 		exit (0);
 	}
 	//ft_putstr_fd(tgetstr("vi", &temp), STDERR_FILENO);
-	ft_putstr_fd(tgetstr("ti", &temp), STDERR_FILENO);
+	//ft_putstr_fd(tgetstr("ti", &temp), STDERR_FILENO);
 	GET_SCREENSIZE;
 	g_term.rows = 1;
 }
@@ -57,8 +57,8 @@ void		reset_term(void)
 
 	temp = buf;
 	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
-	ft_putstr_fd(tgetstr("ve", &temp), STDERR_FILENO);
-	ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
+	//ft_putstr_fd(tgetstr("ve", &temp), STDERR_FILENO);
+	//ft_putstr_fd(tgetstr("te", &temp), STDERR_FILENO);
 }
 
 int			ft_readstdin_line(void)
@@ -161,7 +161,7 @@ int			main(int ac, char **av)
 	init_term();
 	set_sighandle();
 	define_symbols();
-	CLEAR_SCREEN;
+	//CLEAR_SCREEN;
 	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
 	print_banner(STDERR_FILENO);
 	shell_loop();

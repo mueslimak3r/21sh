@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 14:23:18 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 23:06:17 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/21 23:21:25 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int		ft_alias(char *str)
 	new->next = NULL;
 	new->content = ft_strdup(split[1]);
 	new->content_name = ft_strdup(split[0]);
-	ft_printf_fd(STDERR_FILENO, "ALIASING %s -> %s\n", split[0], split[1]);
+	//ft_printf_fd(STDERR_FILENO, "ALIASING %s -> %s\n", split[0], split[1]);
 	while (tmp)
 	{
 		if ((unsigned long)(tmp->content_size) == hash)

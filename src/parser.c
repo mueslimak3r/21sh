@@ -6,12 +6,12 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 21:51:47 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/21 23:21:30 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-#define TREE_DEBUG
+//#define TREE_DEBUG
 /*
 ** new_node
 ** Creates a new node with a passed type, lexeme and parent.
