@@ -311,6 +311,8 @@ void	recurse(t_node *head, t_stats *stats)
 	out = 1;
 	while (h2)
 	{
+		main_pipe[0] = 0;
+		main_pipe[1] = 1;
 		tmp = h2->children;
 		pipes += (count_pipes(tmp) ? count_pipes(tmp) + 1 : 0);
 #ifdef TREE_DEBUG
@@ -336,7 +338,8 @@ void	recurse(t_node *head, t_stats *stats)
 			if (pipes)
 				pipe(main_pipe);
 			exec_node_parse(tmp->parent, stats->f_d[0], (pipes = pipes ? pipes - 1 : 0) ? main_pipe[1] : stats->f_d[1]);
-			close(main_pipe[1]);
+			if (pipes)
+				close(main_pipe[1]);
 			stats->f_d[0] = main_pipe[0];
 		}
 		h2 = h2->next;
