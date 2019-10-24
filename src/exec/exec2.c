@@ -57,19 +57,50 @@ int		handle_redirs(t_redir *list)
 	return (r);
 }
 
+void		free_redir(t_redir **list)
+{
+	t_redir *tmp;
+
+	while (*list)
+	{
+		tmp = *list;
+		*list = (*list)->next;
+		free(tmp);
+	}
+}
+
+static void	fd_helper(int *in, int *out)
+{
+	dup2(in[0], 0);
+	dup2(out[1], 1);
+	in[0] > 2 ? close(in[0]) : 0;
+	out[1] > 2 ? close(out[1]) : 0;
+}
+
 int		execute_command(int *in, int *out, char **args, t_redir *list)
 {
 	pid_t	pid;
+	char	*name;
 
+	name = NULL;
+	args[0] = find_alias(args[0]);
+	out[0] > 2 ? close(out[0]) : 0;
+	if (!check_path(&name, args, g_term.env.envp))
+		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
 	if ((pid = fork()) == 0)
 	{
-		subshell(in, out, args, list);
-		exit(0);
+		
+		set_sighandle_child();
+		fd_helper(in, out);
+		if (!handle_redirs(list))
+			exit(1);
+		execve(name, args, g_term.env.envp);
 	}
 	child_push(&g_term.children, pid);
 	out[1] > 2 ? close(out[1]) : 0;
 	in[0] > 2 ? close(in[0]) : 0;
 	set_sighandle();
+	free(name);
 	free_redir(&list);
 	return (1);
 }

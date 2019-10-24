@@ -30,10 +30,13 @@ void		shell_loop(void)
 			break ;
 		if (res == 0)
 			continue ;
-		tree = lexer(g_term.buff->buff_str);
+		if (!(tree = lexer(g_term.buff->buff_str)))
+			continue ;
+		reset_term();
 		recurse(tree, &stats);
 		if (g_term.children)
 			child_wait();
+		init_term();
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}
@@ -65,7 +68,24 @@ void		define_symbols(void)
 	g_term.buff = NULL;
 }
 
-int			main(void)
+void		subshell(char *input)
+{
+	t_stats		stats;
+	t_node		*tree;
+
+	tree = NULL;
+	if (!(tree = lexer(input)))
+		return ;
+	reset_term();
+	recurse(tree, &stats);
+	if (g_term.children)
+		child_wait();
+	init_term();
+	empty_buffer(stats.f_d);
+	clean_tree(tree);
+}
+
+int			main(int ac, char **av)
 {
 	if (!(validate_term()))
 		return (0);
@@ -74,8 +94,13 @@ int			main(void)
 	set_sighandle();
 	define_symbols();
 	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
-	print_banner(STDERR_FILENO);
-	shell_loop();
+	if (ac == 3 && !(ft_strcmp(av[1], "-c")))
+		subshell(av[2]);
+	else
+	{
+		print_banner(STDERR_FILENO);
+		shell_loop();
+	}
 	reset_term();
 	return (0);
 }

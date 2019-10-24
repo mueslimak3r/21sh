@@ -28,9 +28,11 @@ int		read_rcfile(void)
 			stats.f_d[0] = 0;
 			stats.f_d[1] = 1;
 			tree = lexer(line);
+			reset_term();
 			recurse(tree, &stats);
 			if (g_term.children)
 				child_wait();
+			init_term();
 			empty_buffer(stats.f_d);
 			clean_tree(tree);
 		}

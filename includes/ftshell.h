@@ -233,8 +233,6 @@ int							has_hd(char *thing, char *hd);
 void						shell_loop(void);
 int							ft_readstdin_line(t_tbuff **tbuff, int hd);
 int							read_rcfile(void);
-int							subshell(int *in, int *out, char **args,
-													t_redir *list);
 
 /*
 ** INPUT BUFFER
