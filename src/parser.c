@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/22 00:19:06 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/25 01:25:21 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,9 +337,12 @@ void	recurse(t_node *head, t_stats *stats)
 		{
 			if (pipes)
 				pipe(main_pipe);
-			exec_node_parse(tmp->parent, stats->f_d[0], (pipes = pipes ? pipes - 1 : 0) ? main_pipe[1] : stats->f_d[1]);
+			exec_node_parse(tmp->parent, stats->f_d[0], main_pipe[1]);
 			if (pipes)
+			{
+				pipes -= 1;
 				close(main_pipe[1]);
+			}
 			stats->f_d[0] = main_pipe[0];
 		}
 		h2 = h2->next;

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 23:03:22 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 01:26:28 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,12 @@ int		empty_buffer(int fd[2])
 
 	if (fd[0] == 0)
 		return (0);
-	while ((read_bytes = read(fd[0], &buf, 41)) >= 0)
+	while ((read_bytes = read(fd[0], &buf, 41)) > 0)
 	{
 		buf[read_bytes] = 0;
 		ft_printf_fd(STDERR_FILENO, "%s", buf);
-		if (read_bytes == 0)
-			break;
+		//if (read_bytes == 0)
+		//	break;
 	}
 	return (1);
 }
