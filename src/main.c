@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 03:43:39 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 07:55:59 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,13 +146,14 @@ void		shell_loop(void)
 	read_rcfile();
 	while (!quit)
 	{
-		if (!ft_readstdin_line(0, NULL))
+		if (!ft_readstdin_line(0, NULL) || !g_term.line_in)
 			continue ;
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
 		tree = lexer(g_term.line_in);
 		free(g_term.line_in);
 		g_term.line_in = NULL;
+		tbuff_print(g_term.buff);
 		recurse(tree, &stats);
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
@@ -193,7 +194,6 @@ int			main(void)
 	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
 	print_banner(STDERR_FILENO);
 	shell_loop();
-	CLEAR_SCREEN;
 	reset_term();
 	return (0);
 }

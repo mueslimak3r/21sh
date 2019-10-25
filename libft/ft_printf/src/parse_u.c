@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_u.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/30 15:45:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/01/13 23:29:05 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 07:00:27 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ size_t			usenbr(t_pflags *f, t_buffer *buffer, char t, int base)
 	int			size;
 
 	ret = 0;
-	str = uitoa_base(f->inbuf->u, base);
+	str = ft_uitoa_base(f->inbuf->u, base);
 	size = (int)ft_strlen(str);
 	size = (f->max_size <= 0 && f->inbuf->u == 0) ? 0 : size;
 	f->pound = (f->pound && (((t == 'x' || t == 'X') && f->inbuf->u != 0) ||

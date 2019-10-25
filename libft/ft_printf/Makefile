@@ -6,13 +6,13 @@
 #    By: calamber <calamber@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/17 11:20:37 by calamber          #+#    #+#              #
-#    Updated: 2019/07/01 18:29:34 by calamber         ###   ########.fr        #
+#    Updated: 2019/10/25 07:03:01 by calamber         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ../libft.a
 
-SRC = ft_printf.c tools.c uitoa_base.c print_buffer.c \
+SRC = ft_printf.c tools.c print_buffer.c \
 parse_u.c flags.c parse_chars.c parse_d.c parse_wchar.c
 
 SRC_PATH = src/

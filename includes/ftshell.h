@@ -31,6 +31,8 @@
 # define ESCAPE 0x1B
 # define LEFT 0x445B1B
 # define RIGHT 0x435B1B
+# define UP 0x415B1B
+# define DOWN 0x425B1B
 # define DELETE 0x7F
 # define DELETE2 0x7E335B1B
 # define CLEAR_SCREEN ft_putstr_fd(tgetstr("cl", NULL), STDERR_FILENO);
@@ -204,6 +206,7 @@ int				read_rcfile(void);
 void        	tbuff_push(t_tbuff **buff, char *s);
 char			*tbuff_peek(t_tbuff *buff);
 void			tbuff_free(t_tbuff **buff);
+void			tbuff_print(t_tbuff *buff);
 
 /*
 ** ENVIRONMENT

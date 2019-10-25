@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print.c                                            :+:      :+:    :+:   */
+/*   ft_uitoa_base.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/17 11:45:09 by calamber          #+#    #+#             */
-/*   Updated: 2018/10/01 22:04:11 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 07:01:46 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 
 int						u_numsize(unsigned long long nbr, int base)
 {
@@ -27,7 +27,7 @@ int						u_numsize(unsigned long long nbr, int base)
 	return (size + 1);
 }
 
-char					*uitoa_base(unsigned long long nbr, int base)
+char					*ft_uitoa_base(unsigned long long nbr, int base)
 {
 	char				*res;
 	int					index;

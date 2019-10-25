@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/21 16:24:04 by calamber          #+#    #+#             */
-/*   Updated: 2019/09/25 06:14:50 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 06:59:38 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ typedef struct		s_list
 	size_t			content_size;
 	struct s_list	*next;
 }					t_list;
-
+char				*ft_uitoa_base(unsigned long long nbr, int base);
+int					ft_cntdigit(long n, int base);
 void				*ft_memset(void *b, int c, size_t len);
 void				ft_bzero(void *s, size_t n);
 void				*ft_memcpy(void *dst, const void *src, size_t n);

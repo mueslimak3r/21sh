@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 04:15:14 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 07:55:00 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ int		delete_char(char *str)
 	int			curpos;
 	static int	broke_line;
 
+	if (!str)
+		return (1);
 	if (ft_strlen(str) < 1)
 		return (1);
 	ft_printf_fd(STDERR_FILENO, " ");
@@ -110,9 +112,26 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 		ft_printf_fd(STDERR_FILENO, " \b\n");
 		g_term.conf.cursor[0] = ft_strlen(PROMPT);
 		g_term.conf.cursor[1]++;
-		ret = 1;
 	}
+	else if (code == UP)
+	{
+		;//ft_printf_fd(STDERR_FILENO, "going up\n");
+	}
+	else if (code == DOWN)
+	{
+		;//ft_printf_fd(STDERR_FILENO, "going down\n");
+	}
+	else if (code == LEFT)
+		term_write(str, STDERR_FILENO, 0);
+	else if (code == RIGHT)
+		term_write(str, STDERR_FILENO, 0);
+	else
+		ret -= 1;
+	ret += 1;
 	if (ret == 0)
 		term_write(str, STDERR_FILENO, 0);
+	else
+		ft_memset(str, 0, BUFF_SIZE + 1);
+	//ft_printf_fd(STDERR_FILENO, "code: %lu\n", code);
 	return (ret);
 }
