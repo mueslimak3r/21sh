@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 14:23:18 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/21 23:21:25 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/25 02:46:00 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,35 +31,11 @@ char	*find_alias(char *name)
 	return (name);
 }
 
-int		ft_alias(char *str)
+int		insert_node(t_ht *new, unsigned long hash, char **split)
 {
-	unsigned long	hash;
-	t_ht			*tmp;
-	t_ht			*new;
-	char			**split;
-	int				i;
+	t_ht	*tmp;
 
-	if (!str)
-		return (0);
-	split = ft_strsplit(str, '=');
-	if (!split[0] || !split[1])
-	{
-		if (split[0])
-		{
-			free(split[0]);
-			split[0] = NULL;
-		}
-		split ? free(split) : 0;
-		return (0);
-	}
-	hash = djb2(split[0]);
 	tmp = g_alias[hash % HT_OVERHEAD];
-	new = malloc(sizeof(t_ht));
-	new->content_size = hash;
-	new->next = NULL;
-	new->content = ft_strdup(split[1]);
-	new->content_name = ft_strdup(split[0]);
-	//ft_printf_fd(STDERR_FILENO, "ALIASING %s -> %s\n", split[0], split[1]);
 	while (tmp)
 	{
 		if ((unsigned long)(tmp->content_size) == hash)
@@ -77,6 +53,46 @@ int		ft_alias(char *str)
 		}
 		tmp = tmp->next;
 	}
+	return (0);
+}
+
+char	**check_split(char *str)
+{
+	char	**split;
+
+	split = ft_strsplit(str, '=');
+	if (!split[0] || !split[1])
+	{
+		if (split[0])
+		{
+			free(split[0]);
+			split[0] = NULL;
+		}
+		if (split)
+			free(split);
+		return (NULL);
+	}
+	return (split);
+}
+
+int		ft_alias(char *str)
+{
+	unsigned long	hash;
+	t_ht			*new;
+	char			**split;
+	int				i;
+
+	split = NULL;
+	if (!str || !(split = check_split(str)))
+		return (0);
+	hash = djb2(split[0]);
+	new = malloc(sizeof(t_ht));
+	new->content_size = hash;
+	new->next = NULL;
+	new->content = ft_strdup(split[1]);
+	new->content_name = ft_strdup(split[0]);
+	if (insert_node(new, hash, split))
+		return (1);
 	i = 0;
 	while (split[i])
 	{

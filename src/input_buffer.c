@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   input_buffer.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
+/*   Updated: 2019/10/25 03:28:01 by calamber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ftshell.h"
 
-void        tbuff_push(t_tbuff **buff, char *s)
+void		tbuff_push(t_tbuff **buff, char *s)
 {
 	t_tbuff *new;
 
@@ -43,7 +55,7 @@ void		tbuff_free(t_tbuff **buff)
 		if (tmp == *buff)
 			*buff = NULL;
 		free(tmp->s);
-		free(tmp);	
+		free(tmp);
 	}
 	*buff = NULL;
 }

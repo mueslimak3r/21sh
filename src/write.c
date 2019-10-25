@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/16 17:15:45 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/25 04:15:14 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ int		rem_from_buf(char *str, int pos)
 
 int		delete_char(char *str)
 {
-	char buf[30];
-	int	curpos;
+	char		buf[30];
+	int			curpos;
 	static int	broke_line;
 
 	if (ft_strlen(str) < 1)
@@ -87,7 +87,6 @@ int		delete_char(char *str)
 		ft_printf_fd(STDERR_FILENO, "\033[%dC", g_term.conf.termsize[0]);
 		ft_printf_fd(STDERR_FILENO, " ");
 		ft_printf_fd(STDERR_FILENO, "\033[%dC", g_term.conf.termsize[0]);
-		//ft_printf_fd(STDERR_FILENO, "\033[1D");
 	}
 	else
 	{
@@ -109,13 +108,11 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 	else if (code == ENTER)
 	{
 		ft_printf_fd(STDERR_FILENO, " \b\n");
-		//ft_putstr_fd("\n", STDERR_FILENO);
 		g_term.conf.cursor[0] = ft_strlen(PROMPT);
 		g_term.conf.cursor[1]++;
 		ret = 1;
 	}
 	if (ret == 0)
 		term_write(str, STDERR_FILENO, 0);
-	//ft_printf_fd(STDERR_FILENO, " ");
 	return (ret);
 }

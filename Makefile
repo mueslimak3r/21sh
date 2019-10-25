@@ -2,7 +2,8 @@ NAME = 21sh
 
 SRC = main.c signals.c write.c utils.c \
 	parser.c lexer.c exec.c error.c builtin.c \
-	flavor.c env.c rc.c alias.c input_buffer.c
+	flavor.c env.c rc.c alias.c input_buffer.c \
+	exec2.c env2.c
 
 OBJ = $(SRC:.c=.o)
 

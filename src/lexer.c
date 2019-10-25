@@ -6,26 +6,27 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/20 05:42:40 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/25 03:33:40 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-//#define LEX_DEBUG
+
+/*
+** #define LEX_DEBUG
+*/
 
 int			is_operator(char *op, int pos)
 {
 	int		i;
 	int		ret;
-	
 
 	i = 3;
 	ret = 0;
 	while (g_term.symbls[i])
 	{
-		//if (pos > 0 && ft_strncmp(op + pos - 1, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
-		//	return (2);
-		if (ft_strncmp(op + pos, g_term.symbls[i], ft_strlen(g_term.symbls[i])) == 0)
+		if (ft_strncmp(op + pos, g_term.symbls[i],
+			ft_strlen(g_term.symbls[i])) == 0)
 			return (i);
 		i++;
 	}
@@ -34,25 +35,11 @@ int			is_operator(char *op, int pos)
 	return (ret);
 }
 
-t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
+t_lexeme	*new_lex_helper(t_lexeme **head, t_lexeme *new)
 {
-	t_lexeme	*new;
 	t_lexeme	*tmp;
-	char		*env;
 
 	tmp = *head;
-	new = malloc(sizeof(t_lexeme));
-	new->set = type;
-	new->data = data;
-	new->pos = 0;
-	new->designation = BASE;
-	new->next = NULL;
-	if (data[0] == '$' && data[1] != '(')
-	{
-		env = find_env(data + 1);
-		new->data = env ? ft_strdup(env) : NULL;
-		free(data);
-	}
 	if (!tmp)
 		return ((*head = new));
 	while (tmp)
@@ -67,6 +54,27 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 	return (tmp);
 }
 
+t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
+{
+	t_lexeme	*new;
+	t_lexeme	*tmp;
+	char		*env;
+
+	new = malloc(sizeof(t_lexeme));
+	new->set = type;
+	new->data = data;
+	new->pos = 0;
+	new->designation = BASE;
+	new->next = NULL;
+	if (data[0] == '$' && data[1] != '(')
+	{
+		env = find_env(data + 1);
+		new->data = env ? ft_strdup(env) : NULL;
+		free(data);
+	}
+	return (new_lex_helper(head, new));
+}
+
 int			handle_quote(char *input)
 {
 	int	i;
@@ -79,7 +87,8 @@ int			handle_quote(char *input)
 	match_double = -1;
 	while (input[i])
 	{
-		if ((match_single == 1 && input[i + 1] == '\'') || (match_double == 1 && input[i + 1] == '\"'))
+		if ((match_single == 1 && input[i + 1] == '\'') ||
+			(match_double == 1 && input[i + 1] == '\"'))
 		{
 			input[i] = input[i + 2];
 			ret = i;

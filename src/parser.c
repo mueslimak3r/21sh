@@ -6,12 +6,15 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 01:25:21 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 04:09:51 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-//#define TREE_DEBUG
+
+/*
+** #define TREE_DEBUG
+*/
 
 /*
 ** new_node
@@ -19,7 +22,7 @@
 ** Will add to parent's list of children.
 */
 
-t_node	*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
+t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 {
 	t_node	*new;
 	t_node	*tmp;
@@ -69,18 +72,23 @@ enum e_nodetype	classify(t_lexeme *lexeme)
 ** classify helpers
 */
 
-int	is_mod(t_lexeme *lexeme)
+int				is_mod(t_lexeme *lexeme)
 {
 	if (!lexeme)
 		return (0);
 	if (lexeme->set >= AND && lexeme->set <= IO_NUMBER)
 	{
-		if (lexeme->next && (lexeme->set == LESS || lexeme->set == GREAT || lexeme->set == RDGREAT || lexeme->set == RDLESS))
+		if (lexeme->next && (lexeme->set == LESS || lexeme->set == GREAT
+			|| lexeme->set == RDGREAT || lexeme->set == RDLESS))
 		{
-			lexeme->next->designation = lexeme->set == RDLESS ? FD_H : lexeme->next->designation;
-			lexeme->next->designation = lexeme->set == LESS ? FD_R : lexeme->next->designation;
-			lexeme->next->designation = lexeme->set == GREAT ? FD_W : lexeme->next->designation;
-			lexeme->next->designation = lexeme->set == RDGREAT ? FD_A : lexeme->next->designation;
+			lexeme->next->designation = lexeme->set == RDLESS ? FD_H :
+				lexeme->next->designation;
+			lexeme->next->designation = lexeme->set == LESS ? FD_R :
+				lexeme->next->designation;
+			lexeme->next->designation = lexeme->set == GREAT ? FD_W :
+				lexeme->next->designation;
+			lexeme->next->designation = lexeme->set == RDGREAT ? FD_A :
+				lexeme->next->designation;
 		}
 		if (!lexeme->next || (lexeme->next && !is_mod(lexeme->next)))
 			return (1);
@@ -89,14 +97,14 @@ int	is_mod(t_lexeme *lexeme)
 	return (0);
 }
 
-int	is_arg(t_lexeme *lexeme)
+int				is_arg(t_lexeme *lexeme)
 {
 	enum e_nodetype	tmp;
 
 	if (!lexeme)
 		return (0);
-	if (lexeme->set == WORD &&
-			(!lexeme->next || (is_arg(lexeme->next) || is_mod(lexeme->next) > 0)))
+	if (lexeme->set == WORD && (!lexeme->next || (is_arg(lexeme->next)
+		|| is_mod(lexeme->next) > 0)))
 	{
 		if (is_arg(lexeme->next))
 			lexeme->next->designation = ARG;
@@ -107,12 +115,12 @@ int	is_arg(t_lexeme *lexeme)
 	return (0);
 }
 
-int	is_exec(t_lexeme *lexeme)
+int				is_exec(t_lexeme *lexeme)
 {
 	if (!lexeme)
 		return (0);
-	if (lexeme->set == WORD && 
-			(!lexeme->next || (is_arg(lexeme->next) || is_mod(lexeme->next) > 0)))
+	if (lexeme->set == WORD && (!lexeme->next || (is_arg(lexeme->next)
+		|| is_mod(lexeme->next) > 0)))
 	{
 		if (is_arg(lexeme->next))
 			lexeme->next->designation = ARG;
@@ -130,7 +138,7 @@ int	is_exec(t_lexeme *lexeme)
 ** Replaces passed node's position in parent's list of children.
 */
 
-t_node	*abstract(t_node *node)
+t_node			*abstract(t_node *node)
 {
 	t_node	*parent;
 	t_node	*tmp;
@@ -172,7 +180,7 @@ t_node	*abstract(t_node *node)
 ** Given a node, returns a string array of the data of the children's lexemes.
 */
 
-char	**concat_node(t_node *node)
+char				**concat_node(t_node *node)
 {
 	char	**ret;
 	t_node	*tmp;
@@ -207,7 +215,7 @@ char	**concat_node(t_node *node)
 ** Executes a given node with children.
 */
 
-void	exec_node_parse(t_node *node, int in, int out)
+void				exec_node_parse(t_node *node, int in, int out)
 {
 	char	**disp;
 	t_node	*tmp;
@@ -220,9 +228,11 @@ void	exec_node_parse(t_node *node, int in, int out)
 		if (node->children->set == FD_R)
 			readfd(open(node->children->lexeme->data, O_RDONLY), out, 0);
 		else if (node->children->set == FD_W)
-			readfd(in, open(node->children->lexeme->data, O_WRONLY|O_CREAT|O_TRUNC, 0644), 1);
+			readfd(in, open(node->children->lexeme->data,
+				O_WRONLY | O_CREAT | O_TRUNC, 0644), 1);
 		else if (node->children->set == FD_A)
-			readfd(in, open(node->children->lexeme->data, O_WRONLY|O_CREAT|O_APPEND, 0644), 1);
+			readfd(in, open(node->children->lexeme->data,
+				O_WRONLY | O_CREAT | O_APPEND, 0644), 1);
 		else
 		{
 			ft_readstdin_line(1, node->children->lexeme->data);
@@ -230,7 +240,6 @@ void	exec_node_parse(t_node *node, int in, int out)
 		}
 		return ;
 	}
-	//load_envp();
 	disp = concat_node(node);
 	if (run_builtins(disp, &g_term.env) == 2)
 		execute_command(node, in, out, disp);
@@ -245,7 +254,7 @@ void	exec_node_parse(t_node *node, int in, int out)
 ** Recursively frees the tree and associated lexemes.
 */
 
-void	clean_tree(t_node *head)
+void			clean_tree(t_node *head)
 {
 	t_node	*tmp;
 	t_node	*tmp2;
@@ -270,7 +279,7 @@ void	clean_tree(t_node *head)
 	}
 }
 
-int		count_pipes(t_node *node)
+int				count_pipes(t_node *node)
 {
 	t_node	*tmp;
 	int		ret;
@@ -280,8 +289,8 @@ int		count_pipes(t_node *node)
 	while (node)
 	{
 		if (node->lexeme && (node->lexeme->set == PIPE || node->lexeme->set == LESS
-								|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT
-								|| node->lexeme->set == SEMI || node->lexeme->set == RDLESS))
+					|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT
+					|| node->lexeme->set == SEMI || node->lexeme->set == RDLESS))
 			ret++;
 		node = node->next;
 	}
@@ -293,21 +302,26 @@ int		count_pipes(t_node *node)
 ** Main function for tree evaluation.
 */
 
-void	recurse(t_node *head, t_stats *stats)
+void			recurse(t_node *head, t_stats *stats)
 {
 #ifdef TREE_DEBUG
-	static int st = 0;
+
+	static int	st = 0;
+
 #endif
-	t_node	*tmp;
-	t_node	*h2;
-	int		main_pipe[2];
-	int		out;
+
+	t_node		*tmp;
+	t_node		*h2;
+	int			main_pipe[2];
+	int			out;
 	static int	pipes;
 
 	h2 = head;
 #ifdef TREE_DEBUG
+
 	st++;
 #endif
+
 	out = 1;
 	while (h2)
 	{
@@ -316,17 +330,23 @@ void	recurse(t_node *head, t_stats *stats)
 		tmp = h2->children;
 		pipes += (count_pipes(tmp) ? count_pipes(tmp) + 1 : 0);
 #ifdef TREE_DEBUG
-		if (h2 && h2->lexeme) {
+
+		if (h2 && h2->lexeme)
+		{
 			write(STDERR_FILENO, "            ", st * 2);
-			ft_printf_fd(STDERR_FILENO, "[IN TREE || TYPE: %s, STR: %s]\n", g_term.symbls[h2->lexeme->set], h2->lexeme->data);
-		} else if (h2) {
+			ft_printf_fd(STDERR_FILENO, "[IN TREE || TYPE: %s, STR: %s]\n",
+				g_term.symbls[h2->lexeme->set], h2->lexeme->data);
+		}
+		else if (h2)
+		{
 			write(STDERR_FILENO, "            ", st * 2);
-			ft_printf_fd(STDERR_FILENO, "[IN TREE || TYPE: parent, STR: N/A]\n");
+			ft_printf_fd(STDERR_FILENO,
+				"[IN TREE || TYPE: parent, STR: N/A]\n");
 		}
 #endif
+
 		if (tmp)
 			recurse(tmp, stats);
-		//in = stats->f_d[0];
 		if (h2->lexeme && h2->lexeme->set == SEMI)
 		{
 			ft_printf_fd(STDERR_FILENO, "EMPTYING BUFFER\n");
@@ -348,11 +368,13 @@ void	recurse(t_node *head, t_stats *stats)
 		h2 = h2->next;
 	}
 #ifdef TREE_DEBUG
+
 	st--;
 #endif
+
 }
 
-void	print_list(t_node *head)
+void			print_list(t_node *head)
 {
 	t_node	*tmp;
 
@@ -365,7 +387,7 @@ void	print_list(t_node *head)
 	}
 }
 
-t_node	*invertify(t_node *head)
+t_node			*invertify(t_node *head)
 {
 	t_node	*tmp;
 	t_node	*lst;
@@ -390,7 +412,7 @@ t_node	*invertify(t_node *head)
 	return (head->parent ? head->parent : abstract(head));
 }
 
-t_node	*parser(t_lexeme *lexemes)
+t_node			*parser(t_lexeme *lexemes)
 {
 	t_node	*head;
 	enum e_nodetype	classification;
@@ -415,7 +437,8 @@ t_node	*parser(t_lexeme *lexemes)
 			}
 			invert = lexemes->set == LESS || lexemes->set == RDLESS ? 1 : 0;
 		}
-		else if (classification == EXEC || (classification >= FD_R && classification <= FD_A))
+		else if (classification == EXEC || (classification >= FD_R
+			&& classification <= FD_A))
 			head = new_node(EXPR, NULL, head);
 		else if (classification == ERR)
 		{

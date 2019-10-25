@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/25 04:10:16 by calamber          #+#    #+#             */
+/*   Updated: 2019/10/25 04:10:32 by calamber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ftshell.h"
 
 static void		sig_resume(int nb)
@@ -29,7 +41,6 @@ static void		sig_resize(int nb)
 	{
 		CLEAR_SCREEN;
 		GET_SCREENSIZE;
-		//shell_loop();
 		term_write(PROMPT, STDERR_FILENO, 1);
 		term_write(g_term.line_in, STDERR_FILENO, 0);
 	}
