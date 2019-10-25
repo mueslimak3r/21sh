@@ -28,6 +28,7 @@
 
 # define SPACE 0x20
 # define ENTER 0xA
+# define TAB 0x09
 # define ESCAPE 0x1B
 # define LEFT 0x445B1B
 # define RIGHT 0x435B1B
@@ -52,6 +53,9 @@ typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
 
 typedef struct s_ht			t_ht;
+
+typedef struct s_st_node	t_st_node;
+typedef struct s_st_leaf	t_st_leaf;
 
 struct winsize				g_window_size;
 struct s_term				g_term;
@@ -102,6 +106,13 @@ struct						s_ht
 	void					*content_name;
 	size_t					content_size;
 	struct s_ht				*next;
+};
+
+struct						s_st_node
+{
+	char					*str;
+	struct s_st_node		*children[256];
+	struct s_st_node		*parent;
 };
 
 struct						s_lexeme
@@ -213,6 +224,7 @@ void			tbuff_print(t_tbuff *buff);
 */
 
 char			*find_env(char *name);
+char			*path_expansions(char *path);
 int				ft_unsetenv(char *name);
 int				ft_setenv(char *name, char *val);
 int				init_env(void);
@@ -263,5 +275,7 @@ unsigned long	djb2(char *str);
 int				readfd(int fd1, int fd2, int cd2);
 int				ft_cd(char *path);
 int				ft_env(char **envp);
+
+void			auto_complete(void);
 
 #endif
