@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 18:16:33 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/25 18:21:22 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,8 @@ int		delete_char(char *str)
 
 int		redo_buffer(char *new_buffer)
 {
-	while (g_term.conf.curlines--)
-		ft_printf_fd(STDERR_FILENO, "\33[2K\r");
+	while ((g_term.conf.curlines--))
+		ft_printf_fd(STDERR_FILENO, "\33[2K\r%s", g_term.conf.curlines ? "\33[1A" : "");
 	g_term.conf.curlines = 1;
 	g_term.conf.cursor[0] = 2;
 	g_term.conf.cursor[1] = 0;
