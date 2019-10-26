@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 04:09:51 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/25 18:23:29 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,19 +372,6 @@ void			recurse(t_node *head, t_stats *stats)
 	st--;
 #endif
 
-}
-
-void			print_list(t_node *head)
-{
-	t_node	*tmp;
-
-	tmp = head->children;
-	ft_printf_fd(STDERR_FILENO, "DEBUG PRINT====\n");
-	while (tmp)
-	{
-		ft_printf_fd(STDERR_FILENO, "%s\n", tmp->lexeme ? tmp->lexeme->data : "NULL");
-		tmp = tmp->next;
-	}
 }
 
 t_node			*invertify(t_node *head)
