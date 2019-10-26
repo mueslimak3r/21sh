@@ -194,6 +194,7 @@ struct						s_stats
 void			reset_term(void);
 void			init_term(void);
 int				term_write(char *str, int fd, int len);
+int				redo_buffer(char *new_buffer);
 
 /*
 ** SIGNALS

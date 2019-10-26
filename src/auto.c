@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 10:34:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 12:03:02 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/25 18:16:34 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,6 @@ void		auto_complete(void)
 	xstr = path_expansions(dir);
 	free(dir);
 	get_dir(&tree, xstr);
-	ft_printf_fd(STDERR_FILENO, "DEBUG: Auto: [%s]\n", match_sub(&tree, str));
+	redo_buffer(ft_strjoin(g_term.line_in, match_sub(&tree, str)));
 	dir = NULL;
 }

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 11:00:56 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/25 18:16:33 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,21 @@ int		delete_char(char *str)
 		ft_putstr_fd(" \b", STDERR_FILENO);
 	}
 	return (1);
+}
+
+int		redo_buffer(char *new_buffer)
+{
+	while (g_term.conf.curlines--)
+		ft_printf_fd(STDERR_FILENO, "\33[2K\r");
+	g_term.conf.curlines = 1;
+	g_term.conf.cursor[0] = 2;
+	g_term.conf.cursor[1] = 0;
+	if (g_term.line_in)
+		free(g_term.line_in);
+	g_term.line_in = ft_strdup(new_buffer);
+	ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
+	term_write(new_buffer, STDERR_FILENO, 0);
+	return (0);
 }
 
 int		handle_controls(unsigned long code, char *str, char *saved)
