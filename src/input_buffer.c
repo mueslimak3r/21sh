@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/27 06:53:48 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/27 07:37:01 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ void createRopeStructure(t_rope **node, t_rope *par,
         int j = 0; 
         tmp->str = ft_memalloc(sizeof(char) * LEAF_LEN + 1);
         for (int i=l; i<=r; i++) 
-            tmp->str[j++] = a[i]; 
+            tmp->str[j++] = a[i];
+		ft_printf_fd(STDERR_FILENO, "size: %d, str: %s\n", tmp->lCount, tmp->str);
     } 
 } 
   
@@ -79,6 +80,27 @@ void free_rope(t_rope **r)
 	*r = NULL;
 }
 
+int	count_rope(t_rope *r) 
+{
+	//int ret;
+
+    if (r==NULL) 
+        return (0); 
+	/*
+    //count += r->lCount;
+	if (!r->left && !r->right)
+	{
+		count += r->lCount;
+	}
+	else
+	{
+    	count += count_rope(r->right, 0);
+		count += r->lCount;
+	}
+	*/
+	return (count_rope(r->right) + r->lCount);
+}
+
 void	join_rope_helper(t_rope *r, char *ret, int size, int pos)
 {
 	if (r==NULL)
@@ -99,11 +121,13 @@ void	join_rope_helper(t_rope *r, char *ret, int size, int pos)
 char	*join_rope(t_rope *r)
 {
 	char *ret;
+	int	count;
 
-	if (!(ret = ft_memalloc(sizeof(char) * r->lCount + 1)))
+	count = count_rope(r);
+	if (!(ret = ft_memalloc(sizeof(char) * count + 1)))
 		return (NULL);
-	ft_printf_fd(STDERR_FILENO, "size: %d\n", r->lCount);
-	join_rope_helper(r, ret, r->lCount, 0);
+	ft_printf_fd(STDERR_FILENO, "size: %d\n", count);
+	join_rope_helper(r, ret, count, 0);
 	return (ret);
 }
 
