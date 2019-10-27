@@ -48,6 +48,7 @@ typedef struct s_term		t_term;
 typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
 typedef struct s_tbuff		t_tbuff;
+typedef struct s_rope		t_rope;
 
 typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
@@ -139,6 +140,16 @@ typedef struct				s_env
 	char					*envp[HT_OVERHEAD];
 	int						size;
 }							t_env;
+
+struct s_rope
+{
+	t_rope	*left;
+	t_rope	*right;
+	t_rope	*parent; 
+    char *str;
+    int lCount;
+};
+
 /*
 struct s_tbuff_queue
 {
@@ -152,7 +163,7 @@ struct s_tbuff
 {
 	//struct s_tbuff_queue	*first;
 	//struct s_tfuff_queue	*last;
-	char				*s;
+	t_rope				*rope;
 	size_t				size;
 	struct s_tbuff		*next;
 	struct s_tbuff		*prev;
