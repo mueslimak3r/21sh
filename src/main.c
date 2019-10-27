@@ -54,6 +54,7 @@ void		reset_term(void)
 	char	buf[150];
 
 	temp = buf;
+	ft_putchar_fd('\n', STDERR_FILENO);
 	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
 }
 

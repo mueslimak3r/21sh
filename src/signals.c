@@ -18,7 +18,6 @@ static void		sig_resume(int nb)
 	{
 		init_term();
 		set_sighandle();
-		CLEAR_SCREEN;
 		term_write(PROMPT, STDERR_FILENO, 1);
 		term_write(g_term.line_in, STDERR_FILENO, 0);
 	}
@@ -29,7 +28,6 @@ static void		sig_suspend(int nb)
 	if (nb)
 	{
 		reset_term();
-		CLEAR_SCREEN;
 		signal(SIGTSTP, SIG_DFL);
 		ioctl(STDERR_FILENO, TIOCSTI, "\x1A");
 	}
@@ -39,10 +37,10 @@ static void		sig_resize(int nb)
 {
 	if (nb)
 	{
-		CLEAR_SCREEN;
+		//CLEAR_SCREEN;
 		GET_SCREENSIZE;
-		term_write(PROMPT, STDERR_FILENO, 1);
-		term_write(g_term.line_in, STDERR_FILENO, 0);
+		//term_write(PROMPT, STDERR_FILENO, 1);
+		//term_write(g_term.line_in, STDERR_FILENO, 0);
 	}
 }
 
