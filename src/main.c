@@ -116,6 +116,7 @@ int			ft_readstdin_line(int hd, char *stop)
 		}
 		else if (thing.long_form == ENTER)
 		{
+			ft_printf_fd(STDERR_FILENO, "enter hd\n");
 			tmp = ft_strjoin(g_term.line_in, buf);
 			if (g_term.line_in)
 				free(g_term.line_in);
@@ -149,12 +150,15 @@ void		shell_loop(void)
 	{
 		if (!ft_readstdin_line(0, NULL) || !g_term.line_in)
 			continue ;
+		ft_printf_fd(STDERR_FILENO, "done reading line: %s\n", g_term.line_in);
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
 		tree = lexer(g_term.line_in);
+		ft_printf_fd(STDERR_FILENO, "finished with lexing\n");
 		free(g_term.line_in);
 		g_term.line_in = NULL;
 		recurse(tree, &stats);
+		ft_printf_fd(STDERR_FILENO, "finished with tree\n");
 		tbuff_print(g_term.buff);
 		empty_buffer(stats.f_d);
 		clean_tree(tree);

@@ -38,27 +38,34 @@ void createRopeStructure(t_rope **node, t_rope *par,
     tmp->parent = par; 
 
     // If string length is more 
-    if ((r-l) > LEAF_LEN) 
+    if ((r - l) > LEAF_LEN) 
     { 
         tmp->str = NULL; 
-        tmp->lCount = (r-l)/2; 
-        *node = tmp; 
-        int m = (l + r)/2; 
+        tmp->lCount = (r - l) / 2; 
+        *node = tmp;
+        int m = (l + r) / 2;
         createRopeStructure(&(*node)->left, *node, a, l, m); 
         createRopeStructure(&(*node)->right, *node, a, m + 1, r); 
     } 
     else
     {
         *node = tmp; 
-        tmp->lCount = (r-l); 
-        int j = 0; 
+        tmp->lCount = (r - l); 
+        int j = 0;
         tmp->str = ft_memalloc(sizeof(char) * LEAF_LEN + 1);
-        for (int i=l; i<=r; i++) 
+		if (!tmp->str)
+		{
+			if (tmp)
+				free(tmp);
+			*node = NULL;
+			return ;
+		}
+        for (int i=l; i <= r; i++)
             tmp->str[j++] = a[i];
 		ft_printf_fd(STDERR_FILENO, "size: %d, str: %s\n", tmp->lCount, tmp->str);
     } 
-} 
-  
+}
+
 // Function that prints the string (leaf nodes) 
 void printstring(t_rope *r) 
 { 
@@ -82,22 +89,8 @@ void free_rope(t_rope **r)
 
 int	count_rope(t_rope *r) 
 {
-	//int ret;
-
     if (r==NULL) 
-        return (0); 
-	/*
-    //count += r->lCount;
-	if (!r->left && !r->right)
-	{
-		count += r->lCount;
-	}
-	else
-	{
-    	count += count_rope(r->right, 0);
-		count += r->lCount;
-	}
-	*/
+        return (0);
 	return (count_rope(r->right) + r->lCount);
 }
 
@@ -124,9 +117,9 @@ char	*join_rope(t_rope *r)
 	int	count;
 
 	count = count_rope(r);
+	ft_printf_fd(STDERR_FILENO, "count: %d\n", count);
 	if (!(ret = ft_memalloc(sizeof(char) * count + 1)))
 		return (NULL);
-	ft_printf_fd(STDERR_FILENO, "size: %d\n", count);
 	join_rope_helper(r, ret, count, 0);
 	return (ret);
 }
@@ -180,7 +173,7 @@ void		tbuff_push(t_tbuff **buff, char *s)
 		new->prev = NULL;
 	}
 	new->rope = NULL;
-	createRopeStructure(&new->rope, NULL, s, 0, ft_strlen(s));
+	createRopeStructure(&new->rope, NULL, s, 0, ft_strlen(s) - 1);
 	new->size = ft_strlen(s);
 	*buff = new;
 }
@@ -189,6 +182,7 @@ char		*tbuff_peek(t_tbuff *buff)
 {
 	if (!buff || !(buff->rope))
 		return (NULL);
+	ft_printf_fd(STDERR_FILENO, "peeking\n");
 	return (join_rope(buff->rope));
 }
 
@@ -196,13 +190,16 @@ void		tbuff_free(t_tbuff **buff)
 {
 	t_tbuff *tmp;
 
+	if (!buff || !*buff)
+		return ;
 	while (*buff)
 	{
 		tmp = *buff;
 		*buff = (*buff)->next;
 		if (tmp == *buff)
 			*buff = NULL;
-		free_rope(&tmp->rope);
+		if (tmp->rope)
+			free_rope(&tmp->rope);
 		free(tmp);
 	}
 	*buff = NULL;
@@ -216,8 +213,13 @@ void		tbuff_print(t_tbuff *buff)
 	while (buff)
 	{
 		s = tbuff_peek(buff);
-		ft_printf_fd(STDERR_FILENO, "%s\n", s);
-		ft_strdel(&s);
+		if (s)
+		{
+			ft_printf_fd(STDERR_FILENO, "%s\n", s);
+			ft_strdel(&s);
+		}
+		else
+			ft_printf_fd(STDERR_FILENO, "buff string null\n");
 		buff = buff->next;
 	}
 	ft_printf_fd(STDERR_FILENO, "end of buff\n");
