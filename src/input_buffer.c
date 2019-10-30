@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/30 06:31:51 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/30 06:59:29 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,13 @@ void createRopeStructure(t_rope **node, t_rope *par,
         tmp->str = NULL; 
         tmp->lCount = (r + 1 - l) / 2;
         *node = tmp;
-        int m = (l + r + 1) / 2;
-        createRopeStructure(&(*node)->left, *node, a, l, m); 
-        createRopeStructure(&(*node)->right, *node, a, m + 1, r); 
+        int m = (l + r) / 2;
+		ft_printf_fd(STDERR_FILENO, "adding parent with size: %d |", tmp->lCount);
+		for (int i = l; i <= tmp->lCount; i++)
+			ft_putchar_fd(a[i], STDERR_FILENO);
+		ft_putstr_fd("|\n", STDERR_FILENO);
+        createRopeStructure(&(*node)->left, *node, a, l, m - 1); 
+        createRopeStructure(&(*node)->right, *node, a, m, r); 
     } 
     else
     {
