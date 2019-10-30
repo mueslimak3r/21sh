@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/30 05:38:02 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/30 06:31:51 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,19 @@ void createRopeStructure(t_rope **node, t_rope *par,
     tmp->parent = par; 
 
     // If string length is more 
-    if ((r - l) > LEAF_LEN) 
+    if ((r + 1 - l) > LEAF_LEN) 
     { 
         tmp->str = NULL; 
-        tmp->lCount = (r - l) / 2; 
+        tmp->lCount = (r + 1 - l) / 2;
         *node = tmp;
-        int m = (l + r) / 2;
+        int m = (l + r + 1) / 2;
         createRopeStructure(&(*node)->left, *node, a, l, m); 
         createRopeStructure(&(*node)->right, *node, a, m + 1, r); 
     } 
     else
     {
         *node = tmp; 
-        tmp->lCount = (r - l); 
+        tmp->lCount = (r + 1 - l);
         int j = 0;
         tmp->str = ft_memalloc(sizeof(char) * LEAF_LEN + 1);
 		if (!tmp->str)
@@ -57,7 +57,7 @@ void createRopeStructure(t_rope **node, t_rope *par,
         for (int i = l; i <= r; i++)
             tmp->str[j++] = a[i];
 		ft_printf_fd(STDERR_FILENO, "size: %d, str: %s\n", tmp->lCount, tmp->str);
-    } 
+    }
 }
 
 // Function that prints the string (leaf nodes) 
@@ -85,6 +85,7 @@ int	count_rope(t_rope *r)
 {
     if (r==NULL) 
         return (0);
+	ft_printf_fd(STDERR_FILENO, "adding to count: %d\n", r->lCount);
 	return (count_rope(r->right) + r->lCount);
 }
 
