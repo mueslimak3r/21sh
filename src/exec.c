@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 03:24:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/30 05:39:30 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int		check_path(char **name, char **args, char **envp)
 {
 	char			*env_var;
 
-	env_var = 0;
+	env_var = NULL;
 	if (!get_env(envp, "PATH", &env_var))
 		return (0);
 	if (!(find_exec(*args, ft_strjoin(env_var, ":"), name)))

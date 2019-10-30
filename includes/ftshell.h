@@ -227,7 +227,7 @@ int				read_rcfile(void);
 */
 
 void        	tbuff_push(t_tbuff **buff, char *s);
-char			*tbuff_peek(t_tbuff *buff);
+//char			*tbuff_peek(t_tbuff *buff);
 void			tbuff_free(t_tbuff **buff);
 void			tbuff_print(t_tbuff *buff);
 

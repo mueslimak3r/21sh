@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/25 03:25:39 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/30 05:39:22 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int		execute_command(t_node *a, int in, int out, char **args)
 	char	*name;
 	pid_t	pid;
 
+	name = NULL;
 	args[0] = find_alias(args[0]);
 	if (check_path(&name, args, g_term.env.envp))
 	{
@@ -38,7 +39,8 @@ int		execute_command(t_node *a, int in, int out, char **args)
 		}
 		waitpid(pid, 0, 0);
 	}
-	free(name);
+	if (name)
+		free(name);
 	return (1);
 }
 

@@ -6,17 +6,11 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/27 07:37:01 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/30 05:38:02 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-
-
-
-
-
-
 
 const int LEAF_LEN = 2; 
 
@@ -60,7 +54,7 @@ void createRopeStructure(t_rope **node, t_rope *par,
 			*node = NULL;
 			return ;
 		}
-        for (int i=l; i <= r; i++)
+        for (int i = l; i <= r; i++)
             tmp->str[j++] = a[i];
 		ft_printf_fd(STDERR_FILENO, "size: %d, str: %s\n", tmp->lCount, tmp->str);
     } 
@@ -94,37 +88,40 @@ int	count_rope(t_rope *r)
 	return (count_rope(r->right) + r->lCount);
 }
 
-void	join_rope_helper(t_rope *r, char *ret, int size, int pos)
+void	join_rope_helper(t_rope *r, char *ret, int size, int *pos)
 {
 	if (r==NULL)
         return;
     if (r->left==NULL && r->right==NULL)
 	{
-		for (int i = 0; i < ft_strlen(r->str) && pos < size; i++)
+		for (int i = 0; i < ft_strlen(r->str) && *pos < size; i++)
 		{
-			ret[pos] = r->str[i];
-			pos++;
+			ret[*pos] = r->str[i];
+			(*pos)++;
 		}
-        //ft_putstr_fd(r->str, STDERR_FILENO); 
 	}
-	join_rope_helper(r->left, ret, size, pos); 
+	join_rope_helper(r->left, ret, size, pos);
     join_rope_helper(r->right, ret, size, pos);
 }
 
 char	*join_rope(t_rope *r)
 {
 	char *ret;
+	int	pos;
 	int	count;
 
+	if (!r)
+		return (NULL);
+	pos = 0;
 	count = count_rope(r);
 	ft_printf_fd(STDERR_FILENO, "count: %d\n", count);
 	if (!(ret = ft_memalloc(sizeof(char) * count + 1)))
 		return (NULL);
-	join_rope_helper(r, ret, count, 0);
+	join_rope_helper(r, ret, count, &pos);
 	return (ret);
 }
 
-
+/*
 // Function that efficiently concatenates two strings 
 // with roots root1 and root2 respectively. n1 is size of 
 // string represented by root1. 
@@ -146,6 +143,7 @@ void concatenate_rope(t_rope *root3, t_rope *root1, t_rope *root2, int n1)
     tmp->str = NULL; 
     root3 = tmp;
 } 
+*/
 
 void		tbuff_push(t_tbuff **buff, char *s)
 {
@@ -173,11 +171,13 @@ void		tbuff_push(t_tbuff **buff, char *s)
 		new->prev = NULL;
 	}
 	new->rope = NULL;
+	ft_printf_fd(STDERR_FILENO, "len of buff input: %d\n", (int)ft_strlen(s));
 	createRopeStructure(&new->rope, NULL, s, 0, ft_strlen(s) - 1);
 	new->size = ft_strlen(s);
 	*buff = new;
 }
 
+/*
 char		*tbuff_peek(t_tbuff *buff)
 {
 	if (!buff || !(buff->rope))
@@ -185,7 +185,7 @@ char		*tbuff_peek(t_tbuff *buff)
 	ft_printf_fd(STDERR_FILENO, "peeking\n");
 	return (join_rope(buff->rope));
 }
-
+*/
 void		tbuff_free(t_tbuff **buff)
 {
 	t_tbuff *tmp;
@@ -212,7 +212,7 @@ void		tbuff_print(t_tbuff *buff)
 	ft_printf_fd(STDERR_FILENO, "start of buff\n");
 	while (buff)
 	{
-		s = tbuff_peek(buff);
+		s = join_rope(buff->rope);
 		if (s)
 		{
 			ft_printf_fd(STDERR_FILENO, "%s\n", s);
