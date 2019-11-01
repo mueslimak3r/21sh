@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/30 06:59:29 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/31 22:32:21 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,15 @@ void createRopeStructure(t_rope **node, t_rope *par,
     // We put half nodes in left subtree 
     tmp->parent = par; 
 
-    // If string length is more 
+    // If string length is more
+	ft_printf_fd(STDERR_FILENO, "r: %d l: %d\n", r, l);
     if ((r + 1 - l) > LEAF_LEN) 
     { 
         tmp->str = NULL;
 		tmp->lCount = ((r + 1 - l) / 2) + ((r + 1 - l) % 2);
         *node = tmp;
         int m = (l + r) / 2 + ((r - l) % 2);
+		
 		ft_printf_fd(STDERR_FILENO, "adding parent with size: %d |", tmp->lCount);
 		int it = l;
 		for (int x = 0; x < tmp->lCount; x++)
@@ -46,9 +48,10 @@ void createRopeStructure(t_rope **node, t_rope *par,
 			it++;
 		}
 		ft_putstr_fd("|\n", STDERR_FILENO);
-        createRopeStructure(&(*node)->left, *node, a, l, m); 
+        
+		createRopeStructure(&(*node)->left, *node, a, l, m); 
         createRopeStructure(&(*node)->right, *node, a, m + 1, r); 
-    } 
+    }
     else
     {
         *node = tmp; 
@@ -123,6 +126,8 @@ char	*join_rope(t_rope *r)
 		return (NULL);
 	pos = 0;
 	count = count_rope(r);
+	if (count < 1)
+		return (NULL);
 	ft_printf_fd(STDERR_FILENO, "count: %d\n", count);
 	if (!(ret = ft_memalloc(sizeof(char) * count + 1)))
 		return (NULL);
@@ -180,7 +185,7 @@ void		tbuff_push(t_tbuff **buff, char *s)
 		new->prev = NULL;
 	}
 	new->rope = NULL;
-	ft_printf_fd(STDERR_FILENO, "len of buff input: %d\n", (int)ft_strlen(s));
+	//ft_printf_fd(STDERR_FILENO, "len of buff input: %d\n", (int)ft_strlen(s));
 	createRopeStructure(&new->rope, NULL, s, 0, ft_strlen(s) - 1);
 	new->size = ft_strlen(s);
 	*buff = new;
@@ -219,6 +224,7 @@ void		tbuff_print(t_tbuff *buff)
 	char	*s;
 
 	ft_printf_fd(STDERR_FILENO, "start of buff\n");
+	/*
 	while (buff)
 	{
 		s = join_rope(buff->rope);
@@ -231,5 +237,16 @@ void		tbuff_print(t_tbuff *buff)
 			ft_printf_fd(STDERR_FILENO, "buff string null\n");
 		buff = buff->next;
 	}
+	*/
+	if (!buff)
+		return ;
+	s = join_rope(buff->rope);
+	if (s)
+	{
+		ft_printf_fd(STDERR_FILENO, "%s\n", s);
+		ft_strdel(&s);
+	}
+	else
+		ft_printf_fd(STDERR_FILENO, "buff string null\n");
 	ft_printf_fd(STDERR_FILENO, "end of buff\n");
 }

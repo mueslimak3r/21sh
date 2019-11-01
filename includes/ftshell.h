@@ -32,8 +32,15 @@
 # define ESCAPE 0x1B
 # define LEFT 0x445B1B
 # define RIGHT 0x435B1B
+
+# ifdef __linux__
 # define UP 0x415B1B
 # define DOWN 0x425B1B
+# else
+# define UP 0x414F1B
+# define DOWN 0x424F1B
+# endif
+
 # define DELETE 0x7F
 # define DELETE2 0x7E335B1B
 # define CLEAR_SCREEN ft_putstr_fd(tgetstr("cl", NULL), STDERR_FILENO);
@@ -185,6 +192,7 @@ struct						s_term
 	char					*line_in;
 	char					**symbls;
 	t_tbuff					*buff;
+	t_tbuff					*curr_buff;
 	t_shellconf				conf;
 	struct termios			old_term;
 	struct termios			new_term;

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 18:21:22 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/10/31 22:26:27 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,11 +130,15 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 	}
 	else if (code == UP)
 	{
-		;//ft_printf_fd(STDERR_FILENO, "going up\n");
+		if (g_term.curr_buff && g_term.curr_buff->next)
+			g_term.curr_buff = g_term.curr_buff->next;
+		tbuff_print(g_term.curr_buff);
 	}
 	else if (code == DOWN)
 	{
-		;//ft_printf_fd(STDERR_FILENO, "going down\n");
+		if (g_term.curr_buff && g_term.curr_buff->prev)
+			g_term.curr_buff = g_term.curr_buff->prev;
+		tbuff_print(g_term.curr_buff);
 	}
 	else if (code == TAB)
 	{

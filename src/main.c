@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/30 05:36:52 by calamber         ###   ########.fr       */
+/*   Updated: 2019/10/31 22:10:28 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ void		shell_loop(void)
 	read_rcfile();
 	while (!quit)
 	{
+		g_term.curr_buff = g_term.buff;
 		if (!ft_readstdin_line(0, NULL) || !g_term.line_in)
 			continue ;
 		//ft_printf_fd(STDERR_FILENO, "done reading line: %s\n", g_term.line_in);
