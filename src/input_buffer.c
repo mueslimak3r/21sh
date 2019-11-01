@@ -34,16 +34,20 @@ void createRopeStructure(t_rope **node, t_rope *par,
     // If string length is more 
     if ((r + 1 - l) > LEAF_LEN) 
     { 
-        tmp->str = NULL; 
-        tmp->lCount = (r + 1 - l) / 2;
+        tmp->str = NULL;
+		tmp->lCount = ((r + 1 - l) / 2) + ((r + 1 - l) % 2);
         *node = tmp;
-        int m = (l + r) / 2;
+        int m = (l + r) / 2 + ((r - l) % 2);
 		ft_printf_fd(STDERR_FILENO, "adding parent with size: %d |", tmp->lCount);
-		for (int i = l; i <= tmp->lCount; i++)
-			ft_putchar_fd(a[i], STDERR_FILENO);
+		int it = l;
+		for (int x = 0; x < tmp->lCount; x++)
+		{
+			ft_putchar_fd(a[it], STDERR_FILENO);
+			it++;
+		}
 		ft_putstr_fd("|\n", STDERR_FILENO);
-        createRopeStructure(&(*node)->left, *node, a, l, m - 1); 
-        createRopeStructure(&(*node)->right, *node, a, m, r); 
+        createRopeStructure(&(*node)->left, *node, a, l, m); 
+        createRopeStructure(&(*node)->right, *node, a, m + 1, r); 
     } 
     else
     {
