@@ -6,6 +6,7 @@ typedef struct s_rope_node  t_rope_node;
 
 struct s_rope_node
 {
+    int         lsize;
     char        *value;
     t_rope_node *parent;
     t_rope_node *left;
@@ -15,7 +16,8 @@ struct s_rope_node
 struct s_rope
 {
     t_rope_node *root;
-    int         size;
+    size_t      node_count;
+    size_t      char_count;
 };
 
 t_rope  *rope_new(void)
@@ -26,24 +28,71 @@ t_rope  *rope_new(void)
     if (!new)
         return (NULL);
     new->root = NULL;
-    new->size = 0;
+    new->node_count = 0;
+    new->char_count = 0;
     return (new);
-}
-
-void    rope_del_nodes(t_rope_node *node)
-{
-    if (!node)
-        return ;
-    rope_del_nodes(node->left);
-    rope_del_nodes(node->right);
-    free(node);
 }
 
 t_rope  *rope_delete(t_rope *rope)
 {
     if (!rope)
         return (NULL);
-    rope_del_nodes(rope->root);
+    if (!rope->root)
+    {
+        free(rope);
+        return (NULL);
+    }
+    t_rope_node *tmp = rope->root;
+    while (tmp)
+    {
+        t_rope_node *child = tmp;
+        if (child->left)
+        {
+            while (child->left)
+                child = child->left;
+            if (child->parent)
+                child->parent->left = NULL;
+            tmp = child->parent;
+            free (child);
+        }
+        else if (child->right)
+        {
+            child = child->right;
+            if (child->left)
+            {
+                tmp = child;
+                continue ;
+            }
+            if (child->right)
+            {
+                tmp = child->right;
+                tmp->parent = child->parent;
+            }
+            tmp = child->parent;
+            if (tmp)
+            {
+                if (tmp->left == child)
+                    tmp->left = NULL;
+                else
+                    tmp->right = NULL;            }
+            free (child);
+        }
+        else
+        {
+            if (child->parent)
+            {
+                tmp = child->parent;
+                if (tmp)
+                {
+                    if (tmp->left == child)
+                        tmp->left = NULL;
+                    else
+                        tmp->right = NULL;
+                }
+            }
+            free(child);
+        }
+    }
     return (NULL);
 }
 
@@ -64,5 +113,34 @@ t_rope  *rope_concat(t_rope *rope1, t_rope *rope2)
 
 void    rope_split(t_rope *rope, t_rope **lhalf, t_rope **rhalf, int i)
 {
+    if (!rope || !rope->root)
+        return ;
+    t_rope_node *tmp = rope->root;
+    while (1)
+    {
+        while (tmp->lsize < i)
+        {
+            i -= tmp->lsize;
+            tmp = tmp->right;
+        }
+        while (tmp->lsize > i)
+            tmp = tmp->left;
+        while (tmp->lsize == i && tmp->left)
+            tmp = tmp->left;
+        if (tmp->value)
+            break ;
+    }
+    char *lvalue = NULL;
+    char *rvalue = NULL;
+    if (tmp->value)
+    {
+        if (i > 1)
+        {
+            
+        }
+        else
+        {
 
+        }
+    }
 }
