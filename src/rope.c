@@ -67,14 +67,10 @@ t_rope  *rope_delete(t_rope *rope)
             {
                 tmp = child->right;
                 tmp->parent = child->parent;
+                if (child->parent)
+                    child->parent->right = tmp;
             }
             tmp = child->parent;
-            if (tmp)
-            {
-                if (tmp->left == child)
-                    tmp->left = NULL;
-                else
-                    tmp->right = NULL;            }
             free (child);
         }
         else
