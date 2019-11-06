@@ -112,7 +112,7 @@ void    rope_split(t_rope *rope, t_rope **lhalf, t_rope **rhalf, int i)
     if (!rope || !rope->root)
         return ;
     t_rope_node *tmp = rope->root;
-    while (1)
+    while (tmp && !(tmp->value))
     {
         while (tmp->lsize < i)
         {
@@ -123,20 +123,28 @@ void    rope_split(t_rope *rope, t_rope **lhalf, t_rope **rhalf, int i)
             tmp = tmp->left;
         while (tmp->lsize == i && tmp->left)
             tmp = tmp->left;
-        if (tmp->value)
-            break ;
     }
     char *lvalue = NULL;
     char *rvalue = NULL;
+    int left_lsize = tmp->lsize;
+    int right_lsize;
     if (tmp->value)
     {
         if (i > 1)
         {
-            
+            lvalue = ft_strndup(tmp->value, i);
+            rvalue = ft_strndup(tmp->value + i - (i == 0 ? 0 : 1), ft_strlen(tmp->value) - i);
+            t_rope_node *right;
+            right_lsize = ft_strlen(rvalue);
+            right = rope_new_node(rvalue, right_lsize);
+            t_rope_node *left;
+            left = rope_new_node(lvalue, left_lsize);
+            left_lsize = ft_strlen(lvalue);
         }
         else
         {
-
+            rvalue = tmp->value;
+            tmp->value = NULL;
         }
     }
 }
