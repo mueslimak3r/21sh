@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 13:39:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 00:18:58 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 00:23:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ t_rope_node		*rope_concat(t_rope_node *l, t_rope_node *r)
 	ft_printf_fd(STDERR_FILENO, "END CONCAT\n");
 	return (l ? l : r);
 }
-
+/*
 void			orphan(t_orphan **head, t_rope_node *node)
 {
 	t_orphan	*new;
@@ -160,7 +160,7 @@ t_rope_node		*rebuild_orphans(t_orphan *head)
 	}
 	return (ret);
 }
-
+*/
 t_rope_node		*rope_prune_singles(t_rope_node *start)
 {
 	t_rope_node *curr = start;
