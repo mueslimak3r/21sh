@@ -55,7 +55,7 @@ typedef struct s_term		t_term;
 typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
 typedef struct s_tbuff		t_tbuff;
-typedef struct s_rope		t_rope;
+//typedef struct s_rope		t_rope;
 
 typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
@@ -64,6 +64,7 @@ typedef struct s_ht			t_ht;
 
 typedef struct s_st_node	t_st_node;
 typedef struct s_st_leaf	t_st_leaf;
+typedef struct s_rope_node	t_rope_node;
 
 struct winsize				g_window_size;
 struct s_term				g_term;
@@ -148,6 +149,17 @@ typedef struct				s_env
 	int						size;
 }							t_env;
 
+struct s_rope_node
+{
+	int			length;
+	int			removed_length;
+	t_rope_node	*parent;
+	t_rope_node	*left;
+	t_rope_node	*right;
+	char		*str;
+};
+
+/*
 struct s_rope
 {
 	t_rope	*left;
@@ -156,6 +168,7 @@ struct s_rope
     char *str;
     int lCount;
 };
+*/
 
 /*
 struct s_tbuff_queue
@@ -170,7 +183,7 @@ struct s_tbuff
 {
 	//struct s_tbuff_queue	*first;
 	//struct s_tfuff_queue	*last;
-	t_rope				*rope;
+	t_rope_node			*rope;
 	size_t				size;
 	struct s_tbuff		*next;
 	struct s_tbuff		*prev;
@@ -234,10 +247,14 @@ int				read_rcfile(void);
 ** INPUT BUFFER
 */
 
-void        	tbuff_push(t_tbuff **buff, char *s);
+t_rope_node		*rope_delete(t_rope_node *rope, int pos, int size);
+void			rope_print(t_rope_node *rope);
+t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos);
+void		tbuff_new(t_tbuff **buff);
+//void        	tbuff_push(t_tbuff **buff, char *s);
 //char			*tbuff_peek(t_tbuff *buff);
+void	rope_free(t_rope_node *rope);
 void			tbuff_free(t_tbuff **buff);
-void			tbuff_print(t_tbuff *buff);
 
 /*
 ** ENVIRONMENT

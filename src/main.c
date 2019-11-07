@@ -94,16 +94,24 @@ int			ft_readstdin_line(int hd, char *stop)
 	term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
 	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
 	thing.long_form = 0;
+	if (g_term.buff)
 	if (g_term.line_in)
 	{
 		free(g_term.line_in);
 		g_term.line_in = 0;
 	}
+	rope_print(g_term.curr_buff->rope);
 	while ((ret = read(0, &buf, 4)) >= 0)
 	{
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf, g_term.line_in)) < 1)
 		{
+			// these lines will add to the rope as text is recieved.
+			// we need some sort of buffer to fill before kicking back to the tree
+			// to prevent new rope nodes for every character
+			// 
+			//int pos = g_term.conf.termsize[0] * g_term.conf.cursor[1] + g_term.conf.cursor[0] - 2;
+			//g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, pos + 1);
 			tmp = ft_strjoin(g_term.line_in, buf);
 			if (g_term.line_in)
 				free(g_term.line_in);
@@ -111,7 +119,7 @@ int			ft_readstdin_line(int hd, char *stop)
 		}
 		else if (thing.long_form == ENTER && !hd)
 		{
-			tbuff_push(&g_term.buff, g_term.line_in);
+			//tbuff_push(&g_term.buff, g_term.line_in);
 			return (1);
 		}
 		else if (thing.long_form == ENTER)
@@ -149,6 +157,8 @@ void		shell_loop(void)
 	rope_diagnostic();
 	while (!quit)
 	{
+		if (!g_term.buff || (g_term.buff && g_term.buff->rope))
+			tbuff_new(&g_term.buff);
 		g_term.curr_buff = g_term.buff;
 		if (!ft_readstdin_line(0, NULL) || !g_term.line_in)
 			continue ;
@@ -161,7 +171,7 @@ void		shell_loop(void)
 		g_term.line_in = NULL;
 		recurse(tree, &stats);
 		//ft_printf_fd(STDERR_FILENO, "finished with tree\n");
-		tbuff_print(g_term.buff);
+		//tbuff_print(g_term.buff);
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}

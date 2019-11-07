@@ -132,13 +132,13 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 	{
 		if (g_term.curr_buff && g_term.curr_buff->next)
 			g_term.curr_buff = g_term.curr_buff->next;
-		tbuff_print(g_term.curr_buff);
+		//tbuff_print(g_term.curr_buff);
 	}
 	else if (code == DOWN)
 	{
 		if (g_term.curr_buff && g_term.curr_buff->prev)
 			g_term.curr_buff = g_term.curr_buff->prev;
-		tbuff_print(g_term.curr_buff);
+		//tbuff_print(g_term.curr_buff);
 	}
 	else if (code == TAB)
 	{

@@ -11,10 +11,19 @@
 /* ************************************************************************** */
 
 #include "ftshell.h"
-#include <stdio.h>
+//#include <stdio.h>
 
-typedef struct s_rope_node	t_rope_node;
-typedef struct s_orphan		t_orphan;
+//typedef struct s_rope_node	t_rope_node;
+//typedef struct s_orphan		t_orphan;
+
+// meta struct for holding char count 
+/*
+struct s_rope
+{
+    t_rope_node *root;
+    size_t      char_count;
+};
+
 
 struct s_rope_node
 {
@@ -31,6 +40,7 @@ struct s_orphan
 	t_rope_node	*node;
 	t_orphan	*next;
 };
+*/
 
 t_rope_node		*rope_idx(t_rope_node *head, int *pos)
 {
@@ -232,8 +242,8 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 	t_rope_node	*leaf;
 	t_rope_node	*tmp;
 	t_rope_node	*ret;
-	t_orphan	*orphans;
-	static int n;
+	//t_orphan	*orphans;
+	//static int n;
 
 	head = *headref;
 	leaf = rope_idx(head, &pos);
@@ -263,12 +273,12 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 	if (!start)
 	{
 		*headref = NULL;
-		ft_printf_fd(STDERR_FILENO, "start is null\n");
+		//ft_printf_fd(STDERR_FILENO, "start is null\n");
 		return (rtree);
 	}
 	t_rope_node *curr = start;
 	t_rope_node *last = NULL;
-	ft_printf_fd(STDERR_FILENO, "orphaning\n");
+	//ft_printf_fd(STDERR_FILENO, "orphaning\n");
 	while (curr)
 	{
 		if (last && last == curr->left)
@@ -280,7 +290,7 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 		last = curr;
 		curr = curr->parent;
 	}
-	ft_printf_fd(STDERR_FILENO, "pruning\n");
+	//ft_printf_fd(STDERR_FILENO, "pruning\n");
 	*headref = rope_prune_singles(start);
 	return (rtree);
 }
@@ -357,6 +367,70 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	return (rope_concat(rope, tmp2));
 }
 
+
+//
+// this will be replaced, i just wanted to see if it
+//
+
+void	rope_free(t_rope_node *rope)
+{
+    t_rope_node *tmp = rope;
+    while (tmp)
+    {
+        t_rope_node *child = tmp;
+        if (child->left)
+        {
+            while (child->left)
+                child = child->left;
+            if (child->parent)
+                child->parent->left = NULL;
+            tmp = child->parent;
+			if (child->str)
+				free(child->str);
+            free (child);
+        }
+        else if (child->right)
+        {
+            child = child->right;
+            if (child->left)
+            {
+                tmp = child;
+                continue ;
+            }
+            if (child->right)
+            {
+                tmp = child->right;
+                tmp->parent = child->parent;
+                if (child->parent)
+                    child->parent->right = tmp;
+            }
+            tmp = child->parent;
+			if (tmp)
+				tmp->right = NULL;
+			if (child->str)
+				free(child->str);
+            free (child);
+        }
+        else
+        {
+			tmp = child->parent;
+            if (child->parent)
+            {
+                if (tmp)
+                {
+                    if (tmp->left == child)
+                        tmp->left = NULL;
+                    else
+                        tmp->right = NULL;
+                }
+            }
+			if (child->str)
+				free(child->str);
+            free(child);
+        }
+    }
+}
+
 t_rope_node		*rope_delete(t_rope_node *rope, int pos, int size)
 {
 	t_rope_node *left = NULL;
@@ -376,6 +450,7 @@ t_rope_node		*rope_delete(t_rope_node *rope, int pos, int size)
 		}
 		else
 			ret = rope;
+		rope_free(middle);
 	}
 	return (ret ? ret : rope);
 }
