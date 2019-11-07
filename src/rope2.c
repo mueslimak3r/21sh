@@ -259,12 +259,20 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 		rtree = leaf;
 		start = (leaf->parent) ? leaf->parent : NULL;
 		start->removed_length = sum_length(leaf);
-		if (leaf->parent)
+		if (start)
 		{
-			if (leaf->parent->left == leaf)
+			if (start->left == leaf)
+			{
+				if (start->right)
+				{
+					start->removed_length += sum_length(start->right);
+					rtree = rope_concat(rtree, start->right);
+					start->right = NULL;
+				}
 				leaf->parent->left = NULL;
+			}
 			else
-				leaf->parent->right = NULL;
+				start->right = NULL;
 		}
 		rtree->parent = NULL;
     }

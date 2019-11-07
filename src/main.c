@@ -158,7 +158,10 @@ void		shell_loop(void)
 	while (!quit)
 	{
 		if (!g_term.buff || (g_term.buff && g_term.buff->rope))
+		{
+			ft_printf_fd(STDERR_FILENO, "making new buff\n");
 			tbuff_new(&g_term.buff);
+		}
 		g_term.curr_buff = g_term.buff;
 		if (!ft_readstdin_line(0, NULL) || !g_term.line_in)
 			continue ;
