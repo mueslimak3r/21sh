@@ -19,6 +19,7 @@ typedef struct s_orphan		t_orphan;
 struct s_rope_node
 {
 	int			length;
+	int			removed_length;
 	t_rope_node	*parent;
 	t_rope_node	*left;
 	t_rope_node	*right;
@@ -31,16 +32,19 @@ struct s_orphan
 	t_orphan	*next;
 };
 
-t_rope_node		*rope_idx(t_rope_node *head, int pos)
+t_rope_node		*rope_idx(t_rope_node *head, int *pos)
 {
 	t_rope_node	*tmp;
 
 	tmp = head;
-	if (!tmp)
+	if (!tmp || *pos < 1)
 		return (NULL);
-	if (tmp->left && tmp->length < pos)
-		return (rope_idx(tmp->left, pos - tmp->length));
-	else if (tmp->right && tmp->length >= pos)
+	if (tmp->left && *pos >= tmp->length)
+	{
+		*pos = *pos - tmp->length;
+		return (rope_idx(tmp->left, pos));
+	}
+	else if (tmp->right && *pos > tmp->length)
 		return (rope_idx(tmp->right, pos));
 	return (tmp);
 }
@@ -57,14 +61,25 @@ t_rope_node		*rope_concat(t_rope_node *l, t_rope_node *r)
 {
 	t_rope_node	*new;
 
+	new = NULL;
 	ft_printf_fd(STDERR_FILENO, "CONCAT\n");
-	new = malloc(sizeof(t_rope_node));
-	new->left = l;
-	new->right = r;
-	new->length = l ? sum_length(l) : 0;
-	new->parent = l ? l->parent : NULL;
+	if (l && r)
+	{
+		new = malloc(sizeof(t_rope_node));
+		new->left = l;
+		new->right = r;
+		new->removed_length = 0;
+		new->length = l ? sum_length(l) : 0;
+		new->parent = l ? l->parent : NULL;
+	}
+	if (l)
+		l->parent = (l && r) ? new : NULL;
+	if (r)
+		r->parent = (l && r) ? new : NULL;
+	if (new)
+		return (new);
 	ft_printf_fd(STDERR_FILENO, "END CONCAT\n");
-	return (new);
+	return (l ? l : r);
 }
 
 void			orphan(t_orphan **head, t_rope_node *node)
@@ -122,11 +137,13 @@ t_rope_node		*rebuild_orphans(t_orphan *head)
 	t_orphan	*tmp;
 	t_rope_node	*ret;
 	t_orphan	*buf;
+	static int n;
 
 	tmp = head;
 	ret = NULL;
 	while (tmp)
 	{
+		ft_printf_fd(STDERR_FILENO, "%d yo\n", ++n);
 		if (!ret)
 			ret = tmp->node;
 		else
@@ -143,6 +160,70 @@ t_rope_node		*rebuild_orphans(t_orphan *head)
 	return (ret);
 }
 
+t_rope_node		*rope_prune_singles(t_rope_node *start)
+{
+	t_rope_node *curr = start;
+	t_rope_node *last = NULL;
+	while (curr)
+	{
+		curr->length -= curr->removed_length;
+		if (last && last->removed_length)
+		{
+			curr->length -= last->removed_length;
+			curr->removed_length += last->removed_length;
+			last->removed_length = 0;
+		}
+		t_rope_node *leaf = NULL;
+		if (!curr->str && (!curr->left || !curr->right))
+		{
+			t_rope_node *parent = curr->parent;
+			leaf = curr->left ? curr->left : curr->right;
+			if (leaf)
+			{
+				leaf->parent = curr->parent;
+				if (leaf->parent && leaf->parent->left == curr)
+					leaf->parent->left = leaf;
+				else if (leaf->parent && leaf->parent->right == curr)
+					leaf->parent->right = leaf;
+				leaf->removed_length = curr->removed_length;
+			}
+			else
+				parent = curr->parent;
+			free(curr);
+			last = leaf;
+			curr = parent;
+		}
+		else
+		{
+			last = curr;
+			curr = curr->parent;
+		}
+	}
+	if (last && last->removed_length)
+		last->removed_length = 0;
+	return (last);
+}
+
+t_rope_node		*split_node(t_rope_node *start, int pos)
+{
+	t_rope_node	*new;
+
+	ft_printf_fd(STDERR_FILENO, "split pos: %d s: %s\n", pos, start->str);
+	new = malloc(sizeof(t_rope_node));
+	if (!new)
+		return (NULL);
+	new->left = NULL;
+	new->right = NULL;
+	new->removed_length = 0;
+	pos = pos == 0 ? 0 : pos - 1;
+	new->length = ft_strlen(start->str) - pos;
+	new->str = ft_strdup(start->str + pos);
+	ft_memset(start->str + pos, 0, new->length);
+	new->parent = NULL;
+	start->removed_length = new->length;
+	return (new);
+}
+
 t_rope_node		*rope_split(t_rope_node **headref, int pos)
 {
 	t_rope_node	*head;
@@ -150,36 +231,61 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 	t_rope_node	*tmp;
 	t_rope_node	*ret;
 	t_orphan	*orphans;
+	static int n;
 
 	head = *headref;
-	leaf = rope_idx(head, pos);
-	ret = NULL;
-	tmp = NULL;
-	while (leaf != head)
+	leaf = rope_idx(head, &pos);
+	t_rope_node *start;
+    t_rope_node *rtree;
+	if (pos > 1)
 	{
-		tmp = leaf;
-		leaf = leaf->parent;
-		if (leaf->right)
-		{
-			if (leaf->parent)
-				leaf->parent->length -= leaf->right->length;
-			orphan(&orphans, leaf->right);
-			leaf = collapse(leaf->left);
-		}
+        rtree = split_node(leaf, pos);
+        start = leaf;
+    }
+    else
+    {
+		rtree = leaf;
+		start = (leaf->parent) ? leaf->parent : NULL;
+		start->removed_length = sum_length(leaf);
+		rtree->parent = NULL;
+    }
+	//if (leaf->parent)
+	//	leaf->parent->length -= sum_length(leaf) - (pos == 0 ? 0 : pos - 1);
+	if (!start)
+	{
+		*headref = NULL;
+		ft_printf_fd(STDERR_FILENO, "start is null\n");
+		return (rtree);
 	}
-	return (rebuild_orphans(orphans));
+	t_rope_node *curr = start;
+	t_rope_node *last = NULL;
+	ft_printf_fd(STDERR_FILENO, "orphaning\n");
+	while (curr)
+	{
+		if (last && last == curr->left)
+		{
+			curr->removed_length += sum_length(curr->right);
+			rtree = rope_concat(rtree, curr->right);
+			curr->right = NULL;
+		}
+		last = curr;
+		curr = curr->parent;
+	}
+	ft_printf_fd(STDERR_FILENO, "pruning\n");
+	*headref = rope_prune_singles(start);
+	return (rtree);
 }
 
 void			rope_print(t_rope_node *rope)
 {
 	if (!rope)
 		return ;
-	ft_printf_fd(STDERR_FILENO, "printing\n");
+	//ft_printf_fd(STDERR_FILENO, "printing\n");
 	if (rope->left)
 		rope_print(rope->left);
 	else if (!rope->left)
 	{
-		printf("[%s]\n", rope->str);
+		ft_printf_fd(STDERR_FILENO, "[%s]", rope->str);
 		return ;
 	}
 	if (rope->right)
@@ -192,30 +298,53 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	t_rope_node	*tmp2;
 	t_rope_node	*new;
 
-	new = malloc(sizeof(t_rope_node));
+	new = malloc(sizeof(*new));
 	new->str = ft_strdup(data);
 	new->length = ft_strlen(data);
+	new->removed_length = 0;
 	new->left = NULL;
 	new->right = NULL;
 	new->parent = NULL;
 	if (!rope)
 		return (new);
-	tmp = rope_split(&rope, pos);
-	tmp2 = rope_concat(new, tmp);
-	return (rope_concat(rope->right, tmp2));
+	if (pos <= sum_length(rope))
+	{
+		ft_printf_fd(STDERR_FILENO, "before:\n");
+		rope_print(rope);
+		ft_printf_fd(STDERR_FILENO, "\n");
+
+		tmp = rope_split(&rope, pos);
+		ft_printf_fd(STDERR_FILENO, "after left:\n");
+		rope_print(rope);
+		ft_printf_fd(STDERR_FILENO, "\n");
+
+		ft_printf_fd(STDERR_FILENO, "after right:\n");
+		rope_print(tmp);
+		ft_printf_fd(STDERR_FILENO, "\n");
+
+		tmp2 = rope_concat(new, tmp);
+	}
+	else
+		new = tmp2;
+	return (rope_concat(rope, tmp2));
 }
 
 void			rope_diagnostic(void)
 {
-	char	test_input[] = "Testing!";
+	char	test_input[] = "second||third||";
 	char	test_concat[] = "concat ";
-	char	test_concat2[] = "third";
+	char	test_concat2[] = "heyyy";
 	t_rope_node		*test;
 
 	test = NULL;
-	test = rope_insert(test, test_input, 0);
-	test = rope_insert(test, test_concat, 1);
-	test = rope_insert(test, test_concat2, 5);
+	test = rope_insert(test, test_input, 1);
+	test = rope_insert(test, test_concat, 8);
+	ft_printf_fd(STDERR_FILENO, "after join:\n");
 	rope_print(test);
+	ft_printf_fd(STDERR_FILENO, "\n");
+	test = rope_insert(test, test_concat2, 22);
+	ft_printf_fd(STDERR_FILENO, "result:\n");
+	rope_print(test);
+	ft_printf_fd(STDERR_FILENO, "\n");
 	return ;
 }
