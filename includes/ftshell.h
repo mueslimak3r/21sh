@@ -297,5 +297,6 @@ int				ft_cd(char *path);
 int				ft_env(char **envp);
 
 void			auto_complete(void);
+void			rope_diagnostic(void);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/31 22:10:28 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/06 18:06:47 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ void		shell_loop(void)
 	g_term.buff = NULL;
 	tree = NULL;
 	read_rcfile();
+	rope_diagnostic();
 	while (!quit)
 	{
 		g_term.curr_buff = g_term.buff;
