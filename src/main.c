@@ -94,7 +94,6 @@ int			ft_readstdin_line(int hd, char *stop)
 	term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
 	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
 	thing.long_form = 0;
-	if (g_term.buff)
 	if (g_term.line_in)
 	{
 		free(g_term.line_in);
@@ -110,8 +109,7 @@ int			ft_readstdin_line(int hd, char *stop)
 			// we need some sort of buffer to fill before kicking back to the tree
 			// to prevent new rope nodes for every character
 			// 
-			//int pos = g_term.conf.termsize[0] * g_term.conf.cursor[1] + g_term.conf.cursor[0] - 2;
-			//g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, pos + 1);
+
 			tmp = ft_strjoin(g_term.line_in, buf);
 			if (g_term.line_in)
 				free(g_term.line_in);

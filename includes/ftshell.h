@@ -46,6 +46,8 @@
 # define CLEAR_SCREEN ft_putstr_fd(tgetstr("cl", NULL), STDERR_FILENO);
 # define GET_SCREENSIZE ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 
+# define LEAF_SIZE 5
+
 # define PROMPT "@>"
 # define HDPROMPT " >"
 # define TYPES
@@ -183,6 +185,9 @@ struct s_tbuff
 {
 	//struct s_tbuff_queue	*first;
 	//struct s_tfuff_queue	*last;
+	char				rope_buff[LEAF_SIZE + 1];
+	int					rope_buff_pos;
+	int					cursor;
 	t_rope_node			*rope;
 	size_t				size;
 	struct s_tbuff		*next;
