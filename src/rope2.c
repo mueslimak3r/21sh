@@ -357,6 +357,29 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	return (rope_concat(rope, tmp2));
 }
 
+t_rope_node		*rope_delete(t_rope_node *rope, int pos, int size)
+{
+	t_rope_node *left = NULL;
+	t_rope_node *middle = NULL;
+	t_rope_node *right = NULL;
+	t_rope_node	*ret = NULL;
+	int			rsize = sum_length(rope);
+	if (!rope)
+		return (rope);
+	if (pos <= rsize)
+	{
+		middle = rope_split(&rope, pos);
+		if (pos + size <= rsize)
+		{
+			right = rope_split(&middle, size + 1);
+			ret = rope_concat(rope, right);
+		}
+		else
+			ret = rope;
+	}
+	return (ret ? ret : rope);
+}
+
 void			rope_diagnostic(void)
 {
 	char	test_input[] = "second**third**";
@@ -369,12 +392,18 @@ void			rope_diagnostic(void)
 	test = rope_insert(test, test_concat, 8);
 	
 	ft_printf_fd(STDERR_FILENO, "after first join:\n");
-	debug_print(test, 0);
+	//debug_print(test, 0);
+	rope_print(test);
 	ft_printf_fd(STDERR_FILENO, "\n");
 
 	test = rope_insert(test, test_concat2, 50);
 
-	ft_printf_fd(STDERR_FILENO, "\n\nresult:\n");
+	ft_printf_fd(STDERR_FILENO, "\n\nresult1:\n");
+	rope_print(test);
+	ft_printf_fd(STDERR_FILENO, "\n");
+
+	test = rope_delete(test, 5, 5);
+	ft_printf_fd(STDERR_FILENO, "\n\nresult2:\n");
 	rope_print(test);
 	ft_printf_fd(STDERR_FILENO, "\n");
 	return ;
