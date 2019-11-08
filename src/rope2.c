@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 13:39:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 22:35:46 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 14:39:02 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ t_rope_node		*rope_concat(t_rope_node *l, t_rope_node *r)
 		new->left = l;
 		new->right = r;
 		new->removed_length = 0;
-		new->str = NULL;
+		ft_memset(new->str, 0, LEAF_SIZE + 1);
 		new->length = l ? sum_length(l) : 0;
 		new->parent = NULL;//l ? l->parent : NULL;
 	}
@@ -125,6 +125,7 @@ t_rope_node		*collapse(t_rope_node *node)
 	parent = NULL;
 	return (tmp);
 }
+*/
 
 void			rebalance(t_rope_node *head)
 {
@@ -142,7 +143,7 @@ void			rebalance(t_rope_node *head)
 	}
 	head->length = head->left ? sum_length(head->left) : head->length;
 }
-
+/*
 t_rope_node		*rebuild_orphans(t_orphan *head)
 {
 	t_orphan	*tmp;
@@ -185,7 +186,7 @@ t_rope_node		*rope_prune_singles(t_rope_node *start)
 			last->removed_length = 0;
 		}
 		t_rope_node *leaf = NULL;
-		if (!curr->str && (!curr->left || !curr->right))
+		if (!curr->str[0] && (!curr->left || !curr->right))
 		{
 			t_rope_node *parent = curr->parent;
 			leaf = curr->left ? curr->left : curr->right;
@@ -228,7 +229,8 @@ t_rope_node		*split_node(t_rope_node *start, int pos)
 	new->removed_length = 0;
 	pos = pos == 0 ? 0 : pos - 1;
 	new->length = ft_strlen(start->str) - pos;
-	new->str = ft_strdup(start->str + pos);
+	ft_memset(new->str, 0, LEAF_SIZE + 1);
+	ft_memcpy(new->str, start->str + pos, ft_strlen(start->str + pos));
 	//ft_printf_fd(STDERR_FILENO, "split pos: %d s: %s\n", pos, start->str);
 	ft_memset(start->str + pos, 0, new->length);
 	new->parent = NULL;
@@ -315,19 +317,21 @@ void			debug_print(t_rope_node *rope, int depth)
 	if (!rope)
 		return ;
 	//ft_printf_fd(STDERR_FILENO, "printing\n");
-	if (!rope->str)
-		ft_printf_fd(STDERR_FILENO, "NODE[\nd: %d size: %d left:|", depth, rope->length);
-	if (rope->left)
-		debug_print(rope->left, depth + 1);
-	else if (rope->str)
+	if (!rope->str[0])
+		ft_printf_fd(STDERR_FILENO, "NODE[d: %d size: %d left:|", depth, rope->length);
+	else
 	{
-		ft_printf_fd(STDERR_FILENO, "DATA{d: %d s: %s size: %d}", depth, rope->str, rope->length);
+		ft_printf_fd(STDERR_FILENO, "DATA{d: %d s: %s size: %d}\n", depth, rope->str, rope->length);
 		return ;
 	}
-	ft_printf_fd(STDERR_FILENO, "|right:|");
+	ft_printf_fd(STDERR_FILENO, "lsize: %d | rsize: %d",
+			rope->left ? rope->left->length : 0,
+			rope->right ? rope->right->length : 0);
+	ft_printf_fd(STDERR_FILENO, "|\n");
+	if (rope->left)
+		debug_print(rope->left, depth + 1);
 	if (rope->right)
 		debug_print(rope->right, depth + 1);
-	ft_printf_fd(STDERR_FILENO, "|\n");
 }
 
 void			rope_print(t_rope_node *rope)
@@ -336,7 +340,7 @@ void			rope_print(t_rope_node *rope)
 		return ;
 	if (rope->left)
 		rope_print(rope->left);
-	else if (rope->str)
+	else if (rope->str[0])
 	{
 		term_write(rope->str, STDERR_FILENO, 1);
 		return ;
@@ -351,7 +355,7 @@ int				rope_print_index(t_rope_node *rope, t_rope_node *end)
 		return (1);
 	if (rope->left && !(rope_print_index(rope->left, end)))
 		return (0);
-	else if (rope->str)
+	else if (rope->str[0])
 	{
 		term_write(rope->str, STDERR_FILENO, 1);
 		if (rope == end)
@@ -378,7 +382,7 @@ void			rope_print_from_index(t_rope_node *rope, int i, int j)
 	i = i == 0 ? 0 : i - 1;
 	if (!last)
 		return ;
-	if (last->str)
+	if (last->str[0])
 		term_write(last->str + i, STDERR_FILENO, 1);
 	if (last == end)
 		return ;
@@ -397,7 +401,7 @@ void			rope_getline_tree(t_rope_node *rope, char *ret, int *pos, int size)
 {
 	if (rope->left)
 		rope_getline_tree(rope->left, ret, pos, size);
-	else if (rope->str && *pos + rope->length <= size)
+	else if (rope->str[0] && *pos + rope->length <= size)
 	{
 		ft_memcpy(ret + *pos, rope->str, rope->length);
 		*pos += rope->length;
@@ -424,7 +428,7 @@ char			*rope_getline(t_rope_node *rope, int i)
 		return (NULL);
 	curr = last->parent;
 	i = i == 0 ? 0 : i - 1;
-	if (last->str && pos + last->length <= size)
+	if (last->str[0] && pos + last->length <= size)
 	{
 		ft_memcpy(ret + pos, last->str, last->length);
 		pos += last->length;
@@ -445,10 +449,47 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	t_rope_node	*tmp = NULL;
 	t_rope_node	*tmp2 = NULL;
 	t_rope_node	*new = NULL;
-
+	int			lpos = pos;
+	t_rope_node	*idx = rope_idx(rope, &lpos);
+	lpos -= lpos == 0 ? 0 : 1;
 	//ft_printf_fd(STDERR_FILENO, "added rope node at %d len %d\n", pos, (int)ft_strlen(data));
+
+	if (idx && ft_strlen(idx->str) + ft_strlen(data) <= LEAF_SIZE)
+	{
+		//if (lpos == 1)
+		//	ft_printf("\n");
+		ft_memmove(idx->str + lpos + ft_strlen(data), idx->str + lpos,
+				ft_strlen(idx->str + lpos));
+		ft_memcpy(idx->str + lpos, data, ft_strlen(data));
+		idx->removed_length = ft_strlen(data);
+		idx->removed_length *= -1;
+		//ft_printf_fd(STDERR_FILENO, "adding len %d at index: %d lpos: %d\n", idx->removed_length, pos, lpos);
+		if (g_term.curr_buff)
+			g_term.curr_buff->cursor += ft_strlen(data);
+		if (idx->parent && idx->parent->left == idx)
+		{
+			//ft_printf_fd(STDERR_FILENO, "left\n");
+			return (rope_prune_singles(rope));
+		}
+		else if (idx->parent && idx->parent->parent)
+		{
+			//ft_printf_fd(STDERR_FILENO, "right\n");
+			idx->length -= idx->removed_length;
+			idx->parent->parent->removed_length += idx->removed_length;
+			idx->removed_length = 0;
+			return (rope_prune_singles(idx->parent->parent));
+		}
+		else
+		{
+			idx->length -= idx->removed_length;
+			idx->removed_length = 0;
+			//ft_printf_fd(STDERR_FILENO, "else\n");
+			return (rope_prune_singles(rope));
+		}
+	}
 	new = malloc(sizeof(*new));
-	new->str = ft_strdup(data);
+	ft_memset(new->str, 0, LEAF_SIZE + 1);
+	ft_memcpy(new->str, data, ft_strlen(data));
 	new->length = ft_strlen(data);
 	new->removed_length = 0;
 	new->left = NULL;
@@ -458,7 +499,7 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 		g_term.curr_buff->cursor += new->length;
 	if (!rope)
 		return (new);
-	if (pos <= sum_length(rope))
+	if (pos < sum_length(rope))
 	{
 		//ft_printf_fd(STDERR_FILENO, "before:\n");
 		//rope_print(rope);
@@ -475,7 +516,10 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 		tmp2 = rope_concat(new, tmp);
 	}
 	else
+	{
+		ft_printf_fd(STDERR_FILENO, "+\b");
 		tmp2 = new;
+	}
 	return (rope_concat(rope, tmp2));
 }
 
@@ -497,8 +541,6 @@ void	rope_free(t_rope_node *rope)
             if (child->parent)
                 child->parent->left = NULL;
             tmp = child->parent;
-			if (child->str)
-				free(child->str);
             free (child);
         }
         else if (child->right)
@@ -519,8 +561,6 @@ void	rope_free(t_rope_node *rope)
             tmp = child->parent;
 			if (tmp)
 				tmp->right = NULL;
-			if (child->str)
-				free(child->str);
             free (child);
         }
         else
@@ -536,8 +576,6 @@ void	rope_free(t_rope_node *rope)
                         tmp->right = NULL;
                 }
             }
-			if (child->str)
-				free(child->str);
             free(child);
         }
     }
@@ -579,19 +617,21 @@ void			rope_diagnostic(void)
 	test = rope_insert(test, test_concat, 8);
 	
 	ft_printf_fd(STDERR_FILENO, "after first join:\n");
-	//debug_print(test, 0);
-	rope_print(test);
+	debug_print(test, 1);
+	//rope_print(test);
 	ft_printf_fd(STDERR_FILENO, "\n");
 
 	test = rope_insert(test, test_concat2, 50);
 
 	ft_printf_fd(STDERR_FILENO, "\n\nresult1:\n");
-	rope_print(test);
+	debug_print(test, 1);
+	//rope_print(test);
 	ft_printf_fd(STDERR_FILENO, "\n");
 
 	test = rope_delete(test, 5, 5);
 	ft_printf_fd(STDERR_FILENO, "\n\nresult2:\n");
-	rope_print(test);
+	debug_print(test, 1);
+	//rope_print(test);
 	ft_printf_fd(STDERR_FILENO, "\n");
 	return ;
 }
