@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 22:41:09 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 15:55:56 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,15 +137,15 @@ int		reprint_buffer(t_tbuff *buff)
 	{
 		int size = sum_length(buff->rope);
 		//if (buff->rope_buff[0] && buff->cursor - 1 < size)
-		//term_write(buff->rope_buff, STDERR_FILENO, 1);
+		//	term_write(buff->rope_buff, STDERR_FILENO, 1);
 		//int i = 1;
 		//t_rope_node *lleaf = rope_idx(buff->rope, &i);
-		//rope_print_from_index(buff->rope, 1, buff->cursor);
-		if (buff->rope)
-			rope_print(buff->rope);
-		//if (buff->rope_buff[0] && size <= buff->cursor - 1)
-		term_write(buff->rope_buff, STDERR_FILENO, 1);
-		//rope_print_from_index(buff->rope, buff->cursor + 1, size);
+		rope_print_from_index(buff->rope, 1, buff->cursor);
+		//if (buff->rope)
+		//	rope_print(buff->rope);
+		if (buff->rope_buff[0])
+			term_write(buff->rope_buff, STDERR_FILENO, 1);
+		rope_print_from_index(buff->rope, buff->cursor + 1, size);
 	}
 	return (0);
 }
