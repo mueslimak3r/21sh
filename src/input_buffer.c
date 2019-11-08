@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/07 22:38:56 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 22:46:38 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 				if (g_term.curr_buff && g_term.curr_buff->next)
 				{
 					g_term.curr_buff = g_term.curr_buff->next;
+					g_term.curr_buff->cursor = sum_length(g_term.curr_buff->rope);
 					reprint_buffer(g_term.curr_buff);
 				}
 			}
@@ -80,6 +81,7 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 				if (g_term.curr_buff && g_term.curr_buff->prev)
 				{
 					g_term.curr_buff = g_term.curr_buff->prev;
+					g_term.curr_buff->cursor = sum_length(g_term.curr_buff->rope);
 					reprint_buffer(g_term.curr_buff);
 				}
 			}
