@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 20:43:56 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 21:44:26 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,9 @@ int		reprint_buffer(t_tbuff *buff, int i)
 	{
 		if (buff->rope_buff[0] && i >= buff->cursor - 1)
 			term_write(buff->rope_buff, STDERR_FILENO, 1);
-		rope_print_from_index(buff->rope, i);
+		rope_print_from_index(buff->rope, 1);
+		//if (buff->rope)
+		//	rope_print(buff->rope);
 		if (buff->rope_buff[0] && i < buff->cursor - 1)
 			term_write(buff->rope_buff, STDERR_FILENO, 1);
 	}

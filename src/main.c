@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 20:24:49 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 21:41:12 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int			ft_readstdin_line(int hd, char *stop)
 			//
 			
 			tbuff_rope_add(g_term.curr_buff, g_term.curr_buff->rope_buff, buf);
-			reprint_buffer(g_term.curr_buff, 1);
+			reprint_buffer(g_term.curr_buff, g_term.curr_buff->cursor);
 			tmp = ft_strjoin(g_term.line_in, buf);
 			if (g_term.line_in)
 				free(g_term.line_in);
@@ -127,6 +127,7 @@ int			ft_readstdin_line(int hd, char *stop)
 				ft_memset(g_term.curr_buff->rope_buff, 0, LEAF_SIZE + 1);
 				g_term.curr_buff->rope_buff_pos = 0;
 				g_term.curr_buff->rope_buff_cursor = 0;
+				reprint_buffer(g_term.curr_buff, 1);
 			}
 			//tbuff_push(&g_term.buff, g_term.line_in);
 			return (1);
@@ -164,17 +165,17 @@ void		shell_loop(void)
 	g_term.curr_buff = NULL;
 	tree = NULL;
 	read_rcfile();
-	rope_diagnostic();
+	//rope_diagnostic();
 	while (!quit)
 	{
 
 		if (!g_term.buff || (g_term.buff && g_term.buff->rope))
 		{
-			ft_printf_fd(STDERR_FILENO, "making new buff\n");
+			//ft_printf_fd(STDERR_FILENO, "making new buff\n");
 			tbuff_new(&g_term.buff);
 		}
 		g_term.curr_buff = g_term.buff;
-		if (!ft_readstdin_line(0, NULL) || !g_term.line_in)
+		if (!ft_readstdin_line(0, NULL))
 			continue ;
 		if (g_term.curr_buff)
 		{
@@ -187,7 +188,9 @@ void		shell_loop(void)
 		//ft_printf_fd(STDERR_FILENO, "done reading line: %s\n", g_term.line_in);
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
-		tree = lexer(g_term.line_in);
+		if (!g_term.curr_buff || !g_term.curr_buff->rope)
+			continue ;
+		tree = lexer(rope_getline(g_term.curr_buff->rope, 1));
 		//ft_printf_fd(STDERR_FILENO, "finished with lexing\n");
 		free(g_term.line_in);
 		g_term.line_in = NULL;

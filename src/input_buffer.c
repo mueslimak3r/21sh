@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/07 20:47:45 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 21:36:15 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 	if (code == LEFT || code == RIGHT)
 	{
 		buff->rope_buff_cursor += (code == LEFT) ? -1 : 1;
-		ft_printf_fd(STDERR_FILENO, "%s", str);
+		//ft_printf_fd(STDERR_FILENO, "%s", str);
 	}
 }
 
@@ -149,6 +149,7 @@ void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input)
 		buff->rope = rope_insert(buff->rope, rope_buff, buff->cursor + 1);
 		ft_memset(rope_buff, 0, LEAF_SIZE + 1);
 		buff->rope_buff_pos = 0;
+		buff->rope_buff_cursor = 0;
 		leftover -= LEAF_SIZE - buff->rope_buff_pos;
 		while (leftover)
 		{
@@ -157,6 +158,7 @@ void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input)
 			buff->rope = rope_insert(buff->rope, rope_buff, buff->cursor + 1);
 			ft_memset(rope_buff, 0, LEAF_SIZE + 1);
 			buff->rope_buff_pos = 0;
+			buff->rope_buff_cursor = 0;
 			leftover -= (leftover >= LEAF_SIZE) ? LEAF_SIZE : leftover;
 		}
 	}

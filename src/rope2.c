@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 13:39:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 20:26:34 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 21:38:06 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_rope_node		*rope_concat(t_rope_node *l, t_rope_node *r)
 	t_rope_node	*new;
 
 	new = NULL;
-	ft_printf_fd(STDERR_FILENO, "CONCAT\n");
+	//ft_printf_fd(STDERR_FILENO, "CONCAT\n");
 	if (l && r)
 	{
 		new = malloc(sizeof(t_rope_node));
@@ -81,15 +81,15 @@ t_rope_node		*rope_concat(t_rope_node *l, t_rope_node *r)
 		new->removed_length = 0;
 		new->str = NULL;
 		new->length = l ? sum_length(l) : 0;
-		new->parent = l ? l->parent : NULL;
+		new->parent = NULL;//l ? l->parent : NULL;
 	}
 	if (l)
-		l->parent = (l && r) ? new : NULL;
+		l->parent = (new) ? new : NULL;
 	if (r)
-		r->parent = (l && r) ? new : NULL;
+		r->parent = (new) ? new : NULL;
 	if (new)
 		return (new);
-	ft_printf_fd(STDERR_FILENO, "END CONCAT\n");
+	//ft_printf_fd(STDERR_FILENO, "END CONCAT\n");
 	return (l ? l : r);
 }
 /*
@@ -219,7 +219,7 @@ t_rope_node		*split_node(t_rope_node *start, int pos)
 {
 	t_rope_node	*new;
 
-	ft_printf_fd(STDERR_FILENO, "split pos: %d s: %s\n", pos, start->str);
+	//ft_printf_fd(STDERR_FILENO, "split pos: %d s: %s\n", pos, start->str);
 	new = malloc(sizeof(t_rope_node));
 	if (!new)
 		return (NULL);
@@ -332,6 +332,8 @@ void			debug_print(t_rope_node *rope, int depth)
 
 void			rope_print(t_rope_node *rope)
 {
+	if (!rope)
+		return ;
 	if (rope->left)
 		rope_print(rope->left);
 	else if (rope->str)
@@ -350,8 +352,10 @@ void			rope_print_from_index(t_rope_node *rope, int i)
 	t_rope_node *curr = NULL;
 	t_rope_node	*last = NULL;
 	last = rope_idx(rope, &i);
-	curr = rope->parent;
+	curr = last->parent;
 	i = i == 0 ? 0 : i - 1;
+	if (!last)
+		return ;
 	if (last->str)
 		term_write(last->str + i, STDERR_FILENO, 1);
 	while (curr)
@@ -361,6 +365,55 @@ void			rope_print_from_index(t_rope_node *rope, int i)
 		last = curr;
 		curr = curr->parent;
 	}
+	//if (last)
+	//	rope_print(last->right);
+}
+
+void			rope_getline_tree(t_rope_node *rope, char *ret, int *pos, int size)
+{
+	if (rope->left)
+		rope_getline_tree(rope->left, ret, pos, size);
+	else if (rope->str && *pos + rope->length <= size)
+	{
+		ft_memcpy(ret + *pos, rope->str, rope->length);
+		*pos += rope->length;
+		return ;
+	}
+	if (rope->right)
+		rope_getline_tree(rope->right, ret, pos, size);
+}
+
+char			*rope_getline(t_rope_node *rope, int i)
+{
+	if (!rope)
+		return (NULL);
+	t_rope_node *curr = NULL;
+	t_rope_node	*last = NULL;
+	char		*ret = NULL;
+	int			pos = 0;
+	int			size;
+
+	size = sum_length(rope);
+	last = rope_idx(rope, &i);
+	ret = ft_memalloc(sizeof(*ret) * (size + 1));
+	if (!ret)
+		return (NULL);
+	curr = last->parent;
+	i = i == 0 ? 0 : i - 1;
+	if (last->str && pos + last->length <= size)
+	{
+		ft_memcpy(ret + pos, last->str, last->length);
+		pos += last->length;
+	}
+		//term_write(last->str + i, STDERR_FILENO, 1);
+	while (curr)
+	{
+		if (last && last == curr->left)
+			rope_getline_tree(curr->right, ret, &pos, size);
+		last = curr;
+		curr = curr->parent;
+	}
+	return (ret);
 }
 
 t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)

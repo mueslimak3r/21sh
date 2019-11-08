@@ -265,6 +265,7 @@ void	rope_free(t_rope_node *rope);
 void			tbuff_free(t_tbuff **buff);
 void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
 void			rope_print_from_index(t_rope_node *rope, int i);
+char			*rope_getline(t_rope_node *rope, int i);
 /*
 ** ENVIRONMENT
 */
