@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/31 22:26:27 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 20:43:56 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int		term_write(char *str, int fd, int cmd)
 		return (1);
 	if (!cmd)
 	{
-		
 		if (g_term.conf.cursor[0] + ft_strlen(str) > g_term.conf.termsize[0])
 		{
 			//if (g_term.conf.termsize[0] - g_term.conf.cursor[0] > 0)
@@ -112,7 +111,35 @@ int		redo_buffer(char *new_buffer)
 		free(g_term.line_in);
 	g_term.line_in = ft_strdup(new_buffer);
 	ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
-	term_write(new_buffer, STDERR_FILENO, 0);
+	term_write(new_buffer, STDERR_FILENO, 1);
+	return (0);
+}
+
+int		ft_charput(int c)
+{
+	return (write(1, &c, 1));
+}
+
+int		reprint_buffer(t_tbuff *buff, int i)
+{
+	tputs(tgetstr("dl", NULL), 0, ft_charput);
+	tputs(tgetstr("cr", NULL), 0, ft_charput);
+	while ((g_term.conf.curlines))
+	{
+		g_term.conf.curlines--;
+	}	//ft_printf_fd(STDERR_FILENO, "\33[2K\r%s", g_term.conf.curlines ? "\33[1A" : "");
+	g_term.conf.curlines = 1;
+	g_term.conf.cursor[0] = 2;
+	g_term.conf.cursor[1] = 0;
+	ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
+	if (buff)
+	{
+		if (buff->rope_buff[0] && i >= buff->cursor - 1)
+			term_write(buff->rope_buff, STDERR_FILENO, 1);
+		rope_print_from_index(buff->rope, i);
+		if (buff->rope_buff[0] && i < buff->cursor - 1)
+			term_write(buff->rope_buff, STDERR_FILENO, 1);
+	}
 	return (0);
 }
 
@@ -128,32 +155,26 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 		g_term.conf.cursor[0] = ft_strlen(PROMPT);
 		g_term.conf.cursor[1]++;
 	}
-	else if (code == UP)
-	{
-		if (g_term.curr_buff && g_term.curr_buff->next)
-			g_term.curr_buff = g_term.curr_buff->next;
-		//tbuff_print(g_term.curr_buff);
-	}
-	else if (code == DOWN)
-	{
-		if (g_term.curr_buff && g_term.curr_buff->prev)
-			g_term.curr_buff = g_term.curr_buff->prev;
-		//tbuff_print(g_term.curr_buff);
-	}
 	else if (code == TAB)
 	{
 		auto_complete();
 	}
-	else if (code == LEFT)
-		term_write(str, STDERR_FILENO, 0);
-	else if (code == RIGHT)
-		term_write(str, STDERR_FILENO, 0);
+	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
+	{
+		tbuff_move_cursor(g_term.curr_buff, code, str);
+	}
 	else
 		ret -= 1;
 	ret += 1;
+	//if (ret == 0)
+	//	term_write(str, STDERR_FILENO, 0);
+	//else
+	/*
 	if (ret == 0)
+	{
 		term_write(str, STDERR_FILENO, 0);
-	else
+	*/
+	if (ret != 0)
 		ft_memset(str, 0, BUFF_SIZE + 1);
 	//ft_printf_fd(STDERR_FILENO, "code: %lu\n", code);
 	return (ret);

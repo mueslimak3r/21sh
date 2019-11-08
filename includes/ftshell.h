@@ -34,11 +34,11 @@
 # define RIGHT 0x435B1B
 
 # ifdef __linux__
-# define UP 0x415B1B
-# define DOWN 0x425B1B
-# else
 # define UP 0x414F1B
 # define DOWN 0x424F1B
+# else
+# define UP 0x415B1B
+# define DOWN 0x425B1B
 # endif
 
 # define DELETE 0x7F
@@ -187,9 +187,10 @@ struct s_tbuff
 	//struct s_tfuff_queue	*last;
 	char				rope_buff[LEAF_SIZE + 1];
 	int					rope_buff_pos;
+	int					rope_buff_cursor;
 	int					cursor;
 	t_rope_node			*rope;
-	size_t				size;
+	size_t				rope_size;
 	struct s_tbuff		*next;
 	struct s_tbuff		*prev;
 };
@@ -258,9 +259,12 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos);
 void		tbuff_new(t_tbuff **buff);
 //void        	tbuff_push(t_tbuff **buff, char *s);
 //char			*tbuff_peek(t_tbuff *buff);
+int		reprint_buffer(t_tbuff *buff, int i);
+void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input);
 void	rope_free(t_rope_node *rope);
 void			tbuff_free(t_tbuff **buff);
-
+void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
+void			rope_print_from_index(t_rope_node *rope, int i);
 /*
 ** ENVIRONMENT
 */
