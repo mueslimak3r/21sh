@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/07 21:36:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 21:53:11 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ int     move_cursor(int amt)
 
 void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 {
-	move_cursor(code == LEFT ? -1 : 1);
+	if (code == LEFT || code == RIGHT)
+		move_cursor(code == LEFT ? -1 : 1);
 	if ((code == LEFT && buff->rope_buff_cursor - 1 < 0) ||
 		(code == RIGHT && buff->rope_buff_cursor + 1 > LEAF_SIZE) ||
 		code == UP || code == DOWN)
