@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 22:41:09 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 07:41:55 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,10 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
 	{
 		if (code == LEFT || code == RIGHT)
+		{
 			move_cursor(code == LEFT ? -1 : 1);
+			ft_printf_fd(STDERR_FILENO, "%s", str);
+		}
 		tbuff_move_cursor(g_term.curr_buff, code, str);
 	}
 	else
@@ -205,7 +208,7 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 		term_write(str, STDERR_FILENO, 0);
 	*/
 	if (ret != 0)
-		ft_memset(str, 0, BUFF_SIZE + 1);
+		ft_memset(str, 0, BUFF_SIZE + 1); // redundant? we do the same memset at the end of ft_readstdin_line
 	//ft_printf_fd(STDERR_FILENO, "code: %lu\n", code);
 	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 22:37:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 09:27:14 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,9 @@ int			ft_readstdin_line(int hd, char *stop)
 			// these lines will add to the rope as text is recieved.
 			// we need some sort of buffer to fill before kicking back to the tree
 			// to prevent new rope nodes for every character
-			//
-			
+
+			// added that functionality in rope_insert. :D
+
 			tbuff_rope_add(g_term.curr_buff, g_term.curr_buff->rope_buff, buf);
 			reprint_buffer(g_term.curr_buff);
 			tmp = ft_strjoin(g_term.line_in, buf);
@@ -129,6 +130,7 @@ int			ft_readstdin_line(int hd, char *stop)
 				g_term.curr_buff->rope_buff_cursor = 0;
 				//reprint_buffer(g_term.curr_buff, 1);
 			}
+			debug_print(g_term.curr_buff->rope, 1);
 			//tbuff_push(&g_term.buff, g_term.line_in);
 			return (1);
 		}

@@ -158,7 +158,7 @@ struct s_rope_node
 	t_rope_node	*parent;
 	t_rope_node	*left;
 	t_rope_node	*right;
-	char		*str;
+	char		str[LEAF_SIZE + 1];
 };
 
 /*
@@ -327,5 +327,6 @@ int				ft_env(char **envp);
 
 void			auto_complete(void);
 void			rope_diagnostic(void);
+void			debug_print(t_rope_node *rope, int depth);
 
 #endif

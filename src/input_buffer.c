@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/07 22:46:38 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 09:27:15 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input)
 		tbuff_insert_text(buff, buff->rope_buff, input, size);
 	else if (buff->rope_buff_pos + size > LEAF_SIZE)
 	{
-		ft_printf_fd(STDERR_FILENO, "overflow: pos %d size: %d\n", buff->rope_buff_pos, size);
+		//ft_printf_fd(STDERR_FILENO, "overflow: pos %d size: %d\n", buff->rope_buff_pos, size);
 		int leftover = size;
 		tbuff_insert_text(buff, buff->rope_buff, input, LEAF_SIZE - buff->rope_buff_pos);
 		buff->rope = rope_insert(buff->rope, rope_buff, buff->cursor + 1);
@@ -131,7 +131,7 @@ void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input)
 		buff->rope_buff_pos = 0;
 		buff->rope_buff_cursor = 0;
 		leftover -= LEAF_SIZE - buff->rope_buff_pos;
-		while (leftover)
+		while (leftover > 0)
 		{
 			ft_printf_fd(STDERR_FILENO, "loop leftover: %d\n", leftover);
 			tbuff_insert_text(buff, buff->rope_buff, input, (leftover >= LEAF_SIZE) ? LEAF_SIZE : leftover);
