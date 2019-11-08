@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/08 09:27:15 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/08 15:18:06 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,14 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 		(code == RIGHT && buff->rope_buff_cursor + 1 > LEAF_SIZE) ||
 		code == UP || code == DOWN)
 	{
-		if (buff->rope_buff_pos > 0)
+		if (buff->rope_buff_pos >= 0 && buff->rope_buff[0])
 		{
 			buff->rope = rope_insert(buff->rope, buff->rope_buff, buff->cursor + 1);
 			ft_memset(buff->rope_buff, 0, LEAF_SIZE);
 			buff->rope_buff_pos = 0;
 			buff->rope_buff_cursor = 0;
 		}
-		if (code == LEFT || code == RIGHT)
+		if ((code == LEFT || code == RIGHT) && buff->rope_buff_pos == 0)
 			buff->cursor += (code == LEFT) ? -1 : 1;
 		else
 		{
