@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 09:27:14 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/08 14:31:53 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,8 @@ int			ft_readstdin_line(int hd, char *stop)
 			// to prevent new rope nodes for every character
 
 			// added that functionality in rope_insert. :D
-
-			tbuff_rope_add(g_term.curr_buff, g_term.curr_buff->rope_buff, buf);
+			g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, g_term.curr_buff->cursor + 1);
+			//tbuff_rope_add(g_term.curr_buff, g_term.curr_buff->rope_buff, buf);
 			reprint_buffer(g_term.curr_buff);
 			tmp = ft_strjoin(g_term.line_in, buf);
 			if (g_term.line_in)
@@ -167,7 +167,7 @@ void		shell_loop(void)
 	g_term.curr_buff = NULL;
 	tree = NULL;
 	read_rcfile();
-	//rope_diagnostic();
+	rope_diagnostic();
 	while (!quit)
 	{
 
