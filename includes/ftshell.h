@@ -259,13 +259,15 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos);
 void		tbuff_new(t_tbuff **buff);
 //void        	tbuff_push(t_tbuff **buff, char *s);
 //char			*tbuff_peek(t_tbuff *buff);
-int		reprint_buffer(t_tbuff *buff, int i);
+int		reprint_buffer(t_tbuff *buff);
 void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input);
 void	rope_free(t_rope_node *rope);
 void			tbuff_free(t_tbuff **buff);
 void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
-void			rope_print_from_index(t_rope_node *rope, int i);
+void			rope_print_from_index(t_rope_node *rope, int i, int j);
 char			*rope_getline(t_rope_node *rope, int i);
+int				sum_length(t_rope_node *head);
+t_rope_node		*rope_idx(t_rope_node *head, int *pos);
 /*
 ** ENVIRONMENT
 */

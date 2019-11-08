@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 21:44:26 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 22:41:09 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,9 @@ int		ft_charput(int c)
 	return (write(1, &c, 1));
 }
 
-int		reprint_buffer(t_tbuff *buff, int i)
+int		reprint_buffer(t_tbuff *buff)
 {
+	//ft_printf_fd(STDERR_FILENO, "reprinting buff\n");
 	tputs(tgetstr("dl", NULL), 0, ft_charput);
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	while ((g_term.conf.curlines))
@@ -134,15 +135,40 @@ int		reprint_buffer(t_tbuff *buff, int i)
 	ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
 	if (buff)
 	{
-		if (buff->rope_buff[0] && i >= buff->cursor - 1)
-			term_write(buff->rope_buff, STDERR_FILENO, 1);
-		rope_print_from_index(buff->rope, 1);
-		//if (buff->rope)
-		//	rope_print(buff->rope);
-		if (buff->rope_buff[0] && i < buff->cursor - 1)
-			term_write(buff->rope_buff, STDERR_FILENO, 1);
+		int size = sum_length(buff->rope);
+		//if (buff->rope_buff[0] && buff->cursor - 1 < size)
+		//term_write(buff->rope_buff, STDERR_FILENO, 1);
+		//int i = 1;
+		//t_rope_node *lleaf = rope_idx(buff->rope, &i);
+		//rope_print_from_index(buff->rope, 1, buff->cursor);
+		if (buff->rope)
+			rope_print(buff->rope);
+		//if (buff->rope_buff[0] && size <= buff->cursor - 1)
+		term_write(buff->rope_buff, STDERR_FILENO, 1);
+		//rope_print_from_index(buff->rope, buff->cursor + 1, size);
 	}
 	return (0);
+}
+
+int     move_cursor(int amt)
+{
+    if (g_term.conf.cursor[0] + amt > (ft_strlen(g_term.line_in) + 2))
+        return (0);
+    if (g_term.conf.cursor[0] + amt > g_term.conf.termsize[0])
+    {
+        g_term.conf.cursor[0] = amt;
+        g_term.conf.cursor[1]++;
+        g_term.conf.curlines++;
+    }
+    else if (g_term.conf.cursor[0] + amt < 0)
+    {
+        g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
+        g_term.conf.cursor[1]--;
+        g_term.conf.curlines--;
+    }
+    else if (g_term.conf.cursor[0] + amt <= ft_strlen(g_term.line_in))
+        g_term.conf.cursor[0] += amt;
+    return (1);
 }
 
 int		handle_controls(unsigned long code, char *str, char *saved)
@@ -163,6 +189,8 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 	}
 	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
 	{
+		if (code == LEFT || code == RIGHT)
+			move_cursor(code == LEFT ? -1 : 1);
 		tbuff_move_cursor(g_term.curr_buff, code, str);
 	}
 	else

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/07 21:53:11 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 22:38:56 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,31 +48,8 @@ void		tbuff_new(t_tbuff **buff)
 	*buff = new;
 }
 
-int     move_cursor(int amt)
-{
-    if (g_term.conf.cursor[0] + amt > (ft_strlen(g_term.line_in) + 2))
-        return (0);
-    if (g_term.conf.cursor[0] + amt > g_term.conf.termsize[0])
-    {
-        g_term.conf.cursor[0] = amt;
-        g_term.conf.cursor[1]++;
-        g_term.conf.curlines++;
-    }
-    else if (g_term.conf.cursor[0] + amt < 0)
-    {
-        g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
-        g_term.conf.cursor[1]--;
-        g_term.conf.curlines--;
-    }
-    else if (g_term.conf.cursor[0] + amt <= ft_strlen(g_term.line_in))
-        g_term.conf.cursor[0] += amt;
-    return (1);
-}
-
 void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 {
-	if (code == LEFT || code == RIGHT)
-		move_cursor(code == LEFT ? -1 : 1);
 	if ((code == LEFT && buff->rope_buff_cursor - 1 < 0) ||
 		(code == RIGHT && buff->rope_buff_cursor + 1 > LEAF_SIZE) ||
 		code == UP || code == DOWN)
@@ -94,7 +71,7 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 				if (g_term.curr_buff && g_term.curr_buff->next)
 				{
 					g_term.curr_buff = g_term.curr_buff->next;
-					reprint_buffer(g_term.curr_buff, 1);
+					reprint_buffer(g_term.curr_buff);
 				}
 			}
 			if (code == DOWN)
@@ -103,7 +80,7 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 				if (g_term.curr_buff && g_term.curr_buff->prev)
 				{
 					g_term.curr_buff = g_term.curr_buff->prev;
-					reprint_buffer(g_term.curr_buff, 1);
+					reprint_buffer(g_term.curr_buff);
 				}
 			}
 		}

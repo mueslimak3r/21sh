@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 13:39:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/07 21:38:06 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/07 22:35:46 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,23 +345,47 @@ void			rope_print(t_rope_node *rope)
 		rope_print(rope->right);
 }
 
-void			rope_print_from_index(t_rope_node *rope, int i)
+int				rope_print_index(t_rope_node *rope, t_rope_node *end)
+{
+	if (!rope)
+		return (1);
+	if (rope->left && !(rope_print_index(rope->left, end)))
+		return (0);
+	else if (rope->str)
+	{
+		term_write(rope->str, STDERR_FILENO, 1);
+		if (rope == end)
+			return (0);
+		return (1);
+	}
+	if (rope->right && !(rope_print_index(rope->right, end)))
+		return (0);
+	return (1);
+}
+
+void			rope_print_from_index(t_rope_node *rope, int i, int j)
 {
 	if (!rope)
 		return ;
 	t_rope_node *curr = NULL;
 	t_rope_node	*last = NULL;
+	t_rope_node	*end = NULL;
+	if (i < 0 || j < 0 || j < i)
+		return ;
 	last = rope_idx(rope, &i);
+	end = rope_idx(rope, &j);
 	curr = last->parent;
 	i = i == 0 ? 0 : i - 1;
 	if (!last)
 		return ;
 	if (last->str)
 		term_write(last->str + i, STDERR_FILENO, 1);
+	if (last == end)
+		return ;
 	while (curr)
 	{
-		if (last && last == curr->left)
-			rope_print(curr->right);
+		if (last && last == curr->left && !(rope_print_index(curr->right, end)))
+			return ;
 		last = curr;
 		curr = curr->parent;
 	}
