@@ -381,9 +381,13 @@ void			rope_print_from_index(t_rope_node *rope, int i, int j)
 	curr = last->parent;
 	i = i == 0 ? 0 : i - 1;
 	if (!last)
+	{
 		return ;
+	}
 	if (last->str[0])
+	{
 		ft_printf_fd(STDERR_FILENO, "%s", last->str + i);
+	}
 	if (last == end)
 		return ;
 	while (curr)
