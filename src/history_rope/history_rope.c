@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 13:39:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 17:29:39 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 23:25:45 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,14 +193,14 @@ t_rope_node		*rope_prune_singles(t_rope_node *start)
 			if (leaf)
 			{
 				leaf->parent = curr->parent;
-				if (leaf->parent && leaf->parent->left == curr)
-					leaf->parent->left = leaf;
-				else if (leaf->parent && leaf->parent->right == curr)
-					leaf->parent->right = leaf;
 				leaf->removed_length = curr->removed_length;
 			}
-			else
+			else if (curr->parent)
 				parent = curr->parent;
+			if (curr->parent && curr->parent->left == curr)
+				curr->parent->left = leaf;
+			if (curr->parent && curr->parent->right == curr)
+				curr->parent->right = leaf;
 			free(curr);
 			last = leaf;
 			curr = parent;
@@ -386,6 +386,7 @@ void			rope_print_from_index(t_rope_node *rope, int i, int j)
 	}
 	if (last->str[0])
 	{
+		//ft_printf_fd(STDERR_FILENO, "i:|%d|", i);
 		ft_printf_fd(STDERR_FILENO, "%s", last->str + i);
 	}
 	if (last == end)
@@ -456,7 +457,10 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	int			lpos = pos;
 	t_rope_node	*idx = rope_idx(rope, &lpos);
 	lpos -= lpos == 0 ? 0 : 1;
-	//ft_printf_fd(STDERR_FILENO, "added rope node at %d len %d\n", pos, (int)ft_strlen(data));
+	//ft_printf_fd(STDERR_FILENO, "added rope node at %d ", pos);
+	//if (idx)
+	//	ft_printf_fd(STDERR_FILENO, " lp %d ", lpos);
+	//ft_printf_fd(STDERR_FILENO, "s %d sr %d\n", (int)ft_strlen(data), sum_length(rope));
 	//ft_printf_fd(STDERR_FILENO, "rope insert\n");
 	if (idx && ft_strlen(idx->str) + ft_strlen(data) <= LEAF_SIZE)
 	{
@@ -464,7 +468,7 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 		//	ft_printf("\n");
 		//ft_printf_fd(STDERR_FILENO, "left\n");
 		ft_memmove(idx->str + lpos + ft_strlen(data), idx->str + lpos,
-				ft_strlen(idx->str + lpos));
+				ft_strlen(idx->str - lpos));
 		ft_memcpy(idx->str + lpos, data, ft_strlen(data));
 		idx->removed_length = ft_strlen(data);
 		idx->removed_length *= -1;

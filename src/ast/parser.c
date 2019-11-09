@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 18:23:29 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/08 23:42:14 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,7 +236,7 @@ void				exec_node_parse(t_node *node, int in, int out)
 		else
 		{
 			ft_readstdin_line(1, node->children->lexeme->data);
-			write(out, g_term.line_in, ft_strlen(g_term.line_in));
+			//write(out, g_term.line_in, ft_strlen(g_term.line_in));
 		}
 		return ;
 	}

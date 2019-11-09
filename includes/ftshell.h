@@ -53,7 +53,6 @@ typedef struct s_term		t_term;
 typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
 typedef struct s_tbuff		t_tbuff;
-//typedef struct s_rope		t_rope;
 
 typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
@@ -157,36 +156,11 @@ struct s_rope_node
 	char		str[LEAF_SIZE + 1];
 };
 
-/*
-struct s_rope
-{
-	t_rope	*left;
-	t_rope	*right;
-	t_rope	*parent; 
-    char *str;
-    int lCount;
-};
-*/
-
-/*
-struct s_tbuff_queue
-{
-	char					buff[200];
-	size_t					size;
-	size_t					pos;
-	struct s_tbuff_queue	*next;
-};
-*/
 struct s_tbuff
 {
-	//struct s_tbuff_queue	*first;
-	//struct s_tfuff_queue	*last;
-	char				rope_buff[LEAF_SIZE + 1];
-	int					rope_buff_pos;
-	int					rope_buff_cursor;
 	int					cursor;
 	t_rope_node			*rope;
-	size_t				rope_size;
+	//size_t				rope_size;
 	struct s_tbuff		*next;
 	struct s_tbuff		*prev;
 };
@@ -204,7 +178,6 @@ struct						s_shellconf
 struct						s_term
 {
 	struct s_env			env;
-	char					*line_in;
 	char					**symbls;
 	t_tbuff					*buff;
 	t_tbuff					*curr_buff;
@@ -224,18 +197,17 @@ struct						s_stats
 /*
 ** TERMCAPS
 */
-
+int		ft_charput(int c);
 void			reset_term(void);
 void			init_term(void);
 int				term_write(char *str, int fd, int len);
-int				redo_buffer(char *new_buffer);
 
 /*
 ** SIGNALS
 */
 
 void			set_sighandle(void);
-int				handle_controls(unsigned long code, char *str, char *saved);
+int				handle_controls(unsigned long code, char *str);
 
 /*
 ** SHELL
@@ -256,7 +228,6 @@ void		tbuff_new(t_tbuff **buff);
 //void        	tbuff_push(t_tbuff **buff, char *s);
 //char			*tbuff_peek(t_tbuff *buff);
 int		reprint_buffer(t_tbuff *buff);
-void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input);
 void	rope_free(t_rope_node *rope);
 void			tbuff_free(t_tbuff **buff);
 void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   write.c                                            :+:      :+:    :+:   */
+/*   line_buffer.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 17:40:34 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 23:32:10 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,62 +46,6 @@ int		term_write(char *str, int fd, int cmd)
 	return (1);
 }
 
-/*
-int		rem_from_buf(char *str, int pos)
-{
-	int	i;
-	int	max;
-
-	max = ft_strlen(str);
-	i = 0;
-	while (pos != i)
-		i++;
-	while (str[i])
-	{
-		str[i] = str[i + 1];
-		i++;
-	}
-	str[i] = 0;
-	return (1);
-}
-
-int		delete_char(char *str)
-{
-	char		buf[30];
-	int			curpos;
-	static int	broke_line;
-
-	if (!str)
-		return (1);
-	if (ft_strlen(str) < 1)
-		return (1);
-	ft_printf_fd(STDERR_FILENO, " ");
-	ft_putstr_fd("\b", STDERR_FILENO);
-	g_term.conf.cursor[0] -= 1;
-	rem_from_buf(str, (g_term.conf.cursor[0] + (g_term.conf.curlines - 1)) + ((g_term.conf.curlines - 1) * (g_window_size.ws_col - 1)) - 2);
-	if (g_term.conf.cursor[0] < 0)
-	{
-		broke_line = 1;
-		g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
-		g_term.conf.cursor[1]--;
-		g_term.conf.curlines--;
-		ft_printf_fd(STDERR_FILENO, "\033[1A");
-		ft_printf_fd(STDERR_FILENO, "\033[%dC", g_term.conf.termsize[0]);
-		ft_printf_fd(STDERR_FILENO, " ");
-		ft_printf_fd(STDERR_FILENO, "\033[%dC", g_term.conf.termsize[0]);
-	}
-	else
-	{
-		if (broke_line)
-			broke_line = 0;
-		else
-			ft_putstr_fd("\b", STDERR_FILENO);
-		ft_putstr_fd(" \b", STDERR_FILENO);
-	}
-	return (1);
-}
-*/
-
 int		ft_charput(int c)
 {
 	return (write(1, &c, 1));
@@ -110,7 +54,6 @@ int		ft_charput(int c)
 int		reprint_buffer(t_tbuff *buff)
 {
 	//ft_printf_fd(STDERR_FILENO, "reprinting buff\ntermcursor h: %d y: %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
-	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
 	if (g_term.conf.cursor[1] == 0)
@@ -129,15 +72,17 @@ int		reprint_buffer(t_tbuff *buff)
 		index = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) - 1;
 		if (index <= 0)
 			index = 0;
+		else if (index - PROMPT_SIZE >= 0)
+			index -= PROMPT_SIZE;
 		else
-			index -= index - PROMPT_SIZE > 0 ? PROMPT_SIZE : 0;
+			index = 0;
 		//int cursor_size = (g_term.conf.cursor[0] == 0 && index - 1 > 0) ? 1 : 0;
 		//ft_printf_fd(STDERR_FILENO, "index: %d rindex: %d\n", index, g_term.curr_buff->cursor);
 		if (buff->rope)
 		{
 			if (g_term.conf.cursor[1] > 0)
 			{
-				//ft_printf_fd(STDERR_FILENO, "i: %d s: %d", index, size);
+				//ft_printf_fd(STDERR_FILENO, "tsx %d tsy: %d | i: %d s: %d", g_term.conf.termsize[0], g_term.conf.termsize[1], index, size);
 				rope_print_from_index(buff->rope, index + 1, size);
 			}
 			//rope_print_from_index(buff->rope, 1, size);
@@ -157,27 +102,35 @@ int		reprint_buffer(t_tbuff *buff)
 int     move_cursor(int amt)
 {
 	//ft_printf_fd(STDERR_FILENO, "move cursor\n");
-    if (!g_term.curr_buff || g_term.conf.cursor[0] + amt > sum_length(g_term.curr_buff->rope) + 2)
+    int size = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - 1;
+
+	if (!g_term.curr_buff || (g_term.conf.cursor[0] + amt < 2 && g_term.conf.cursor[1] == 0))
         return (0);
     else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
     {
-		ft_printf_fd(STDERR_FILENO, "\n\b\b");
+		//tputs(tgetstr("cr", NULL), 0, ft_charput);
+		//tputs(tgetstr("al", NULL), 0, ft_charput);
+		tputs(tgetstr("do", NULL), 0, ft_charput);
         g_term.conf.cursor[0] = amt;
         g_term.conf.cursor[1]++;
         g_term.conf.curlines++;
+		//ft_printf_fd(STDERR_FILENO, "gsize x: %d y: %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
     }
     else if (g_term.conf.cursor[0] + amt < 0)
     {
+		tputs(tgetstr("up", NULL), 0, ft_charput);
+		for (int i = 1; i < g_term.conf.termsize[0]; i++)
+			tputs(tgetstr("nd", NULL), 0, ft_charput);
         g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
         g_term.conf.cursor[1]--;
         g_term.conf.curlines--;
     }
-    else if (g_term.curr_buff && g_term.conf.cursor[0] + amt <= sum_length(g_term.curr_buff->rope) + 2)
+    else if (g_term.curr_buff && size - PROMPT_SIZE <= sum_length(g_term.curr_buff->rope))
         g_term.conf.cursor[0] += amt;
     return (1);
 }
 
-int		handle_controls(unsigned long code, char *str, char *saved)
+int		handle_controls(unsigned long code, char *str)
 {
 	int ret = 0;
 

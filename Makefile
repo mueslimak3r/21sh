@@ -1,17 +1,19 @@
 NAME = 21sh
 
-SRC = main.c signals.c write.c utils.c \
-	parser.c lexer.c exec.c error.c builtin.c \
-	flavor.c env.c rc.c alias.c input_buffer.c \
-	exec2.c env2.c auto.c rope2.c
+SRC = src/main.c \
+	src/ast/lexer.c src/ast/parser.c \
+	src/env/alias.c src/env/auto.c src/env/env.c src/env/env2.c src/env/rc.c \
+	src/exec/exec.c src/exec/exec2.c \
+	src/history_rope/history_buffer.c src/history_rope/history_rope.c \
+	src/shell/builtin.c src/shell/error.c src/shell/flavor.c src/shell/input.c src/shell/signals.c src/shell/utils.c
 
-OBJ = $(SRC:.c=.o)
+#SRC_POS = $(addprefix $(SRC_PATH),$(SRC))
 
-SRC_PATH = src/
+OBJ := $(notdir $(SRC)) #$(subst .c,.o,$(filter %.c, $(SRC))) #$(SRC:.c=.o)# $(subst .c,.o,$(SRC))#$(SRC:.c=.o)
 
-SRC_POS = $(addprefix $(SRC_PATH),$(SRC))
+#SRC_PATH := src/
 
-INC = -I includes
+INC := -I includes
 
 CC = gcc
 
@@ -24,7 +26,7 @@ $(NAME): $(OBJ)
 	@gcc $(FLAGS) $(OBJ) libft/libft.a -lncurses -o $(NAME)
 
 $(OBJ):
-	@$(CC) $(INC) $(FLAGS) -c $(SRC_POS)
+	@$(CC) $(INC) $(FLAGS) -c $(SRC)
 
 clean:
 	@make clean -C libft

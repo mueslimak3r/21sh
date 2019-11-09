@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 17:21:58 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 23:30:19 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int			ft_readstdin_line(int hd, char *stop)
 	while ((ret = read(0, &buf, 4)) >= 0)
 	{
 		ft_memcpy(thing.arr_form, buf, 4);
-		if ((handle_controls(thing.long_form, buf, g_term.line_in)) < 1)
+		if ((handle_controls(thing.long_form, buf)) < 1)
 		{
 			g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, g_term.curr_buff->cursor + 1);
 			reprint_buffer(g_term.curr_buff);
@@ -137,6 +137,7 @@ void		shell_loop(void)
 	g_term.buff = NULL;
 	g_term.curr_buff = NULL;
 	tree = NULL;
+	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	read_rcfile();
 	//rope_diagnostic();
 	while (!quit)

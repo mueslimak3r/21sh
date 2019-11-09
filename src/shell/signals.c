@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 04:10:16 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/25 04:10:32 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 23:44:12 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ static void		sig_resume(int nb)
 	{
 		init_term();
 		set_sighandle();
-		term_write(PROMPT, STDERR_FILENO, 1);
-		term_write(g_term.line_in, STDERR_FILENO, 0);
+		if (g_term.curr_buff)
+			reprint_buffer(g_term.curr_buff);
 	}
 }
 
