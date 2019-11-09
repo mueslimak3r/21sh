@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 10:24:04 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 07:04:36 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 16:07:58 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,20 @@ int		ft_printf_fd(int fd, const char *fmt, ...)
 		}
 	}
 	return (1);
+}
+
+void	add_to_rope(const char *data)
+{
+	size_t	len;
+
+	len = ft_strlen(data);
+	while (len > 0)
+	{
+		g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope,
+				(char*)data, g_term.curr_buff->rope_buff_cursor + 1);
+		data += (len > 6 ? 6 : len);
+		len -= (len > 6 ? 6 : len);
+	}
 }
 
 /*

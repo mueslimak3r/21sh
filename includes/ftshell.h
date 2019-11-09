@@ -268,6 +268,7 @@ void			rope_print_from_index(t_rope_node *rope, int i, int j);
 char			*rope_getline(t_rope_node *rope, int i);
 int				sum_length(t_rope_node *head);
 t_rope_node		*rope_idx(t_rope_node *head, int *pos);
+void			add_to_rope(const char *data);
 /*
 ** ENVIRONMENT
 */

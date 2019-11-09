@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 10:34:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 18:16:34 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/08 16:07:52 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,12 @@ void		auto_complete(void)
 	char	*xstr;
 	char	**split;
 	int		i;
+	char	*treestr;
 	t_st_node	*tree;
 
+	treestr = rope_getline(g_term.curr_buff->rope, 1);
 	tree = NULL;
-	split = ft_strsplit(g_term.line_in, ' ');
+	split = ft_strsplit(treestr, ' ');
 	i = 0;
 	str = NULL;
 	in = NULL;
@@ -119,6 +121,7 @@ void		auto_complete(void)
 	xstr = path_expansions(dir);
 	free(dir);
 	get_dir(&tree, xstr);
-	redo_buffer(ft_strjoin(g_term.line_in, match_sub(&tree, str)));
+	add_to_rope(match_sub(&tree, str));
+	reprint_buffer(g_term.curr_buff);
 	dir = NULL;
 }
