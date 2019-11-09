@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 07:41:55 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/08 17:40:34 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int		term_write(char *str, int fd, int cmd)
 	return (1);
 }
 
+/*
 int		rem_from_buf(char *str, int pos)
 {
 	int	i;
@@ -99,21 +100,7 @@ int		delete_char(char *str)
 	}
 	return (1);
 }
-
-int		redo_buffer(char *new_buffer)
-{
-	while ((g_term.conf.curlines--))
-		ft_printf_fd(STDERR_FILENO, "\33[2K\r%s", g_term.conf.curlines ? "\33[1A" : "");
-	g_term.conf.curlines = 1;
-	g_term.conf.cursor[0] = 2;
-	g_term.conf.cursor[1] = 0;
-	if (g_term.line_in)
-		free(g_term.line_in);
-	g_term.line_in = ft_strdup(new_buffer);
-	ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
-	term_write(new_buffer, STDERR_FILENO, 1);
-	return (0);
-}
+*/
 
 int		ft_charput(int c)
 {
@@ -122,16 +109,9 @@ int		ft_charput(int c)
 
 int		reprint_buffer(t_tbuff *buff)
 {
-	//ft_printf_fd(STDERR_FILENO, "reprinting buff\n");
+	//ft_printf_fd(STDERR_FILENO, "reprinting buff\ntermcursor h: %d y: %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
 	tputs(tgetstr("dl", NULL), 0, ft_charput);
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
-	while ((g_term.conf.curlines))
-	{
-		g_term.conf.curlines--;
-	}	//ft_printf_fd(STDERR_FILENO, "\33[2K\r%s", g_term.conf.curlines ? "\33[1A" : "");
-	g_term.conf.curlines = 1;
-	g_term.conf.cursor[0] = 2;
-	g_term.conf.cursor[1] = 0;
 	ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
 	if (buff)
 	{
@@ -144,15 +124,19 @@ int		reprint_buffer(t_tbuff *buff)
 		if (buff->rope)
 			rope_print(buff->rope);
 		//if (buff->rope_buff[0] && size <= buff->cursor - 1)
-		term_write(buff->rope_buff, STDERR_FILENO, 1);
+		//ft_printf_fd(STDERR_FILENO, "%s", buff->rope_buff);//term_write(buff->rope_buff, STDERR_FILENO, 1);
 		//rope_print_from_index(buff->rope, buff->cursor + 1, size);
+		tputs(tgetstr("cr", NULL), 0, ft_charput);
+		for (int i = 0; i < g_term.conf.cursor[0]; i++)
+			tputs(tgetstr("nd", NULL), 0, ft_charput);
 	}
 	return (0);
 }
 
 int     move_cursor(int amt)
 {
-    if (g_term.conf.cursor[0] + amt > (ft_strlen(g_term.line_in) + 2))
+	//ft_printf_fd(STDERR_FILENO, "move cursor\n");
+    if (!g_term.curr_buff || g_term.conf.cursor[0] + amt > sum_length(g_term.curr_buff->rope) + 2)
         return (0);
     if (g_term.conf.cursor[0] + amt > g_term.conf.termsize[0])
     {
@@ -166,7 +150,7 @@ int     move_cursor(int amt)
         g_term.conf.cursor[1]--;
         g_term.conf.curlines--;
     }
-    else if (g_term.conf.cursor[0] + amt <= ft_strlen(g_term.line_in))
+    else if (g_term.curr_buff && g_term.conf.cursor[0] + amt <= sum_length(g_term.curr_buff->rope) + 2)
         g_term.conf.cursor[0] += amt;
     return (1);
 }
@@ -176,39 +160,75 @@ int		handle_controls(unsigned long code, char *str, char *saved)
 	int ret = 0;
 
 	if (code == DELETE)
-		ret = delete_char(saved);
+	{
+		;
+	}
 	else if (code == ENTER)
 	{
 		ft_printf_fd(STDERR_FILENO, " \b\n");
 		g_term.conf.cursor[0] = ft_strlen(PROMPT);
-		g_term.conf.cursor[1]++;
+		g_term.conf.cursor[1] = 0;
 	}
 	else if (code == TAB)
 	{
 		auto_complete();
 	}
 	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
-	{
+	{	
+		if (code == UP)
+		{
+			if (g_term.curr_buff && g_term.curr_buff->next)
+			{
+				g_term.curr_buff = g_term.curr_buff->next;
+				int len = sum_length(g_term.curr_buff->rope);
+				g_term.curr_buff->cursor = len;
+				if (len < 1)
+				{
+					g_term.conf.cursor[0] = 2;
+					g_term.conf.cursor[1] = 0;
+				}
+				else
+				{
+					g_term.conf.cursor[0] = len % g_term.conf.termsize[0] + 2;
+					g_term.conf.cursor[1] = len / g_term.conf.termsize[0];
+				}
+				reprint_buffer(g_term.curr_buff);
+			}
+		}
+		if (code == DOWN)
+		{
+			if (g_term.curr_buff && g_term.curr_buff->prev)
+			{
+				g_term.curr_buff = g_term.curr_buff->prev;
+				int len = sum_length(g_term.curr_buff->rope);
+				g_term.curr_buff->cursor = len;
+				if (len < 1)
+				{
+					g_term.conf.cursor[0] = 2;
+					g_term.conf.cursor[1] = 0;
+				}
+				else
+				{
+					g_term.conf.cursor[0] = len % g_term.conf.termsize[0] + 2;
+					g_term.conf.cursor[1] = len / g_term.conf.termsize[0];
+				}
+				reprint_buffer(g_term.curr_buff);
+			}
+		}
 		if (code == LEFT || code == RIGHT)
 		{
+			int len = sum_length(g_term.curr_buff->rope);
+			if (code == LEFT)
+				g_term.curr_buff->cursor -= g_term.curr_buff->cursor < 1 ? 0 : 1;
+			else
+				g_term.curr_buff->cursor += g_term.curr_buff->cursor < len ? 1 : 0;
 			move_cursor(code == LEFT ? -1 : 1);
 			ft_printf_fd(STDERR_FILENO, "%s", str);
 		}
-		tbuff_move_cursor(g_term.curr_buff, code, str);
 	}
 	else
 		ret -= 1;
 	ret += 1;
-	//if (ret == 0)
-	//	term_write(str, STDERR_FILENO, 0);
-	//else
-	/*
-	if (ret == 0)
-	{
-		term_write(str, STDERR_FILENO, 0);
-	*/
-	if (ret != 0)
-		ft_memset(str, 0, BUFF_SIZE + 1); // redundant? we do the same memset at the end of ft_readstdin_line
 	//ft_printf_fd(STDERR_FILENO, "code: %lu\n", code);
 	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 14:31:53 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 17:21:58 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,58 +89,30 @@ int			ft_readstdin_line(int hd, char *stop)
 	int		ret;
 	t_input	thing;
 
+	tmp = NULL;
 	g_term.conf.curlines = 1;
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
 	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
 	thing.long_form = 0;
-	if (g_term.line_in)
-	{
-		free(g_term.line_in);
-		g_term.line_in = 0;
-	}
 	while ((ret = read(0, &buf, 4)) >= 0)
 	{
-		//rope_print(g_term.curr_buff->rope);
-		//if ((g_term.curr_buff->rope_buff)[0])
-		//	ft_printf_fd(STDERR_FILENO, "%s", g_term.curr_buff->rope_buff);
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf, g_term.line_in)) < 1)
 		{
-			// these lines will add to the rope as text is recieved.
-			// we need some sort of buffer to fill before kicking back to the tree
-			// to prevent new rope nodes for every character
-
-			// added that functionality in rope_insert. :D
 			g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, g_term.curr_buff->cursor + 1);
-			//tbuff_rope_add(g_term.curr_buff, g_term.curr_buff->rope_buff, buf);
 			reprint_buffer(g_term.curr_buff);
-			tmp = ft_strjoin(g_term.line_in, buf);
-			if (g_term.line_in)
-				free(g_term.line_in);
-			g_term.line_in = tmp;
 		}
 		else if (thing.long_form == ENTER && !hd)
 		{
-			if (g_term.curr_buff && g_term.curr_buff->rope_buff[0])
-			{
-				g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, g_term.curr_buff->rope_buff, g_term.curr_buff->cursor + 1);
-				ft_memset(g_term.curr_buff->rope_buff, 0, LEAF_SIZE + 1);
-				g_term.curr_buff->rope_buff_pos = 0;
-				g_term.curr_buff->rope_buff_cursor = 0;
-				//reprint_buffer(g_term.curr_buff, 1);
-			}
-			debug_print(g_term.curr_buff->rope, 1);
-			//tbuff_push(&g_term.buff, g_term.line_in);
+			g_term.curr_buff->cursor = sum_length(g_term.curr_buff->rope) - 1;
+			if (g_term.curr_buff->cursor < 0)
+				g_term.curr_buff->cursor = 0;
 			return (1);
 		}
 		else if (thing.long_form == ENTER)
 		{
 			ft_printf_fd(STDERR_FILENO, "enter hd\n");
-			tmp = ft_strjoin(g_term.line_in, buf);
-			if (g_term.line_in)
-				free(g_term.line_in);
-			g_term.line_in = tmp;
 			if (has_hd(tmp, stop))
 				return (1);
 			term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
@@ -162,43 +134,32 @@ void		shell_loop(void)
 	g_term.conf.cursor[0] = 0;
 	g_term.conf.cursor[1] = 0;
 	g_term.conf.curr_c = -1;
-	g_term.line_in = NULL;
 	g_term.buff = NULL;
 	g_term.curr_buff = NULL;
 	tree = NULL;
 	read_rcfile();
-	rope_diagnostic();
+	//rope_diagnostic();
 	while (!quit)
 	{
 
 		if (!g_term.buff || (g_term.buff && g_term.buff->rope))
-		{
-			//ft_printf_fd(STDERR_FILENO, "making new buff\n");
 			tbuff_new(&g_term.buff);
-		}
 		g_term.curr_buff = g_term.buff;
 		if (!ft_readstdin_line(0, NULL))
 			continue ;
 		if (g_term.curr_buff)
 		{
 			ft_printf_fd(STDERR_FILENO, "BUFF:{\n");
+			//debug_print(g_term.curr_buff->rope, 1);
 			rope_print(g_term.curr_buff->rope);
-			if ((g_term.curr_buff->rope_buff)[0])
-				ft_printf_fd(STDERR_FILENO, "%s", g_term.curr_buff->rope_buff);
 			ft_printf_fd(STDERR_FILENO, "\n}\n");
 		}
-		//ft_printf_fd(STDERR_FILENO, "done reading line: %s\n", g_term.line_in);
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
 		if (!g_term.curr_buff || !g_term.curr_buff->rope)
 			continue ;
 		tree = lexer(rope_getline(g_term.curr_buff->rope, 1));
-		//ft_printf_fd(STDERR_FILENO, "finished with lexing\n");
-		free(g_term.line_in);
-		g_term.line_in = NULL;
 		recurse(tree, &stats);
-		//ft_printf_fd(STDERR_FILENO, "finished with tree\n");
-		//tbuff_print(g_term.buff);
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}

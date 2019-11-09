@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 13:39:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 14:39:02 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 17:29:39 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,7 +357,7 @@ int				rope_print_index(t_rope_node *rope, t_rope_node *end)
 		return (0);
 	else if (rope->str[0])
 	{
-		term_write(rope->str, STDERR_FILENO, 1);
+		ft_printf_fd(STDERR_FILENO, "%s", rope->str);
 		if (rope == end)
 			return (0);
 		return (1);
@@ -383,7 +383,7 @@ void			rope_print_from_index(t_rope_node *rope, int i, int j)
 	if (!last)
 		return ;
 	if (last->str[0])
-		term_write(last->str + i, STDERR_FILENO, 1);
+		ft_printf_fd(STDERR_FILENO, "%s", last->str + i);
 	if (last == end)
 		return ;
 	while (curr)
@@ -453,23 +453,22 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	t_rope_node	*idx = rope_idx(rope, &lpos);
 	lpos -= lpos == 0 ? 0 : 1;
 	//ft_printf_fd(STDERR_FILENO, "added rope node at %d len %d\n", pos, (int)ft_strlen(data));
-
+	//ft_printf_fd(STDERR_FILENO, "rope insert\n");
 	if (idx && ft_strlen(idx->str) + ft_strlen(data) <= LEAF_SIZE)
 	{
 		//if (lpos == 1)
 		//	ft_printf("\n");
+		//ft_printf_fd(STDERR_FILENO, "left\n");
 		ft_memmove(idx->str + lpos + ft_strlen(data), idx->str + lpos,
 				ft_strlen(idx->str + lpos));
 		ft_memcpy(idx->str + lpos, data, ft_strlen(data));
 		idx->removed_length = ft_strlen(data);
 		idx->removed_length *= -1;
 		//ft_printf_fd(STDERR_FILENO, "adding len %d at index: %d lpos: %d\n", idx->removed_length, pos, lpos);
-		if (g_term.curr_buff)
-			g_term.curr_buff->cursor += ft_strlen(data);
+		t_rope_node *ret = NULL;
 		if (idx->parent && idx->parent->left == idx)
 		{
-			//ft_printf_fd(STDERR_FILENO, "left\n");
-			return (rope_prune_singles(rope));
+			ret = rope_prune_singles(rope);
 		}
 		else if (idx->parent && idx->parent->parent)
 		{
@@ -477,15 +476,20 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 			idx->length -= idx->removed_length;
 			idx->parent->parent->removed_length += idx->removed_length;
 			idx->removed_length = 0;
-			return (rope_prune_singles(idx->parent->parent));
+			ret = rope_prune_singles(idx->parent->parent);
 		}
 		else
 		{
 			idx->length -= idx->removed_length;
 			idx->removed_length = 0;
 			//ft_printf_fd(STDERR_FILENO, "else\n");
-			return (rope_prune_singles(rope));
+			ret = rope_prune_singles(rope);
 		}
+		g_term.curr_buff->rope = ret;
+		move_cursor(ft_strlen(data));
+		if (g_term.curr_buff)
+			g_term.curr_buff->cursor += ft_strlen(data);
+		return (ret);
 	}
 	new = malloc(sizeof(*new));
 	ft_memset(new->str, 0, LEAF_SIZE + 1);
@@ -498,7 +502,11 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	if (g_term.curr_buff)
 		g_term.curr_buff->cursor += new->length;
 	if (!rope)
+	{
+		g_term.curr_buff->rope = new;
+		move_cursor(ft_strlen(data));
 		return (new);
+	}
 	if (pos < sum_length(rope))
 	{
 		//ft_printf_fd(STDERR_FILENO, "before:\n");
@@ -516,11 +524,11 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 		tmp2 = rope_concat(new, tmp);
 	}
 	else
-	{
-		ft_printf_fd(STDERR_FILENO, "+\b");
 		tmp2 = new;
-	}
-	return (rope_concat(rope, tmp2));
+	rope = rope_concat(rope, tmp2);
+	g_term.curr_buff->rope = rope;
+	move_cursor(ft_strlen(data));
+	return (rope);
 }
 
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   auto.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 10:34:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 16:07:52 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/08 17:43:27 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,8 @@ void		auto_complete(void)
 	char	*treestr;
 	t_st_node	*tree;
 
+	if (!g_term.curr_buff->rope)
+		return ;
 	treestr = rope_getline(g_term.curr_buff->rope, 1);
 	tree = NULL;
 	split = ft_strsplit(treestr, ' ');

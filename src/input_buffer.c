@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/08 15:18:06 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/08 16:27:20 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 		{
 			if (code == UP)
 			{
-				//ft_printf_fd(STDERR_FILENO, "going up\n");
 				if (g_term.curr_buff && g_term.curr_buff->next)
 				{
 					g_term.curr_buff = g_term.curr_buff->next;
@@ -77,7 +76,6 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 			}
 			if (code == DOWN)
 			{
-				//ft_printf_fd(STDERR_FILENO, "going down\n");
 				if (g_term.curr_buff && g_term.curr_buff->prev)
 				{
 					g_term.curr_buff = g_term.curr_buff->prev;
@@ -91,56 +89,6 @@ void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str)
 	if (code == LEFT || code == RIGHT)
 	{
 		buff->rope_buff_cursor += (code == LEFT) ? -1 : 1;
-		//ft_printf_fd(STDERR_FILENO, "%s", str);
-	}
-}
-
-void		tbuff_insert_text(t_tbuff *buff, char *rope_buff, char *input, int size)
-{
-	//int size = ft_strlen(input);
-	//ft_printf_fd(STDERR_FILENO, "inserting %s at bpos: %d\n", input, buff->rope_buff_pos);
-	if (buff->rope_buff_cursor < buff->rope_buff_pos)
-		ft_memmove(rope_buff + buff->rope_buff_cursor, rope_buff + buff->rope_buff_cursor, size - buff->rope_buff_cursor);
-	buff->rope_buff_pos += size;
-	ft_memcpy(rope_buff + buff->rope_buff_cursor, input, size);
-	buff->rope_buff_cursor += size;
-}
-
-void		tbuff_rope_add(t_tbuff *buff, char *rope_buff, char *input)
-{
-				//int pos = g_term.conf.termsize[0] * g_term.conf.cursor[1] + g_term.conf.cursor[0] - 2;
-			//g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, pos + 1);
-	int size = ft_strlen(input);
-	if (buff->rope_buff_pos + size == LEAF_SIZE)
-	{
-		tbuff_insert_text(buff, buff->rope_buff, input, size);
-		buff->rope = rope_insert(buff->rope, rope_buff, buff->cursor + 1);
-		ft_memset(rope_buff, 0, LEAF_SIZE + 1);
-		buff->rope_buff_pos = 0;
-		buff->rope_buff_cursor = 0;
-	}
-	else if (buff->rope_buff_pos + size < LEAF_SIZE)
-		tbuff_insert_text(buff, buff->rope_buff, input, size);
-	else if (buff->rope_buff_pos + size > LEAF_SIZE)
-	{
-		//ft_printf_fd(STDERR_FILENO, "overflow: pos %d size: %d\n", buff->rope_buff_pos, size);
-		int leftover = size;
-		tbuff_insert_text(buff, buff->rope_buff, input, LEAF_SIZE - buff->rope_buff_pos);
-		buff->rope = rope_insert(buff->rope, rope_buff, buff->cursor + 1);
-		ft_memset(rope_buff, 0, LEAF_SIZE + 1);
-		buff->rope_buff_pos = 0;
-		buff->rope_buff_cursor = 0;
-		leftover -= LEAF_SIZE - buff->rope_buff_pos;
-		while (leftover > 0)
-		{
-			ft_printf_fd(STDERR_FILENO, "loop leftover: %d\n", leftover);
-			tbuff_insert_text(buff, buff->rope_buff, input, (leftover >= LEAF_SIZE) ? LEAF_SIZE : leftover);
-			buff->rope = rope_insert(buff->rope, rope_buff, buff->cursor + 1);
-			ft_memset(rope_buff, 0, LEAF_SIZE + 1);
-			buff->rope_buff_pos = 0;
-			buff->rope_buff_cursor = 0;
-			leftover -= (leftover >= LEAF_SIZE) ? LEAF_SIZE : leftover;
-		}
 	}
 }
 

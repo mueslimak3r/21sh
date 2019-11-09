@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 10:24:04 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 16:07:58 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/08 17:49:58 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,28 @@ int		ft_printf_fd(int fd, const char *fmt, ...)
 void	add_to_rope(const char *data)
 {
 	size_t	len;
-
+	int		pos = 0;
+	char	buff[LEAF_SIZE + 1];
+	if (!data)
+		return ;
 	len = ft_strlen(data);
-	while (len > 0)
+	/*while (len > 0)
 	{
+		ft_memset();
 		g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope,
-				(char*)data, g_term.curr_buff->rope_buff_cursor + 1);
+				(char*)data, g_term.curr_buff->cursor + 1);
 		data += (len > 6 ? 6 : len);
 		len -= (len > 6 ? 6 : len);
+	}
+	*/
+	int leftover = len;
+	while (leftover > 0)
+	{
+		ft_printf_fd(STDERR_FILENO, "loop leftover: %d\n", leftover);
+		ft_memmove(buff, data + pos, (leftover >= LEAF_SIZE) ? LEAF_SIZE : leftover);
+		g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buff, g_term.curr_buff->cursor + 1);
+		leftover -= (leftover >= LEAF_SIZE) ? LEAF_SIZE : leftover;
+		pos += (leftover >= LEAF_SIZE) ? LEAF_SIZE : leftover;
 	}
 }
 
