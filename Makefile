@@ -24,7 +24,7 @@ $(NAME): $(OBJ)
 
 %.d : %.c
 	./depend.sh $*.o $(CFLAGS) $< > $@
-	echo "\t$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
+	printf '\t%s' "$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
 
 clean:
 	@make clean -C libft
