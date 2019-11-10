@@ -39,7 +39,8 @@ $(NAME): $(OBJ)
 
 clean:
 	@make clean -C libft
-	@rm -f $(OBJ) && rm -f $(cat all.d)
+	@rm -f $(OBJ)
+	rm -f `cat all.d`
 	@rm -f all.d
 
 fclean: clean
