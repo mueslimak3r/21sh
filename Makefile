@@ -22,7 +22,7 @@ DEP :=	$(patsubst %.c,%.d,$(filter %.c,$(SRC)))
 include $(DEP)
 
 $(NAME): $(OBJ)
-	@make -C libft
+	make -C libft
 	$(CC) $(CFLAGS) $(OBJ) $(LIBS) -o $@
 	@echo $(patsubst %.o,%.d,$(OBJ)) > all.d
 
@@ -31,7 +31,7 @@ $(NAME): $(OBJ)
 
 %.d : %.c
 	./depend.sh $*.o $(CFLAGS) $< > $@
-	echo -e "\t$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
+	echo "\t$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
 
 #%.o: %.c %.d
 #	$(CC) $(CFLAGS) -c -o $@ $<
