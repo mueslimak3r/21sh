@@ -21,7 +21,7 @@
 # include <stdint.h>
 # include <wchar.h>
 # include <locale.h>
-# include "../../libft.h"
+# include "libft.h"
 
 typedef struct				s_buffer
 {

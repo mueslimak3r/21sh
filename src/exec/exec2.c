@@ -18,7 +18,7 @@ void	dup_close(int fd1, int fd2)
 	close(fd1);
 }
 
-int		execute_command(t_node *a, int in, int out, char **args)
+int		execute_command(int in, int out, char **args)
 {
 	char	*name;
 	pid_t	pid;

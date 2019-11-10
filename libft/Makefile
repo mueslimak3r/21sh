@@ -10,11 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
-INCLUDE = libft.h
-FLAGS = -Wall -Wextra -Werror -g #-fsanitize=address
-
-SRC = ft_memset.c ft_bzero.c ft_memcpy.c ft_memccpy.c ft_memmove.c \
+CC := gcc
+INCLUDE := -Ift_printf/includes -I.
+FLAGS := -Wall -Wextra -Werror # -g -fsanitize=address
+NAME := libft.a
+SRC_LIST := ft_memset.c ft_bzero.c ft_memcpy.c ft_memccpy.c ft_memmove.c \
 ft_memchr.c ft_memcmp.c ft_strlen.c ft_strdup.c ft_strcpy.c \
 ft_strncpy.c ft_strcat.c ft_strncat.c ft_strlcat.c ft_strchr.c \
 ft_strrchr.c ft_strstr.c ft_strnstr.c ft_strcmp.c ft_strncmp.c \
@@ -30,20 +30,30 @@ ft_strcase.c ft_itoa_base.c get_next_line.c ft_arraydel.c ft_makepath.c \
 ft_strndup.c ft_returnfree.c ft_readstdin_line.c ft_checkifc.c ft_realloc.c ft_atoi_base.c \
 ft_isspace.c ft_cntwords_space.c ft_strsplit_space.c ft_get_word.c ft_termcap.c ft_isnumber.c \
 ft_cntdigit.c ft_uitoa_base.c
+include ft_printf/Makefile
+OBJ := $(SRC_LIST:.c=.o)
 
-OBJ = $(SRC:.c=.o)
+$(NAME): $(OBJ)
+	@ar rc $(NAME) $(OBJ)
+	@ranlib $(NAME)
 
-all:
-	@$(CC) $(FLAGS) -c $(SRC)
-	@make -C ft_printf
+%.o: %.c
+	@$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
 
 clean:
-	@rm -f *.o
+	@rm -rf *.h.gch
+	@rm -f $(OBJ)
 
-fclean:
-	@rm -f *.o
-	@make fclean -C ft_printf
+fclean: clean
+	@rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+compile: re
+	@$(CC) $(FLAGS) $(INC) mymain.c $(NAME)
+	@make clean
+
+cleanup: fclean
+	@rm -rf *.out*
+
+.PHONY : all, re, clean, fclean, cleanup

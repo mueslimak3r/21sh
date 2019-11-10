@@ -76,7 +76,6 @@ int				init_env(void)
 {
 	extern char	**environ;
 	int			i;
-	char		**split;
 
 	i = 0;
 	ft_bzero(g_env, sizeof(t_ht*) * HT_OVERHEAD);

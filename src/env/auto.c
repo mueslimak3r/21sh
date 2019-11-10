@@ -38,32 +38,30 @@ char		*match_sub(t_st_node **tree, char *str)
 	tmp = *tree;
 	if (!str)
 		return (tmp->str);
-	while (tmp->children[str[i]])
-		tmp = tmp->children[str[i++]];
+	while (tmp->children[(int)str[i]])
+		tmp = tmp->children[(int)str[i++]];
 	return (ft_strjoin(str + i, tmp->str + 1));
 }
 
 void		add_to_tree(t_st_node **tree, char *str)
 {
 	t_st_node	*tmp;
-	t_st_node	*head;
 
 	tmp = *tree;
-	head = tmp;
 	if (!tmp)
 	{
 		tmp = malloc(sizeof(t_st_node));
 		tmp->parent = NULL;
 		tmp->str = ft_strdup(str);
 	}
-	while (tmp->children[*str])
-		tmp = tmp->children[*str++];
+	while (tmp->children[(int)*str])
+		tmp = tmp->children[(int)*str++];
 	while (*str)
 	{
-		tmp->children[*str] = malloc(sizeof(t_st_node));
-		tmp->children[*str]->str = ft_strdup(str);
-		tmp->children[*str]->parent = tmp;
-		tmp = tmp->children[*str];
+		tmp->children[(int)*str] = malloc(sizeof(t_st_node));
+		tmp->children[(int)*str]->str = ft_strdup(str);
+		tmp->children[(int)*str]->parent = tmp;
+		tmp = tmp->children[(int)*str];
 		str++;
 	}
 	while (tmp->parent)

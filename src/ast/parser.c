@@ -99,8 +99,6 @@ int				is_mod(t_lexeme *lexeme)
 
 int				is_arg(t_lexeme *lexeme)
 {
-	enum e_nodetype	tmp;
-
 	if (!lexeme)
 		return (0);
 	if (lexeme->set == WORD && (!lexeme->next || (is_arg(lexeme->next)
@@ -142,7 +140,6 @@ t_node			*abstract(t_node *node)
 {
 	t_node	*parent;
 	t_node	*tmp;
-	t_node	*child;
 	t_node	*new;
 
 	new = malloc(sizeof(t_node));
@@ -218,7 +215,6 @@ char				**concat_node(t_node *node)
 void				exec_node_parse(t_node *node, int in, int out)
 {
 	char	**disp;
-	t_node	*tmp;
 	int		i;
 
 	if (!node || node->evaluated)
@@ -242,7 +238,7 @@ void				exec_node_parse(t_node *node, int in, int out)
 	}
 	disp = concat_node(node);
 	if (run_builtins(disp, &g_term.env) == 2)
-		execute_command(node, in, out, disp);
+		execute_command(in, out, disp);
 	i = 0;
 	while (disp[i])
 		free(disp[i++]);
@@ -281,11 +277,9 @@ void			clean_tree(t_node *head)
 
 int				count_pipes(t_node *node)
 {
-	t_node	*tmp;
 	int		ret;
 
 	ret = 0;
-	tmp = node;
 	while (node)
 	{
 		if (node->lexeme && (node->lexeme->set == PIPE || node->lexeme->set == LESS
@@ -313,7 +307,6 @@ void			recurse(t_node *head, t_stats *stats)
 	t_node		*tmp;
 	t_node		*h2;
 	int			main_pipe[2];
-	int			out;
 	static int	pipes;
 
 	h2 = head;
@@ -322,7 +315,6 @@ void			recurse(t_node *head, t_stats *stats)
 	st++;
 #endif
 
-	out = 1;
 	while (h2)
 	{
 		main_pipe[0] = 0;

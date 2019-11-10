@@ -10,46 +10,52 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ../libft.a
+#NAME = ../libft.a
 
-SRC = ft_printf.c tools.c print_buffer.c \
-parse_u.c flags.c parse_chars.c parse_d.c parse_wchar.c
+SRC := ft_printf.c \
+		tools.c \
+		print_buffer.c \
+		parse_u.c \
+		flags.c \
+		parse_chars.c \
+		parse_d.c \
+		parse_wchar.c
 
-SRC_PATH = src/
+SRC_PATH := ft_printf/src/
 
-SRC_POS = $(addprefix $(SRC_PATH),$(SRC))
+SRC_LIST += $(addprefix $(SRC_PATH),$(SRC))
 
-OBJ = $(SRC:.c=.o)
+#OBJ = $(SRC:.c=.o)
 
-INC = -I includes
+INCLUDE += -Ift_printf/includes
 
-CC = gcc
+#CC = gcc
 
-FLAGS = -Wall -Wextra -Werror
+#FLAGS = -Wall -Wextra -Werror
 
-all: $(NAME)
+# all: $(NAME)
 
-$(NAME): $(OBJ)
-	@ar rc $(NAME) $(OBJ) ../*.o
-	@ranlib $(NAME)
+# $(NAME): $(OBJ)
+# 	@ar rc $(NAME) $(OBJ) ../*.o
+# 	@ranlib $(NAME)
 
-$(OBJ):
-	@$(CC) $(FLAGS) $(INC) -c $(SRC_POS)
+# $(OBJ):
+# 	@$(CC) $(FLAGS) $(INC) -c $(SRC_POS)
 
-clean:
-	@make clean -C ../
-	@rm -f $(OBJ)
+# clean:
+# 	@rm -rf *.h.gch
+# 	@rm -f $(OBJ)
 
-fclean: clean
-	@rm -f $(NAME)
+# fclean: clean
+# 	@rm -f $(NAME)
 
-re: fclean all
+# re: fclean all
 
-compile: re
-	@$(CC) $(FLAGS) -g -fsanitize=address $(INC) mymain.c $(NAME)
-	@make clean
+# compile: re
+# 	@$(CC) $(FLAGS) $(INC) mymain.c $(NAME)
+# 	@make clean
 
-cleanup: fclean
-	@rm -rf *.out*
+# cleanup: fclean
+# 	@rm -rf *.out*
 
-.PHONY : all, re, clean, fclean, cleanup
+# .PHONY : all, re, clean, fclean, cleanup

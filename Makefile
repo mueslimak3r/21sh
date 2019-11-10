@@ -1,36 +1,45 @@
 NAME = 21sh
-
-SRC = src/main.c \
-	src/ast/lexer.c src/ast/parser.c \
-	src/env/alias.c src/env/auto.c src/env/env.c src/env/env2.c src/env/rc.c \
-	src/exec/exec.c src/exec/exec2.c \
-	src/history_rope/history_buffer.c src/history_rope/history_rope.c \
-	src/shell/builtin.c src/shell/error.c src/shell/flavor.c src/shell/input.c src/shell/signals.c src/shell/utils.c
-
-#SRC_POS = $(addprefix $(SRC_PATH),$(SRC))
-
-OBJ := $(notdir $(SRC)) #$(subst .c,.o,$(filter %.c, $(SRC))) #$(SRC:.c=.o)# $(subst .c,.o,$(SRC))#$(SRC:.c=.o)
-
-#SRC_PATH := src/
-
-INC := -I includes
-
-CC = gcc
-
-FLAGS = -g -fsanitize=address #-Wall -Wextra -Werror #-g -fsanitize=address
+CC := gcc
 
 all: $(NAME)
 
+MODULES := src/ast src/env src/exec src/shell src/history_rope includes
+#look for include files in#each of the modules
+ #-g -Wall -Werror -Wextra  
+#extra libraries if required
+LIBDIRS := libft
+LIBS := -lncurses -Llibft -lft
+CFLAGS := -Wall -Werror -Wextra -Ilibft/ft_printf/includes  -Ilibft -Iincludes 
+MODNAME := module.mk
+SRC :=
+
+include $(patsubst %,%/$(MODNAME),$(MODULES))
+
+OBJ :=  $(patsubst %.c,%.o,$(filter %.c,$(SRC)))
+DEP :=	$(patsubst %.c,%.d,$(filter %.c,$(SRC)))
+		#$(patsubst %.h,%.d,$(filter %.h,$(SRC)))
+
+include $(DEP)
+
 $(NAME): $(OBJ)
 	@make -C libft
-	@gcc $(FLAGS) $(OBJ) libft/libft.a -lncurses -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBS) -o $@
 
-$(OBJ):
-	@$(CC) $(INC) $(FLAGS) -c $(SRC)
+
+#%.d: %.h
+#	./depend.sh `dirname $*.h` $(CFLAGS) $*.h > $@
+
+%.d : %.c
+	./depend.sh $*.o $(CFLAGS) $< > $@
+	echo -e "\t$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
+
+#%.o: %.c %.d
+#	$(CC) $(CFLAGS) -c -o $@ $<
+
 
 clean:
 	@make clean -C libft
-	@rm -f $(OBJ)
+	@rm -f $(OBJ) && find . -name "*.d" -delete
 
 fclean: clean
 	@make fclean -C libft
@@ -38,10 +47,4 @@ fclean: clean
 
 re: fclean all
 
-again: re
-	@make clean
-
-cleanup: fclean
-	@rm -rf *21sh*
-
-.PHONY : all, re, clean, fclean, again, cleanup
+.PHONY: all clean fclean re

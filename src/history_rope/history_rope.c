@@ -242,8 +242,6 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 {
 	t_rope_node	*head;
 	t_rope_node	*leaf;
-	t_rope_node	*tmp;
-	t_rope_node	*ret;
 	//t_orphan	*orphans;
 	//static int n;
 
@@ -599,7 +597,6 @@ void	rope_free(t_rope_node *rope)
 
 t_rope_node		*rope_delete(t_rope_node *rope, int pos, int size)
 {
-	t_rope_node *left = NULL;
 	t_rope_node *middle = NULL;
 	t_rope_node *right = NULL;
 	t_rope_node	*ret = NULL;

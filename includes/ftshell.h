@@ -17,7 +17,7 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <sys/ioctl.h>
-# include "../libft/libft.h"
+# include "libft.h"
 # include <sys/stat.h>
 # include <unistd.h>
 # include <dirent.h>
@@ -287,7 +287,7 @@ int				ft_alias(char *str);
 
 int				empty_buffer(int fd[2]);
 int		print_buffer(int fd[2]);
-int				execute_command(t_node *a, int in, int out, char **args);
+int		execute_command(int in, int out, char **args);
 void			print_banner(int fd);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);
@@ -301,3 +301,4 @@ void			rope_diagnostic(void);
 void			debug_print(t_rope_node *rope, int depth);
 
 #endif
+#define NOTHING something

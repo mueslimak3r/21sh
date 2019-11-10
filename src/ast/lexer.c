@@ -57,7 +57,6 @@ t_lexeme	*new_lex_helper(t_lexeme **head, t_lexeme *new)
 t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 {
 	t_lexeme	*new;
-	t_lexeme	*tmp;
 	char		*env;
 
 	new = malloc(sizeof(t_lexeme));

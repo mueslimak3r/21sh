@@ -21,7 +21,7 @@ int		term_write(char *str, int fd, int cmd)
 		return (1);
 	if (!cmd)
 	{
-		if (g_term.conf.cursor[0] + ft_strlen(str) > g_term.conf.termsize[0])
+	  if (g_term.conf.cursor[0] + ft_strlen(str) > (unsigned int)g_term.conf.termsize[0])
 		{
 			//if (g_term.conf.termsize[0] - g_term.conf.cursor[0] > 0)
 			//	write(des, str, g_term.conf.termsize[0] - g_term.conf.cursor[0]);
