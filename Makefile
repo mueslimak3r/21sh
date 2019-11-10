@@ -24,7 +24,7 @@ include $(DEP)
 $(NAME): $(OBJ)
 	@make -C libft
 	$(CC) $(CFLAGS) $(OBJ) $(LIBS) -o $@
-
+	@echo $(patsubst %.o,%.d,$(OBJ)) > all.d
 
 #%.d: %.h
 #	./depend.sh `dirname $*.h` $(CFLAGS) $*.h > $@
@@ -39,7 +39,8 @@ $(NAME): $(OBJ)
 
 clean:
 	@make clean -C libft
-	@rm -f $(OBJ) && find . -name "*.d" -delete
+	@rm -f $(OBJ) && rm -f $(cat all.d)
+	@rm -f all.d
 
 fclean: clean
 	@make fclean -C libft
