@@ -47,15 +47,16 @@ DEP :=	$(patsubst %.c,%.d,$(filter %.c,$(SRC)))
 $(NAME): $(OBJ)
 	@ar rc $@ $(OBJ)
 	@ranlib $@
-	@echo $(patsubst %.o,%.d,$(OBJ)) > all.d
+	
 
 %.d : %.c
 	@./depend.sh $*.o $(CFLAGS) $< > $@
 	@printf '\t%s' "$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
+	@echo $@ >> all.d
 
 clean:
 	rm -f $(OBJ)
-	rm -f `cat all.d 2>/dev/null`
+	rm -f $(shell cat all.d)
 	@rm -f all.d
 
 fclean: clean
@@ -63,4 +64,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean rmname fclean re\

@@ -20,19 +20,24 @@ DEP :=	$(patsubst %.c,%.d,$(filter %.c,$(SRC)))
 $(NAME): $(OBJ)
 	make -C libft
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBS) -o $@
-	@echo $(patsubst %.o,%.d,$(OBJ)) > all.d
 
 %.d : %.c
 	@./depend.sh $*.o $(CFLAGS) $< > $@
 	@printf '\t%s' "$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
+	@echo $@ >> all.d
 
 clean:
 	make clean -C libft
 	rm -f $(OBJ)
-	rm -f `cat all.d 2>/dev/null`
+	rm -f $(shell cat all.d)
 	@rm -f all.d
 
-fclean: clean
+clean_nolib:
+	rm -f $(OBJ)
+	rm -f $(shell cat all.d)
+	@rm -f all.d
+
+fclean: clean_nolib
 	make fclean -C libft
 	rm -f $(NAME)
 
