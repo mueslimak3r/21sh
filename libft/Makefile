@@ -6,54 +6,61 @@
 #    By: calamber <calamber@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/29 23:01:53 by calamber          #+#    #+#              #
-#    Updated: 2019/10/25 06:59:07 by calamber         ###   ########.fr        #
+#    Updated: 2019/11/10 03:48:03 by calamber         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+#CC := gcc
+#INCLUDE := -Ift_printf/includes -I.
+#FLAGS := -Wall -Wextra -Werror # -g -fsanitize=address
+#NAME := libft.a
+#SRC_LIST :=
+#include ft_printf/Makefile
+#OBJ := $(SRC_LIST:.c=.o)
+
+#$(NAME): $(OBJ)
+#	@ar rc $(NAME) $(OBJ)
+#	@ranlib $(NAME)
+
+#%.o: %.c
+#	@$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
+
+NAME = libft.a
 CC := gcc
-INCLUDE := -Ift_printf/includes -I.
-FLAGS := -Wall -Wextra -Werror # -g -fsanitize=address
-NAME := libft.a
-SRC_LIST := ft_memset.c ft_bzero.c ft_memcpy.c ft_memccpy.c ft_memmove.c \
-ft_memchr.c ft_memcmp.c ft_strlen.c ft_strdup.c ft_strcpy.c \
-ft_strncpy.c ft_strcat.c ft_strncat.c ft_strlcat.c ft_strchr.c \
-ft_strrchr.c ft_strstr.c ft_strnstr.c ft_strcmp.c ft_strncmp.c \
-ft_atoi.c ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c \
-ft_isprint.c ft_toupper.c ft_tolower.c ft_memalloc.c ft_memdel.c \
-ft_strnew.c ft_strdel.c ft_strclr.c ft_striter.c ft_striteri.c \
-ft_strmap.c ft_strmapi.c ft_strequ.c ft_strnequ.c ft_strsub.c \
-ft_strjoin.c ft_strtrim.c ft_strsplit.c ft_itoa.c ft_putchar.c \
-ft_putstr.c ft_putendl.c ft_putnbr.c ft_putchar_fd.c ft_putstr_fd.c \
-ft_putendl_fd.c ft_putnbr_fd.c ft_lstnew.c ft_lstdelone.c ft_lstdel.c \
-ft_lstadd.c ft_lstiter.c ft_lstmap.c ft_cntwords.c ft_isupper.c \
-ft_strcase.c ft_itoa_base.c get_next_line.c ft_arraydel.c ft_makepath.c \
-ft_strndup.c ft_returnfree.c ft_readstdin_line.c ft_checkifc.c ft_realloc.c ft_atoi_base.c \
-ft_isspace.c ft_cntwords_space.c ft_strsplit_space.c ft_get_word.c ft_termcap.c ft_isnumber.c \
-ft_cntdigit.c ft_uitoa_base.c
-include ft_printf/Makefile
-OBJ := $(SRC_LIST:.c=.o)
+
+all: $(NAME)
+
+MODULES := src ft_printf includes
+LIBDIRS :=
+LIBS :=
+CFLAGS := -Wall -Werror -Wextra -Ift_printf/includes -Iincludes 
+MODNAME := module.mk
+SRC :=
+
+include $(patsubst %,%/$(MODNAME),$(MODULES))
+
+OBJ :=  $(patsubst %.c,%.o,$(filter %.c,$(SRC)))
+DEP :=	$(patsubst %.c,%.d,$(filter %.c,$(SRC)))
+
+-include $(DEP)
 
 $(NAME): $(OBJ)
-	@ar rc $(NAME) $(OBJ)
-	@ranlib $(NAME)
+	@ar rc $@ $(OBJ)
+	@ranlib $@
+	@echo $(patsubst %.o,%.d,$(OBJ)) > all.d
 
-%.o: %.c
-	@$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
+%.d : %.c
+	@./depend.sh $*.o $(CFLAGS) $< > $@
+	@printf '\t%s' "$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
 
 clean:
-	@rm -rf *.h.gch
-	@rm -f $(OBJ)
+	rm -f $(OBJ)
+	rm -f `cat all.d 2>/dev/null`
+	@rm -f all.d
 
 fclean: clean
-	@rm -f $(NAME)
+	rm -f $(NAME)
 
 re: fclean all
 
-compile: re
-	@$(CC) $(FLAGS) $(INC) mymain.c $(NAME)
-	@make clean
-
-cleanup: fclean
-	@rm -rf *.out*
-
-.PHONY : all, re, clean, fclean, cleanup
+.PHONY: all clean fclean re

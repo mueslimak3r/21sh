@@ -6,7 +6,7 @@ all: $(NAME)
 MODULES := src/ast src/env src/exec src/shell src/history_rope includes
 LIBDIRS := libft
 LIBS := -lncurses -Llibft -lft
-CFLAGS := -Wall -Werror -Wextra -Ilibft/ft_printf/includes  -Ilibft -Iincludes 
+CFLAGS := -Wall -Werror -Wextra -Ilibft/includes -Iincludes 
 MODNAME := module.mk
 SRC :=
 
