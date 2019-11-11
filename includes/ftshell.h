@@ -301,4 +301,3 @@ void			rope_diagnostic(void);
 void			debug_print(t_rope_node *rope, int depth);
 
 #endif
-#define NOTHING something

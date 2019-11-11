@@ -27,7 +27,9 @@ t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 	t_node	*new;
 	t_node	*tmp;
 
-	new = malloc(sizeof(t_node));
+	new = ft_memalloc(sizeof(*new));
+	if (!new)
+		return (NULL);
 	new->set = set;
 	new->lexeme = lexeme;
 	new->parent = parent;

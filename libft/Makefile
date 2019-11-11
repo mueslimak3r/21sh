@@ -33,7 +33,7 @@ all: $(NAME)
 MODULES := src ft_printf includes
 LIBDIRS :=
 LIBS :=
-CFLAGS := -Wall -Werror -Wextra -Ift_printf/includes -Iincludes 
+CFLAGS := -Wall -Werror -Wextra -Iincludes 
 MODNAME := module.mk
 SRC :=
 
@@ -47,7 +47,6 @@ DEP :=	$(patsubst %.c,%.d,$(filter %.c,$(SRC)))
 $(NAME): $(OBJ)
 	@ar rc $@ $(OBJ)
 	@ranlib $@
-	
 
 %.d : %.c
 	@./depend.sh $*.o $(CFLAGS) $< > $@

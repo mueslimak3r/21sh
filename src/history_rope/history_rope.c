@@ -11,36 +11,6 @@
 /* ************************************************************************** */
 
 #include "ftshell.h"
-//#include <stdio.h>
-
-//typedef struct s_rope_node	t_rope_node;
-//typedef struct s_orphan		t_orphan;
-
-// meta struct for holding char count 
-/*
-struct s_rope
-{
-    t_rope_node *root;
-    size_t      char_count;
-};
-
-
-struct s_rope_node
-{
-	int			length;
-	int			removed_length;
-	t_rope_node	*parent;
-	t_rope_node	*left;
-	t_rope_node	*right;
-	char		*str;
-};
-
-struct s_orphan
-{
-	t_rope_node	*node;
-	t_orphan	*next;
-};
-*/
 
 t_rope_node		*rope_idx(t_rope_node *head, int *pos)
 {
@@ -125,25 +95,7 @@ t_rope_node		*collapse(t_rope_node *node)
 	parent = NULL;
 	return (tmp);
 }
-*/
 
-void			rebalance(t_rope_node *head)
-{
-	t_rope_node	*tmp;
-
-	if (head->left)
-		rebalance(head->left);
-	if (head->right)
-		rebalance(head->right);
-	if (head->left && head->right && head->left->length < head->right->length)
-	{
-		tmp = head->left;
-		head->left = head->right;
-		head->right = tmp;
-	}
-	head->length = head->left ? sum_length(head->left) : head->length;
-}
-/*
 t_rope_node		*rebuild_orphans(t_orphan *head)
 {
 	t_orphan	*tmp;
@@ -172,6 +124,24 @@ t_rope_node		*rebuild_orphans(t_orphan *head)
 	return (ret);
 }
 */
+
+void			rebalance(t_rope_node *head)
+{
+	t_rope_node	*tmp;
+
+	if (head->left)
+		rebalance(head->left);
+	if (head->right)
+		rebalance(head->right);
+	if (head->left && head->right && head->left->length < head->right->length)
+	{
+		tmp = head->left;
+		head->left = head->right;
+		head->right = tmp;
+	}
+	head->length = head->left ? sum_length(head->left) : head->length;
+}
+
 t_rope_node		*rope_prune_singles(t_rope_node *start)
 {
 	t_rope_node *curr = start;
