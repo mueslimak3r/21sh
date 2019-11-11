@@ -3,7 +3,7 @@ CC := gcc
 
 all: $(NAME)
 
-MODULES := src/ast src/env src/exec src/shell src/history_rope includes
+MODULES := src/ast src/env src/exec src/shell src/termcaps src/history_rope includes
 LIBDIRS := libft
 LIBS := -lncurses -Llibft -lft
 CFLAGS := -Wall -Werror -Wextra -Ilibft/includes -Iincludes 
@@ -24,18 +24,18 @@ $(NAME): $(OBJ)
 %.d : %.c
 	@./depend.sh $*.o $(CFLAGS) $< > $@
 	@printf '\t%s' "$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
-	@echo $@ >> all.d
+	@echo $@ >> all.log
 
 clean:
 	make clean -C libft
 	rm -f $(OBJ)
-	rm -f $(shell cat all.d)
-	@rm -f all.d
+	rm -f $(shell cat all.log)
+	@rm -f all.log
 
 clean_nolib:
 	rm -f $(OBJ)
-	rm -f $(shell cat all.d)
-	@rm -f all.d
+	rm -f $(shell cat all.log)
+	@rm -f all.log
 
 fclean: clean_nolib
 	make fclean -C libft

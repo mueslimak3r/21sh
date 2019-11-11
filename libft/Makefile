@@ -51,12 +51,12 @@ $(NAME): $(OBJ)
 %.d : %.c
 	@./depend.sh $*.o $(CFLAGS) $< > $@
 	@printf '\t%s' "$(CC) $(CFLAGS) -c -o $*.o $<" >> $@
-	@echo $@ >> all.d
+	@echo $@ >> all.log
 
 clean:
 	rm -f $(OBJ)
-	rm -f $(shell cat all.d)
-	@rm -f all.d
+	rm -f $(shell cat all.log)
+	@rm -f all.log
 
 fclean: clean
 	rm -f $(NAME)
