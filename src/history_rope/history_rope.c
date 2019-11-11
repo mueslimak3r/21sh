@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rope2.c                                            :+:      :+:    :+:   */
+/*   history_rope.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/04 13:39:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 23:25:45 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/10 22:45:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,15 @@ t_rope_node		*rope_idx(t_rope_node *head, int *pos)
 		return (NULL);
 	if (tmp->right && *pos > tmp->length)
 	{
-		*pos = *pos - (*pos == tmp->length ? 0 : tmp->length);
+		ft_printf_fd(STDERR_FILENO, "going right pos %d len %d str: %s\n", *pos, tmp->length, tmp->str);
+		*pos -= (*pos == tmp->length) ? 0 : tmp->length;
 		return (rope_idx(tmp->right, pos));
 	}
 	else if (tmp->left && *pos <= tmp->length)
+	{
+		ft_printf_fd(STDERR_FILENO, "going right pos %d len %d str: %s\n", *pos, tmp->length, tmp->str);
 		return (rope_idx(tmp->left, pos));
+	}
 	return (tmp);
 }
 
@@ -216,16 +220,17 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 	//static int n;
 
 	head = *headref;
-	leaf = rope_idx(head, &pos);
+	int	i = pos;
+	leaf = rope_idx(head, &i);
 	if (!leaf)
 		return (NULL);
 	t_rope_node *start;
     t_rope_node *rtree;
 	//ft_printf_fd(STDERR_FILENO, "splitting\n");
-	if (pos > 1)
+	if (i > 1)
 	{
-		//ft_printf_fd(STDERR_FILENO, "middle split\n");
-        rtree = split_node(leaf, pos);
+		ft_printf_fd(STDERR_FILENO, "original pos: %d, pos: %d, len: %d leaf str: |%s|\n", i, pos, leaf->length, leaf->str);
+        rtree = split_node(leaf, i);
         start = leaf;
     }
     else
