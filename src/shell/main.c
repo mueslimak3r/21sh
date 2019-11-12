@@ -93,9 +93,11 @@ int			ft_readstdin_line(int hd, char *stop)
 	thing.long_form = 0;
 	while ((ret = read(0, &buf, 4)) >= 0)
 	{
+		//ft_printf_fd(STDERR_FILENO, "reading...\n");
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf)) < 1)
 		{
+			//ft_printf_fd(STDERR_FILENO, "adding to rope at %d\n", g_term.curr_buff->cursor);
 			g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, g_term.curr_buff->cursor + 1);
 			reprint_buffer(g_term.curr_buff);
 		}

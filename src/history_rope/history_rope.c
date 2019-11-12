@@ -21,13 +21,13 @@ t_rope_node		*rope_idx(t_rope_node *head, int *pos)
 		return (NULL);
 	if (tmp->right && *pos > tmp->length)
 	{
-		ft_printf_fd(STDERR_FILENO, "going right pos %d len %d str: %s\n", *pos, tmp->length, tmp->str);
+		//ft_printf_fd(STDERR_FILENO, "going right pos %d len %d str: %s\n", *pos, tmp->length, tmp->str);
 		*pos -= (*pos == tmp->length) ? 0 : tmp->length;
 		return (rope_idx(tmp->right, pos));
 	}
 	else if (tmp->left && *pos <= tmp->length)
 	{
-		ft_printf_fd(STDERR_FILENO, "going right pos %d len %d str: %s\n", *pos, tmp->length, tmp->str);
+		//ft_printf_fd(STDERR_FILENO, "going left pos %d len %d str: %s\n", *pos, tmp->length, tmp->str);
 		return (rope_idx(tmp->left, pos));
 	}
 	return (tmp);
@@ -152,10 +152,11 @@ t_rope_node		*rope_prune_singles(t_rope_node *start)
 	t_rope_node *last = NULL;
 	while (curr)
 	{
-		curr->length -= curr->removed_length;
+		if (!last || (last && curr->left == last))
+			curr->length -= curr->removed_length;
 		if (last && last->removed_length)
 		{
-			curr->length -= last->removed_length;
+			//curr->length -= last->removed_length;
 			curr->removed_length += last->removed_length;
 			last->removed_length = 0;
 		}
@@ -229,7 +230,7 @@ t_rope_node		*rope_split(t_rope_node **headref, int pos)
 	//ft_printf_fd(STDERR_FILENO, "splitting\n");
 	if (i > 1)
 	{
-		ft_printf_fd(STDERR_FILENO, "original pos: %d, pos: %d, len: %d leaf str: |%s|\n", i, pos, leaf->length, leaf->str);
+		//ft_printf_fd(STDERR_FILENO, "original pos: %d, pos: %d, len: %d leaf str: |%s|\n", i, pos, leaf->length, leaf->str);
         rtree = split_node(leaf, i);
         start = leaf;
     }
@@ -428,44 +429,61 @@ t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos)
 	t_rope_node	*tmp2 = NULL;
 	t_rope_node	*new = NULL;
 	int			lpos = pos;
+	//ft_printf_fd(STDERR_FILENO, "added rope node at %d ", pos);
 	t_rope_node	*idx = rope_idx(rope, &lpos);
 	lpos -= lpos == 0 ? 0 : 1;
-	//ft_printf_fd(STDERR_FILENO, "added rope node at %d ", pos);
-	//if (idx)
-	//	ft_printf_fd(STDERR_FILENO, " lp %d ", lpos);
+	if (!idx && rope)
+	{
+		//ft_printf_fd(STDERR_FILENO, "idx and rope null\n");
+		return (rope);
+	}
 	//ft_printf_fd(STDERR_FILENO, "s %d sr %d\n", (int)ft_strlen(data), sum_length(rope));
 	//ft_printf_fd(STDERR_FILENO, "rope insert\n");
 	if (idx && ft_strlen(idx->str) + ft_strlen(data) <= LEAF_SIZE)
 	{
 		//if (lpos == 1)
 		//	ft_printf("\n");
-		//ft_printf_fd(STDERR_FILENO, "left\n");
+		//ft_printf_fd(STDERR_FILENO, "idx len %d lpos %d\n", idx->length, lpos);
 		ft_memmove(idx->str + lpos + ft_strlen(data), idx->str + lpos,
 				ft_strlen(idx->str - lpos));
 		ft_memcpy(idx->str + lpos, data, ft_strlen(data));
+		//ft_printf_fd(STDERR_FILENO, "value after memmove: |%s|\n", idx->str);
 		idx->removed_length = ft_strlen(data);
 		idx->removed_length *= -1;
 		//ft_printf_fd(STDERR_FILENO, "adding len %d at index: %d lpos: %d\n", idx->removed_length, pos, lpos);
 		t_rope_node *ret = NULL;
 		if (idx->parent && idx->parent->left == idx)
 		{
-			ret = rope_prune_singles(rope);
+			ret = rope_prune_singles(idx);
 		}
-		else if (idx->parent && idx->parent->parent)
+		else if (idx->parent && idx->parent->right == idx)
 		{
-			//ft_printf_fd(STDERR_FILENO, "right\n");
-			idx->length -= idx->removed_length;
-			idx->parent->parent->removed_length += idx->removed_length;
-			idx->removed_length = 0;
-			ret = rope_prune_singles(idx->parent->parent);
+			//ft_printf_fd(STDERR_FILENO, "not left\n");
+			//idx->length -= idx->removed_length;
+			//idx->parent->parent->removed_length += idx->removed_length;
+			//idx->removed_length = 0;
+			if (idx->parent)
+			{
+				ret = rope_prune_singles(idx);
+
+			}
 		}
 		else
 		{
 			idx->length -= idx->removed_length;
 			idx->removed_length = 0;
+			ret = rope;
+		}
+		/*
+		else
+		{
+			ft_printf_fd(STDERR_FILENO, "else\n");
+			idx->length -= idx->removed_length;
+			idx->removed_length = 0;
 			//ft_printf_fd(STDERR_FILENO, "else\n");
 			ret = rope_prune_singles(rope);
 		}
+		*/
 		g_term.curr_buff->rope = ret;
 		move_cursor(ft_strlen(data));
 		if (g_term.curr_buff)
