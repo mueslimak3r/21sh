@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/10 22:16:50 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/13 03:12:46 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,10 @@ int		handle_controls(unsigned long code, char *str)
 
 	if (code == DELETE)
 	{
-		;
+		g_term.curr_buff->rope = rope_delete(g_term.curr_buff->rope, g_term.curr_buff->cursor, 1);
+		g_term.curr_buff->cursor -= g_term.curr_buff->cursor > 0 ? 1 : 0;
+		move_cursor(-1);
+		reprint_buffer(g_term.curr_buff);
 	}
 	else if (code == ENTER)
 	{
