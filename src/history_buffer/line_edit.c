@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/13 22:37:43 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 05:14:30 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 06:01:07 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void        tbuff_line_insert(t_tbuff *buff, char *in, int pos)
 
     if (!buff)
         return ;
+    //ft_printf_fd(STDERR_FILENO, "in at %d\n", pos);
     in_size = ft_strlen(in);
     new_size = in_size + buff->len;
     if (!buff->buff_str || !*(buff->buff_str)) 

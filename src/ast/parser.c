@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/13 22:55:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/14 06:15:05 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,9 @@ void				exec_node_parse(t_node *node, int in, int out)
 		execute_command(in, out, disp);
 	i = 0;
 	while (disp[i])
-		free(disp[i++]);
+	{
+		ft_strdel(&disp[i++]);
+	}
 	free(disp);
 }
 

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 05:08:06 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 06:19:45 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ int		reprint_buffer(t_tbuff *buff)
 			ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str +
 					(g_term.conf.cursor > 0 ? index : 0));
 	}
-	tputs(tgetstr("cr", NULL), 0, ft_charput);
-	for (int i = 0; i < g_term.conf.cursor[0]; i++)
-			tputs(tgetstr("nd", NULL), 0, ft_charput);
+	//tputs(tgetstr("cr", NULL), 0, ft_charput);
+	//for (int i = 0; i < g_term.conf.cursor[0]; i++)
+	//		tputs(tgetstr("nd", NULL), 0, ft_charput);
 	return (0);
 }
 
@@ -87,8 +87,8 @@ int     move_cursor(int amt)
 		for (int i = 1; i < amt % g_term.conf.termsize[0]; i++)
 			tputs(tgetstr("nd", NULL), 0, ft_charput);
         g_term.conf.cursor[0] = (g_term.conf.cursor[0] + (amt % g_term.conf.termsize[0])) % g_term.conf.termsize[0];
-        g_term.conf.cursor[1] += amt / g_term.conf.termsize[0];
-        g_term.conf.curlines= g_term.conf.cursor[1];
+        g_term.conf.cursor[1] = (amt / g_term.conf.termsize[0]) + (amt % g_term.conf.termsize[0]);
+        g_term.conf.curlines = g_term.conf.cursor[1];
     }
     else if (g_term.conf.cursor[0] + amt < 0)
     {
@@ -100,7 +100,7 @@ int     move_cursor(int amt)
         g_term.conf.cursor[0] = (g_term.conf.cursor[0] - (amt % g_term.conf.termsize[0]));
 		g_term.conf.cursor[0] = (g_term.conf.cursor[0] < 0) ? -(g_term.conf.cursor[0]) : g_term.conf.cursor[0];
 		g_term.conf.cursor[0] = g_term.conf.cursor[0] % g_term.conf.termsize[0];
-        g_term.conf.cursor[1] -= amt / g_term.conf.termsize[0];
+        g_term.conf.cursor[1] -= (amt / g_term.conf.termsize[0]) + (amt % g_term.conf.termsize[0]);
         g_term.conf.curlines = g_term.conf.cursor[1];
     }
     else if (g_term.curr_buff && size - PROMPT_SIZE <= (int)ft_strlen(g_term.curr_buff->buff_str))
@@ -167,8 +167,8 @@ int		handle_controls(unsigned long code, char *str)
 				g_term.conf.cursor[0] = PROMPT_SIZE;
 				g_term.conf.cursor[1] = 0;
 				g_term.conf.curlines = 1;
-				move_cursor(len);
 				reprint_buffer(g_term.curr_buff);
+				move_cursor(len);
 			}
 		}
 		if (code == DOWN)
@@ -186,8 +186,8 @@ int		handle_controls(unsigned long code, char *str)
 				g_term.conf.cursor[0] = PROMPT_SIZE;
 				g_term.conf.cursor[1] = 0;
 				g_term.conf.curlines = 1;
-				move_cursor(len);
 				reprint_buffer(g_term.curr_buff);
+				move_cursor(len);
 			}
 		}
 		if (code == LEFT || code == RIGHT)
