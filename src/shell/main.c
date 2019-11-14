@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 23:30:19 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/13 15:28:56 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,15 +97,15 @@ int			ft_readstdin_line(int hd, char *stop)
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf)) < 1)
 		{
-			//ft_printf_fd(STDERR_FILENO, "adding to rope at %d\n", g_term.curr_buff->cursor);
-			g_term.curr_buff->rope = rope_insert(g_term.curr_buff->rope, buf, g_term.curr_buff->cursor + 1);
-			reprint_buffer(g_term.curr_buff);
+			// insert new text into buffer
+			//
+			//reprint_buffer(g_term.curr_buff);
 		}
 		else if (thing.long_form == ENTER && !hd)
 		{
-			g_term.curr_buff->cursor = sum_length(g_term.curr_buff->rope) - 1;
-			if (g_term.curr_buff->cursor < 0)
-				g_term.curr_buff->cursor = 0;
+			//
+			// set cursor to end of buff line
+			//
 			return (1);
 		}
 		else if (thing.long_form == ENTER)
@@ -146,13 +146,6 @@ void		shell_loop(void)
 		g_term.curr_buff = g_term.buff;
 		if (!ft_readstdin_line(0, NULL))
 			continue ;
-		if (g_term.curr_buff)
-		{
-			ft_printf_fd(STDERR_FILENO, "BUFF:{\n");
-			//debug_print(g_term.curr_buff->rope, 1);
-			rope_print(g_term.curr_buff->rope);
-			ft_printf_fd(STDERR_FILENO, "\n}\n");
-		}
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
 		if (!g_term.curr_buff || !g_term.curr_buff->rope)

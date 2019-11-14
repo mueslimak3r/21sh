@@ -158,9 +158,7 @@ struct s_rope_node
 
 struct s_tbuff
 {
-	int					cursor;
-	t_rope_node			*rope;
-	//size_t				rope_size;
+	char					*buff_str;
 	struct s_tbuff		*next;
 	struct s_tbuff		*prev;
 };
@@ -221,23 +219,13 @@ int				read_rcfile(void);
 ** INPUT BUFFER
 */
 
-t_rope_node		*rope_delete(t_rope_node *rope, int pos, int size);
-void			rope_print(t_rope_node *rope);
-t_rope_node		*rope_insert(t_rope_node *rope, char *data, int pos);
-void		tbuff_new(t_tbuff **buff);
-//void        	tbuff_push(t_tbuff **buff, char *s);
-//char			*tbuff_peek(t_tbuff *buff);
-int		reprint_buffer(t_tbuff *buff);
-void	rope_free(t_rope_node *rope);
+void			tbuff_new(t_tbuff **buff);
+int				reprint_buffer(t_tbuff *buff);
+void			tbuff_line_insert(t_tbuff *buff, char *in, int pos);
+void        	t_buff_line_rm(t_tbuff *buff, char *in, int pos, int size);
 void			tbuff_free(t_tbuff **buff);
-void		tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
-void			rope_print_from_index(t_rope_node *rope, int i, int j);
-char			*rope_getline(t_rope_node *rope, int i);
-int				sum_length(t_rope_node *head);
-t_rope_node		*rope_idx(t_rope_node *head, int *pos);
-void			add_to_rope(const char *data);
-
-int     move_cursor(int amt);
+void			tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
+int				move_cursor(int amt);
 
 /*
 ** ENVIRONMENT
