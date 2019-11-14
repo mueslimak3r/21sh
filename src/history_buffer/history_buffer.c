@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/14 02:17:57 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 09:17:21 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void		tbuff_new(t_tbuff **buff)
 	}
 	new->len = 0;
 	new->buff_str = NULL;
+	//tbuff_line_setsize(new, 0);
 	*buff = new;
 }
 

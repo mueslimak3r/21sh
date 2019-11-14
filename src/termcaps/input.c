@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 06:19:45 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 09:15:42 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,38 +73,56 @@ int		reprint_buffer(t_tbuff *buff)
 	return (0);
 }
 
-int     move_cursor(int amt)
+int     move_cursor(int amt, int affect_tc)
 {
     int size = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - 1;
 
-	if (!g_term.curr_buff || (g_term.conf.cursor[0] + amt < 2 && g_term.conf.cursor[1] == 0))
+	if (amt == 0 || !g_term.curr_buff || (g_term.conf.cursor[0] + amt < 2 && g_term.conf.cursor[1] == 0))
         return (0);
     else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
     {
-		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		for (int i = 0; i < amt / g_term.conf.termsize[0]; i++)
-			tputs(tgetstr("do", NULL), 0, ft_charput);
-		for (int i = 1; i < amt % g_term.conf.termsize[0]; i++)
-			tputs(tgetstr("nd", NULL), 0, ft_charput);
-        g_term.conf.cursor[0] = (g_term.conf.cursor[0] + (amt % g_term.conf.termsize[0])) % g_term.conf.termsize[0];
-        g_term.conf.cursor[1] = (amt / g_term.conf.termsize[0]) + (amt % g_term.conf.termsize[0]);
-        g_term.conf.curlines = g_term.conf.cursor[1];
+		if (affect_tc)
+		{
+			tputs(tgetstr("cr", NULL), 0, ft_charput);
+			for (int i = 0; i < (g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0]; i++)
+			{
+				tputs(tgetstr("sf", NULL), 0, ft_charput);
+			//tputs(tgetstr("do", NULL), 0, ft_charput);
+			}
+			for (int i = 1; i < amt % g_term.conf.termsize[0]; i++)
+				tputs(tgetstr("nd", NULL), 0, ft_charput);
+		}
+		//ft_printf_fd(STDERR_FILENO, "ayy x %d y %d trmsz: %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1], g_term.conf.termsize[0]);
+        g_term.conf.cursor[1] += (g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0];
+		g_term.conf.cursor[0] = (g_term.conf.cursor[0] + (amt % g_term.conf.termsize[0])) % g_term.conf.termsize[0];
+        // + (amt % g_term.conf.termsize[0]);
+        g_term.conf.curlines = g_term.conf.cursor[1] + 1;
+		//ft_printf_fd(STDERR_FILENO, "ayy2 x %d y %d trmsz: %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1], g_term.conf.termsize[0]);
     }
     else if (g_term.conf.cursor[0] + amt < 0)
     {
-		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		for (int i = 0; i < (-amt) / g_term.conf.termsize[0]; i++)
-			tputs(tgetstr("up", NULL), 0, ft_charput);
-		for (int i = 1; i < (-amt) % g_term.conf.termsize[0]; i++)
-			tputs(tgetstr("nd", NULL), 0, ft_charput);
-        g_term.conf.cursor[0] = (g_term.conf.cursor[0] - (amt % g_term.conf.termsize[0]));
+		if (affect_tc)
+		{
+			tputs(tgetstr("cr", NULL), 0, ft_charput);
+			for (int i = 0; i < -(g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0]; i++)
+			{
+				tputs(tgetstr("up", NULL), 0, ft_charput);
+			}
+			for (int i = 1; i < -(g_term.conf.cursor[0] + amt) % g_term.conf.termsize[0]; i++)
+				tputs(tgetstr("nd", NULL), 0, ft_charput);
+		}
+		g_term.conf.cursor[1] -= ((g_term.conf.cursor[0] + amt < 0) ? -(g_term.conf.cursor[0] + amt) : (g_term.conf.cursor[0] + amt)) / g_term.conf.termsize[0];
+		g_term.conf.cursor[0] = (g_term.conf.cursor[0] + (-amt % g_term.conf.termsize[0]));
 		g_term.conf.cursor[0] = (g_term.conf.cursor[0] < 0) ? -(g_term.conf.cursor[0]) : g_term.conf.cursor[0];
 		g_term.conf.cursor[0] = g_term.conf.cursor[0] % g_term.conf.termsize[0];
-        g_term.conf.cursor[1] -= (amt / g_term.conf.termsize[0]) + (amt % g_term.conf.termsize[0]);
-        g_term.conf.curlines = g_term.conf.cursor[1];
+        g_term.conf.curlines = g_term.conf.cursor[1] + 1;
     }
     else if (g_term.curr_buff && size - PROMPT_SIZE <= (int)ft_strlen(g_term.curr_buff->buff_str))
-        g_term.conf.cursor[0] += amt;
+	{
+		//tputs(tgetstr(amt < 0 ? "le" : "nd", NULL), 0, ft_charput);
+		g_term.conf.cursor[0] += amt;
+	}
+	//ft_printf_fd(STDERR_FILENO, "cursor x %d y %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
     return (1);
 }
 
@@ -112,6 +130,7 @@ int		handle_controls(unsigned long code, char *str)
 {
 	int ret = 0;
 
+	//tbuff_line_setsize(g_term.curr_buff, 0);
 	if (code == DELETE)
 	{
 		// delete char
@@ -126,20 +145,17 @@ int		handle_controls(unsigned long code, char *str)
 		//
 		if (g_term.curr_buff && g_term.curr_buff->buff_str)
 		{
-			int len = g_term.curr_buff->len;
 			while (g_term.conf.curlines > 1)
-			{
-				tputs(tgetstr("cr", NULL), 0, ft_charput);
-				tputs(tgetstr("cd", NULL), 0, ft_charput);
 				g_term.conf.curlines--;
-			}
 			g_term.conf.cursor[0] = PROMPT_SIZE;
 			g_term.conf.cursor[1] = 0;
 			g_term.conf.curlines = 1;
-			move_cursor(len);
-			reprint_buffer(g_term.curr_buff);
+			//move_cursor(len);
+			//eprint_buffer(g_term.curr_buff);
 		}
-		ft_printf_fd(STDERR_FILENO, " \b\n");
+		//ft_printf_fd(STDERR_FILENO, " \b\n");
+		tputs(tgetstr("cr", NULL), 0, ft_charput);
+		tputs(tgetstr("sf", NULL), 0, ft_charput);
 		g_term.conf.cursor[0] = PROMPT_SIZE;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
@@ -156,47 +172,48 @@ int		handle_controls(unsigned long code, char *str)
 			//ft_printf_fd(STDERR_FILENO, "up\n");
 			if (g_term.curr_buff && g_term.curr_buff->next)
 			{
+				tputs(tgetstr("cr", NULL), 0, ft_charput);
+				for (int i = g_term.conf.curlines; i > 1; i--)
+					tputs(tgetstr("sr", NULL), 0, ft_charput);
+				tputs(tgetstr("cd", NULL), 0, ft_charput);
 				g_term.curr_buff = g_term.curr_buff->next;
 				len = g_term.curr_buff->len;
-				while (g_term.conf.curlines > 1)
-				{
-					tputs(tgetstr("cr", NULL), 0, ft_charput);
-					tputs(tgetstr("cd", NULL), 0, ft_charput);
-					g_term.conf.curlines--;
-				}
 				g_term.conf.cursor[0] = PROMPT_SIZE;
 				g_term.conf.cursor[1] = 0;
 				g_term.conf.curlines = 1;
 				reprint_buffer(g_term.curr_buff);
-				move_cursor(len);
+				move_cursor(len, 0);
 			}
 		}
 		if (code == DOWN)
 		{
 			if (g_term.curr_buff && g_term.curr_buff->prev)
 			{
+				tputs(tgetstr("cr", NULL), 0, ft_charput);
+				for (int i = g_term.conf.curlines; i > 1; i--)
+					tputs(tgetstr("sr", NULL), 0, ft_charput);
+				tputs(tgetstr("cd", NULL), 0, ft_charput);
 				g_term.curr_buff = g_term.curr_buff->prev;
 				len = g_term.curr_buff->len;
-				while (g_term.conf.curlines > 1)
-				{
-					tputs(tgetstr("cr", NULL), 0, ft_charput);
-					tputs(tgetstr("cd", NULL), 0, ft_charput);
-					g_term.conf.curlines--;
-				}
 				g_term.conf.cursor[0] = PROMPT_SIZE;
 				g_term.conf.cursor[1] = 0;
 				g_term.conf.curlines = 1;
 				reprint_buffer(g_term.curr_buff);
-				move_cursor(len);
+				move_cursor(len, 0);
 			}
 		}
 		if (code == LEFT || code == RIGHT)
 		{
 			if ((code == LEFT && !(g_term.conf.cursor[0] - 1 < 2 && g_term.conf.cursor[1] == 0)) ||
-				(code == RIGHT && !(((g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - PROMPT_SIZE + 1) > g_term.curr_buff->len)))
+				(code == RIGHT && !(((g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - PROMPT_SIZE) >= g_term.curr_buff->len)))
 			{
-				ft_printf_fd(STDERR_FILENO, "%s", str);
-				move_cursor(code == LEFT ? -1 : 1);
+				if (str)
+				{
+					;
+				}
+				tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
+				//ft_printf_fd(STDERR_FILENO, "%s", str);
+				move_cursor(code == LEFT ? -1 : 1, 1);
 			}
 		}
 	}

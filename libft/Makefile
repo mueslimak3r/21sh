@@ -6,7 +6,7 @@
 #    By: calamber <calamber@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/29 23:01:53 by calamber          #+#    #+#              #
-#    Updated: 2019/11/10 03:48:03 by calamber         ###   ########.fr        #
+#    Updated: 2019/11/14 07:06:51 by calamber         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,7 @@ all: $(NAME)
 MODULES := src ft_printf includes
 LIBDIRS :=
 LIBS :=
-CFLAGS := -Wall -Werror -Wextra -Iincludes 
+CFLAGS += -Wall -Werror -Wextra -Iincludes 
 MODNAME := module.mk
 SRC :=
 

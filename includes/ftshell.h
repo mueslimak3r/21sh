@@ -158,6 +158,7 @@ struct s_rope_node
 
 struct s_tbuff
 {
+	//int						input_line_size[2];
 	char				*buff_str;
 	int					len;
 	struct s_tbuff		*next;
@@ -170,7 +171,6 @@ struct						s_shellconf
 	int						g_routes[5000];
 	int						termsize[2];
 	int						cursor[2];
-	//int						curr_c;
 	int						curlines;
 };
 
@@ -226,8 +226,8 @@ void			tbuff_line_insert(t_tbuff *buff, char *in, int pos);
 void        	t_buff_line_rm(t_tbuff *buff, int pos, int size);
 void			tbuff_free(t_tbuff **buff);
 void			tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
-int				move_cursor(int amt);
-
+int				move_cursor(int amt, int affect_tc);
+void        	tbuff_line_setsize(t_tbuff *buff, int amt);
 /*
 ** ENVIRONMENT
 */

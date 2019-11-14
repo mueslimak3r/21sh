@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/13 22:37:43 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 06:01:07 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 09:16:50 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,22 @@ void        t_buff_line_rm(t_tbuff *buff, int pos, int size)
 	if (pos < 0 || !buff || !buff->buff_str)
 		return ;
 	sz = ft_strlen(buff->buff_str) - size;
-	if (!(new = ft_memalloc(sizeof(*new) * (sz + 1))))
+    if (sz <= 0)
+    {
+        ft_strdel(&buff->buff_str);
+        buff->len = 0;
+        return ;
+    }
+    if (!(new = ft_memalloc(sizeof(*new) * (sz + 1))))
         return ;
 	ft_memcpy(new, buff->buff_str, pos);
     if (size < (int)ft_strlen(buff->buff_str) - pos)
 	    ft_memcpy(new + pos, buff->buff_str + pos + size, ft_strlen(buff->buff_str) - pos - size);
 	free(buff->buff_str);
 	buff->buff_str = new;
-	move_cursor(-size);
+    buff->len -= size;
+	move_cursor(-size, 1);
+    //tbuff_line_setsize(buff, -size);
 }
 
 /*
@@ -52,6 +60,29 @@ void        tbuff_line_insert(t_tbuff *buff, char *in, int pos)
 	move_cursor(ft_strlen(in));
 }
 */
+/*
+void        tbuff_line_setsize(t_tbuff *buff, int amt)
+{
+    int len = buff->len + PROMPT_SIZE;
+    buff->input_line_size[1] = len / g_term.conf.termsize[0];
+    buff->input_line_size[0] = len % g_term.conf.termsize[0];
+    if (amt == 0 || (amt < 0 && buff->len - amt <= 0))
+        return ;
+    if (amt > 0)
+    {
+        buff->input_line_size[1] += amt / g_term.conf.termsize[0];
+        buff->input_line_size[0] = (buff->input_line_size[0] + (amt % g_term.conf.termsize[0])) % g_term.conf.termsize[0];
+    }
+    else if (amt < 0)
+    {
+        buff->input_line_size[1] -= (amt / g_term.conf.termsize[0]);
+        buff->input_line_size[0] = (buff->input_line_size[0] - (amt % g_term.conf.termsize[0]));
+		buff->input_line_size[0] = (buff->input_line_size[0] < 0) ? -(buff->input_line_size[0]) : g_term.conf.cursor[0];
+		buff->input_line_size[0] = buff->input_line_size[0] % g_term.conf.termsize[0];
+    }
+}
+*/
+
 void        tbuff_line_insert(t_tbuff *buff, char *in, int pos)
 {
     char    *tmp = NULL;
@@ -69,7 +100,8 @@ void        tbuff_line_insert(t_tbuff *buff, char *in, int pos)
             ft_strdel(&(buff->buff_str));
         buff->buff_str = ft_strdup(in);
         buff->len = in_size;
-        move_cursor(in_size);
+        move_cursor(in_size, 1);
+        //tbuff_line_setsize(buff, in_size);
         return ;
     }
     if (!(tmp = ft_strnew(new_size)))
@@ -89,7 +121,8 @@ void        tbuff_line_insert(t_tbuff *buff, char *in, int pos)
         ft_strdel(&(buff->buff_str));
         buff->buff_str = tmp;
         buff->len = new_size;
-        move_cursor(in_size);
+        //tbuff_line_setsize(buff, in_size);
+        move_cursor(in_size, 1);
     }
     else if (tmp)
         ft_strdel(&tmp);

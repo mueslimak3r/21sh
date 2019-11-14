@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 04:33:37 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 07:22:17 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int			ft_readstdin_line(int hd, char *stop)
 	
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	ft_printf_fd(STDERR_FILENO, "%s", hd ? HDPROMPT : PROMPT);
+	
 	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
 	g_term.conf.cursor[1] = 0;
 	g_term.conf.curlines = 1;
