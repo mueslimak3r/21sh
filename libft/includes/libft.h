@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/21 16:24:04 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/25 06:59:38 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 02:19:28 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,4 +106,5 @@ char				**ft_strsplit_space(char const *s);
 char    *ft_get_word(char *s, int nb);
 void		ft_termcap(char *cmd, int fd);
 int     ft_isnumber(char *str, int len);
+void        ft_strcat_cpy(char *dst, char const *s1, char const *s2, int size);
 #endif

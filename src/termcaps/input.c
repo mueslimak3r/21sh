@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/13 22:24:24 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/14 05:08:06 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int		reprint_buffer(t_tbuff *buff)
 			index -= PROMPT_SIZE;
 		else
 			index = 0;
+		//ft_printf_fd(STDERR_FILENO, "p from %d\n", index);
 		if (buff->buff_str)
 			ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str +
 					(g_term.conf.cursor > 0 ? index : 0));
@@ -80,19 +81,27 @@ int     move_cursor(int amt)
         return (0);
     else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
     {
-		tputs(tgetstr("do", NULL), 0, ft_charput);
-        g_term.conf.cursor[0] = amt;
-        g_term.conf.cursor[1]++;
-        g_term.conf.curlines++;
+		tputs(tgetstr("cr", NULL), 0, ft_charput);
+		for (int i = 0; i < amt / g_term.conf.termsize[0]; i++)
+			tputs(tgetstr("do", NULL), 0, ft_charput);
+		for (int i = 1; i < amt % g_term.conf.termsize[0]; i++)
+			tputs(tgetstr("nd", NULL), 0, ft_charput);
+        g_term.conf.cursor[0] = (g_term.conf.cursor[0] + (amt % g_term.conf.termsize[0])) % g_term.conf.termsize[0];
+        g_term.conf.cursor[1] += amt / g_term.conf.termsize[0];
+        g_term.conf.curlines= g_term.conf.cursor[1];
     }
     else if (g_term.conf.cursor[0] + amt < 0)
     {
-		tputs(tgetstr("up", NULL), 0, ft_charput);
-		for (int i = 1; i < g_term.conf.termsize[0]; i++)
+		tputs(tgetstr("cr", NULL), 0, ft_charput);
+		for (int i = 0; i < (-amt) / g_term.conf.termsize[0]; i++)
+			tputs(tgetstr("up", NULL), 0, ft_charput);
+		for (int i = 1; i < (-amt) % g_term.conf.termsize[0]; i++)
 			tputs(tgetstr("nd", NULL), 0, ft_charput);
-        g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
-        g_term.conf.cursor[1]--;
-        g_term.conf.curlines--;
+        g_term.conf.cursor[0] = (g_term.conf.cursor[0] - (amt % g_term.conf.termsize[0]));
+		g_term.conf.cursor[0] = (g_term.conf.cursor[0] < 0) ? -(g_term.conf.cursor[0]) : g_term.conf.cursor[0];
+		g_term.conf.cursor[0] = g_term.conf.cursor[0] % g_term.conf.termsize[0];
+        g_term.conf.cursor[1] -= amt / g_term.conf.termsize[0];
+        g_term.conf.curlines = g_term.conf.cursor[1];
     }
     else if (g_term.curr_buff && size - PROMPT_SIZE <= (int)ft_strlen(g_term.curr_buff->buff_str))
         g_term.conf.cursor[0] += amt;
@@ -106,16 +115,32 @@ int		handle_controls(unsigned long code, char *str)
 	if (code == DELETE)
 	{
 		// delete char
-		move_cursor(-1);
+		int cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - PROMPT_SIZE - 1;
+		t_buff_line_rm(g_term.curr_buff, cursor_pos, 1);
 		reprint_buffer(g_term.curr_buff);
 	}
 	else if (code == ENTER)
 	{
-		ft_printf_fd(STDERR_FILENO, " \b\n");
 		//
 		// set cursor to end of buff line
 		//
-		g_term.conf.cursor[0] = ft_strlen(PROMPT);
+		if (g_term.curr_buff && g_term.curr_buff->buff_str)
+		{
+			int len = g_term.curr_buff->len;
+			while (g_term.conf.curlines > 1)
+			{
+				tputs(tgetstr("cr", NULL), 0, ft_charput);
+				tputs(tgetstr("cd", NULL), 0, ft_charput);
+				g_term.conf.curlines--;
+			}
+			g_term.conf.cursor[0] = PROMPT_SIZE;
+			g_term.conf.cursor[1] = 0;
+			g_term.conf.curlines = 1;
+			move_cursor(len);
+			reprint_buffer(g_term.curr_buff);
+		}
+		ft_printf_fd(STDERR_FILENO, " \b\n");
+		g_term.conf.cursor[0] = PROMPT_SIZE;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
 	}
@@ -124,40 +149,26 @@ int		handle_controls(unsigned long code, char *str)
 		auto_complete();
 	}
 	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
-	{	
-		int len = ft_strlen(g_term.curr_buff->buff_str);
+	{
+		int len;
 		if (code == UP)
 		{
 			//ft_printf_fd(STDERR_FILENO, "up\n");
 			if (g_term.curr_buff && g_term.curr_buff->next)
 			{
 				g_term.curr_buff = g_term.curr_buff->next;
-				while (g_term.conf.curlines)
+				len = g_term.curr_buff->len;
+				while (g_term.conf.curlines > 1)
 				{
 					tputs(tgetstr("cr", NULL), 0, ft_charput);
 					tputs(tgetstr("cd", NULL), 0, ft_charput);
 					g_term.conf.curlines--;
 				}
+				g_term.conf.cursor[0] = PROMPT_SIZE;
+				g_term.conf.cursor[1] = 0;
 				g_term.conf.curlines = 1;
-
-				//
-				// get len of buff_str
-				//
-
-				if (len < 1)
-				{
-					g_term.conf.cursor[0] = 2;
-					g_term.conf.cursor[1] = 0;
-				}
-				else
-				{
-					g_term.conf.cursor[1] = len / g_term.conf.termsize[0];
-					g_term.conf.cursor[0] = (len % g_term.conf.termsize[0]) + PROMPT_SIZE; 
-				}
-				ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
-
-				// reprint buffer
-
+				move_cursor(len);
+				reprint_buffer(g_term.curr_buff);
 			}
 		}
 		if (code == DOWN)
@@ -165,37 +176,28 @@ int		handle_controls(unsigned long code, char *str)
 			if (g_term.curr_buff && g_term.curr_buff->prev)
 			{
 				g_term.curr_buff = g_term.curr_buff->prev;
-				while (g_term.conf.curlines)
+				len = g_term.curr_buff->len;
+				while (g_term.conf.curlines > 1)
 				{
 					tputs(tgetstr("cr", NULL), 0, ft_charput);
 					tputs(tgetstr("cd", NULL), 0, ft_charput);
 					g_term.conf.curlines--;
 				}
+				g_term.conf.cursor[0] = PROMPT_SIZE;
+				g_term.conf.cursor[1] = 0;
 				g_term.conf.curlines = 1;
-				
-				//
-				// get len of buff_str
-				//
-				if (len < 1)
-				{
-					g_term.conf.cursor[0] = 2;
-					g_term.conf.cursor[1] = 0;
-				}
-				else
-				{
-					g_term.conf.cursor[1] = len / g_term.conf.termsize[0];
-					g_term.conf.cursor[0] = (len % g_term.conf.termsize[0]) + PROMPT_SIZE; 
-				}
-				ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
-
-				// reprint buffer
-
+				move_cursor(len);
+				reprint_buffer(g_term.curr_buff);
 			}
 		}
 		if (code == LEFT || code == RIGHT)
 		{
-			move_cursor(code == LEFT ? -1 : 1);
-			ft_printf_fd(STDERR_FILENO, "%s", str);
+			if ((code == LEFT && !(g_term.conf.cursor[0] - 1 < 2 && g_term.conf.cursor[1] == 0)) ||
+				(code == RIGHT && !(((g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - PROMPT_SIZE + 1) > g_term.curr_buff->len)))
+			{
+				ft_printf_fd(STDERR_FILENO, "%s", str);
+				move_cursor(code == LEFT ? -1 : 1);
+			}
 		}
 	}
 	else

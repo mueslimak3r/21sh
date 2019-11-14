@@ -158,7 +158,8 @@ struct s_rope_node
 
 struct s_tbuff
 {
-	char					*buff_str;
+	char				*buff_str;
+	int					len;
 	struct s_tbuff		*next;
 	struct s_tbuff		*prev;
 };
@@ -169,7 +170,7 @@ struct						s_shellconf
 	int						g_routes[5000];
 	int						termsize[2];
 	int						cursor[2];
-	int						curr_c;
+	//int						curr_c;
 	int						curlines;
 };
 

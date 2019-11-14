@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/13 22:55:50 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/14 04:33:37 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,26 +86,27 @@ int			ft_readstdin_line(int hd, char *stop)
 	t_input	thing;
 
 	tmp = NULL;
-	g_term.conf.curlines = 1;
+	
 	ft_memset(buf, 0, BUFF_SIZE + 1);
-	term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
+	ft_printf_fd(STDERR_FILENO, "%s", hd ? HDPROMPT : PROMPT);
 	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
+	g_term.conf.cursor[1] = 0;
+	g_term.conf.curlines = 1;
 	thing.long_form = 0;
 	while ((ret = read(0, &buf, 4)) >= 0)
 	{
-		//ft_printf_fd(STDERR_FILENO, "reading...\n");
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf)) < 1)
 		{
-			tbuff_line_insert(g_term.curr_buff, buf,
-					ft_strlen(g_term.curr_buff->buff_str));
+			int cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - PROMPT_SIZE;
+			tbuff_line_insert(g_term.curr_buff, buf, cursor_pos);
 			reprint_buffer(g_term.curr_buff);
 		}
 		else if (thing.long_form == ENTER && !hd)
 		{
-			//
-			// set cursor to end of buff line
-			//
+			g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
+			g_term.conf.cursor[1] = 0;
+			g_term.conf.curlines = 1;
 			return (1);
 		}
 		else if (thing.long_form == ENTER)
@@ -127,27 +128,23 @@ void		shell_loop(void)
 	t_node		*tree;
 
 	quit = 0;
-	g_term.conf.termsize[0] = g_window_size.ws_col;
-	g_term.conf.termsize[1] = g_window_size.ws_row;
-	g_term.conf.cursor[0] = 0;
-	g_term.conf.cursor[1] = 0;
-	g_term.conf.curr_c = -1;
+
 	g_term.buff = NULL;
 	g_term.curr_buff = NULL;
 	tree = NULL;
-	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	read_rcfile();
-	//rope_diagnostic();
 	while (!quit)
 	{
-		if (!g_term.buff)
+		g_term.conf.termsize[0] = g_window_size.ws_col;
+		g_term.conf.termsize[1] = g_window_size.ws_row;
+		if (!g_term.buff || (g_term.buff && g_term.buff->buff_str && *(g_term.buff->buff_str)))
 			tbuff_new(&g_term.buff);
 		g_term.curr_buff = g_term.buff;
 		if (!ft_readstdin_line(0, NULL))
 			continue ;
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
-		if (!g_term.curr_buff)
+		if (!g_term.curr_buff || !g_term.curr_buff->buff_str || (g_term.curr_buff->buff_str && !*(g_term.curr_buff->buff_str)))
 			continue ;
 		tree = lexer(g_term.curr_buff->buff_str);
 		recurse(tree, &stats);

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/13 22:30:04 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/14 02:17:57 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void		tbuff_new(t_tbuff **buff)
 		new->next = NULL;
 		new->prev = NULL;
 	}
+	new->len = 0;
+	new->buff_str = NULL;
 	*buff = new;
 }
 
@@ -46,6 +48,8 @@ void		tbuff_free(t_tbuff **buff)
 		*buff = (*buff)->next;
 		if (tmp == *buff)
 			*buff = NULL;
+		if (tmp->buff_str)
+			ft_strdel(&(tmp->buff_str));
 		free(tmp);
 	}
 	*buff = NULL;
