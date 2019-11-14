@@ -1,2 +1,2 @@
-DIR := src/history_rope
-SRC += $(DIR)/line_edit.c $(DIR)/history_buffer.c  
+DIR := src/history_buffer
+SRC += $(DIR)/history_buffer.c $(DIR)/line_edit.c 

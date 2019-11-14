@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/13 15:28:56 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/13 22:55:50 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,9 @@ int			ft_readstdin_line(int hd, char *stop)
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf)) < 1)
 		{
-			// insert new text into buffer
-			//
-			//reprint_buffer(g_term.curr_buff);
+			tbuff_line_insert(g_term.curr_buff, buf,
+					ft_strlen(g_term.curr_buff->buff_str));
+			reprint_buffer(g_term.curr_buff);
 		}
 		else if (thing.long_form == ENTER && !hd)
 		{
@@ -140,17 +140,16 @@ void		shell_loop(void)
 	//rope_diagnostic();
 	while (!quit)
 	{
-
-		if (!g_term.buff || (g_term.buff && g_term.buff->rope))
+		if (!g_term.buff)
 			tbuff_new(&g_term.buff);
 		g_term.curr_buff = g_term.buff;
 		if (!ft_readstdin_line(0, NULL))
 			continue ;
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
-		if (!g_term.curr_buff || !g_term.curr_buff->rope)
+		if (!g_term.curr_buff)
 			continue ;
-		tree = lexer(rope_getline(g_term.curr_buff->rope, 1));
+		tree = lexer(g_term.curr_buff->buff_str);
 		recurse(tree, &stats);
 		empty_buffer(stats.f_d);
 		clean_tree(tree);

@@ -222,7 +222,7 @@ int				read_rcfile(void);
 void			tbuff_new(t_tbuff **buff);
 int				reprint_buffer(t_tbuff *buff);
 void			tbuff_line_insert(t_tbuff *buff, char *in, int pos);
-void        	t_buff_line_rm(t_tbuff *buff, char *in, int pos, int size);
+void        	t_buff_line_rm(t_tbuff *buff, int pos, int size);
 void			tbuff_free(t_tbuff **buff);
 void			tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
 int				move_cursor(int amt);

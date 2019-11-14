@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/13 15:33:09 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/13 22:24:24 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int		reprint_buffer(t_tbuff *buff)
 	}
 	if (buff)
 	{
-		int size = sum_length(buff->rope);
 		int index;
 		index = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) - 1;
 		if (index <= 0)
@@ -63,15 +62,9 @@ int		reprint_buffer(t_tbuff *buff)
 			index -= PROMPT_SIZE;
 		else
 			index = 0;
-		if (buff->rope)
-		{
-			if (g_term.conf.cursor[1] > 0)
-			{
-				rope_print_from_index(buff->rope, index + 1, size);
-			}
-			else
-				rope_print(buff->rope);
-		}
+		if (buff->buff_str)
+			ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str +
+					(g_term.conf.cursor > 0 ? index : 0));
 	}
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	for (int i = 0; i < g_term.conf.cursor[0]; i++)
@@ -101,7 +94,7 @@ int     move_cursor(int amt)
         g_term.conf.cursor[1]--;
         g_term.conf.curlines--;
     }
-    else if (g_term.curr_buff && size - PROMPT_SIZE <= sum_length(g_term.curr_buff->rope))
+    else if (g_term.curr_buff && size - PROMPT_SIZE <= (int)ft_strlen(g_term.curr_buff->buff_str))
         g_term.conf.cursor[0] += amt;
     return (1);
 }
@@ -132,6 +125,7 @@ int		handle_controls(unsigned long code, char *str)
 	}
 	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
 	{	
+		int len = ft_strlen(g_term.curr_buff->buff_str);
 		if (code == UP)
 		{
 			//ft_printf_fd(STDERR_FILENO, "up\n");
@@ -171,7 +165,6 @@ int		handle_controls(unsigned long code, char *str)
 			if (g_term.curr_buff && g_term.curr_buff->prev)
 			{
 				g_term.curr_buff = g_term.curr_buff->prev;
-				g_term.curr_buff->cursor = sum_length(g_term.curr_buff->rope);
 				while (g_term.conf.curlines)
 				{
 					tputs(tgetstr("cr", NULL), 0, ft_charput);

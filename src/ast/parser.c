@@ -6,15 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/08 23:42:14 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/13 22:55:46 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-/*
-** #define TREE_DEBUG
-*/
+#define TREE_DEBUG
 
 /*
 ** new_node
