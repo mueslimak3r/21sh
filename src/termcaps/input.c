@@ -65,7 +65,7 @@ int		reprint_buffer(t_tbuff *buff)
 		//ft_printf_fd(STDERR_FILENO, "p from %d\n", index);
 		if (buff->buff_str)
 			ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str +
-					(g_term.conf.cursor > 0 ? index : 0));
+					(g_term.conf.cursor[1] > 0 ? index : 0));
 	}
 	//tputs(tgetstr("cr", NULL), 0, ft_charput);
 	//for (int i = 0; i < g_term.conf.cursor[0]; i++)

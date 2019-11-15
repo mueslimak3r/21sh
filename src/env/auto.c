@@ -89,20 +89,19 @@ void		auto_complete(void)
 	char	*in;
 	int		ls;
 	char	*dir;
-	char	*str;
 	char	*xstr;
 	char	**split;
 	int		i;
 	char	*treestr;
 	t_st_node	*tree;
 
+	treestr = NULL;
 	/*if (!g_term.curr_buff->rope)
 		return ;
 	treestr = rope_getline(g_term.curr_buff->rope, 1);*/
 	tree = NULL;
 	split = ft_strsplit(treestr, ' ');
 	i = 0;
-	str = NULL;
 	in = NULL;
 	while (split[i])
 	{
@@ -117,7 +116,6 @@ void		auto_complete(void)
 	if (ls < 0)
 		return ;
 	dir = ft_strsub(in, 0, ls);
-	str = ft_strsub(in, ls + 1, ft_strlen(in));
 	xstr = path_expansions(dir);
 	free(dir);
 	get_dir(&tree, xstr);

@@ -20,20 +20,20 @@ void        t_buff_line_rm(t_tbuff *buff, int pos, int size)
 	if (pos < 0 || !buff || !buff->buff_str)
 		return ;
 	sz = ft_strlen(buff->buff_str) - size;
-    if (sz <= 0)
-    {
-        ft_strdel(&buff->buff_str);
-        buff->len = 0;
-        return ;
-    }
-    if (!(new = ft_memalloc(sizeof(*new) * (sz + 1))))
-        return ;
+	if (sz <= 0)
+	{
+		ft_strdel(&buff->buff_str);
+		buff->len = 0;
+		return ;
+	}
+	if (!(new = ft_memalloc(sizeof(*new) * (sz + 1))))
+		return ;
 	ft_memcpy(new, buff->buff_str, pos);
-    if (size < (int)ft_strlen(buff->buff_str) - pos)
+	if (size < (int)ft_strlen(buff->buff_str) - pos)
 	    ft_memcpy(new + pos, buff->buff_str + pos + size, ft_strlen(buff->buff_str) - pos - size);
 	free(buff->buff_str);
 	buff->buff_str = new;
-    buff->len -= size;
+	buff->len -= size;
 	move_cursor(-size, 1);
 }
 

@@ -20,7 +20,7 @@
 ** Will add to parent's list of children.
 */
 
-t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
+t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent, int dir)
 {
 	t_node	*new;
 	t_node	*tmp;
@@ -37,6 +37,12 @@ t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent)
 	if (!parent)
 		return (new);
 	tmp = parent->children;
+	if (dir)
+	{
+		new->next = tmp;
+		parent->children = new;
+		return (new);
+	}
 	while (tmp && tmp->next)
 		tmp = tmp->next;
 	if (tmp)
@@ -400,14 +406,14 @@ t_node			*parser(t_lexeme *lexemes)
 	int		invert;
 
 	invert = 0;
-	head = new_node(EXPR, NULL, NULL);
+	head = new_node(EXPR, NULL, NULL, invert);
 	while (lexemes)
 	{
 		classification = classify(lexemes);
 		if (classification == MOD)
 		{
 			if (invert)
-				head = invertify(head->parent);
+				head = head->parent ? head->parent : abstract(head);
 			if (head->children)
 				head = head->parent ? head->parent : abstract(head);
 			else
@@ -420,7 +426,7 @@ t_node			*parser(t_lexeme *lexemes)
 		}
 		else if (classification == EXEC || (classification >= FD_R
 			&& classification <= FD_A))
-			head = new_node(EXPR, NULL, head);
+			head = new_node(EXPR, NULL, head, invert);
 		else if (classification == ERR)
 		{
 			ft_printf_fd(STDERR_FILENO, "classifier returned error\n");
@@ -429,11 +435,11 @@ t_node			*parser(t_lexeme *lexemes)
 			parse_error(head, lexemes);
 			return (NULL);
 		}
-		new_node(classification, lexemes, head);
+		new_node(classification, lexemes, head, invert);
+		if (lexemes->set == SEMI)
+			head = new_node(EXPR, NULL, head, invert);
 		lexemes = lexemes->next;
 	}
-	if (invert)
-		head = invertify(head->parent);
 	while (head->parent)
 		head = head->parent;
 	return (head);
