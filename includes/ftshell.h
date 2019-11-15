@@ -286,7 +286,5 @@ int				ft_cd(char *path);
 int				ft_env(char **envp);
 
 void			auto_complete(void);
-void			rope_diagnostic(void);
-void			debug_print(t_rope_node *rope, int depth);
-
+int				termcap_reset_cursor(int pos, int len);
 #endif

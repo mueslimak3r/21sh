@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 07:22:17 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 15:59:24 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,17 @@ int			has_hd(char *thing, char *hd)
 	return (ret);
 }
 
+int			termcap_reset_cursor(int pos, int len)
+{
+	int		a;
+
+	a = len - 1;
+	//ft_printf_fd(STDERR_FILENO, "[%d][%d]\n", a, pos);
+	while (a-- > pos)
+		ft_printf_fd(STDERR_FILENO, "\b");
+	return (1);
+}
+
 int			ft_readstdin_line(int hd, char *stop)
 {
 	char	buf[BUFF_SIZE + 1];
@@ -102,6 +113,7 @@ int			ft_readstdin_line(int hd, char *stop)
 			int cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - PROMPT_SIZE;
 			tbuff_line_insert(g_term.curr_buff, buf, cursor_pos);
 			reprint_buffer(g_term.curr_buff);
+			termcap_reset_cursor(cursor_pos, ft_strlen(g_term.curr_buff->buff_str));
 		}
 		else if (thing.long_form == ENTER && !hd)
 		{

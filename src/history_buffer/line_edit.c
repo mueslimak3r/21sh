@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/13 22:37:43 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 09:16:50 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/14 16:06:36 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void        t_buff_line_rm(t_tbuff *buff, int pos, int size)
 	buff->buff_str = new;
     buff->len -= size;
 	move_cursor(-size, 1);
-    //tbuff_line_setsize(buff, -size);
 }
 
 /*

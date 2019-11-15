@@ -1,3 +1,0 @@
-ast
-
-move binary redirects ('2>&-') to front of executable node 
