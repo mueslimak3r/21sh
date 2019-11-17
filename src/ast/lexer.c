@@ -16,6 +16,17 @@
 ** #define LEX_DEBUG
 */
 
+int			size_redir(char *op)
+{
+	if (!op)
+		return (0);
+	if (!(!(ft_strncmp(op, ">&", 2)) || !(ft_strncmp(op, "<&", 2))))
+		return (0);
+	if (op && op + 1 && op + 2 && *(op + 2) == '-')
+		return (3);
+	return (2);
+}
+
 int			is_operator(char *op, int pos)
 {
 	int		i;
@@ -23,7 +34,9 @@ int			is_operator(char *op, int pos)
 
 	i = 3;
 	ret = 0;
-	while (g_term.symbls[i])
+	if (op && op + pos && (!(ft_strncmp(op + pos, ">&", 2)) || !(ft_strncmp(op + pos, "<&", 2))))
+		return (11);
+	while (g_term.symbls[i] && i < 11)
 	{
 		if (ft_strncmp(op + pos, g_term.symbls[i],
 			ft_strlen(g_term.symbls[i])) == 0)
@@ -147,8 +160,23 @@ t_node		*lexer(char *input)
 		input += i;
 		if (op > 1)
 		{
-			new_lex(ft_strndup(input, ft_strlen(g_term.symbls[op])), op, &ref);
-			input += ft_strlen(g_term.symbls[op]);
+			if (op < 11)
+			{
+				new_lex(ft_strndup(input, ft_strlen(g_term.symbls[op])), op, &ref);
+				input += ft_strlen(g_term.symbls[op]);
+			}
+			else if (op == REDIRECT)
+			{
+				new_lex(ft_strndup(input, size_redir(input)), op, &ref);
+				ft_printf_fd(STDERR_FILENO, "REDIRECT: ");
+				t_lexeme *prnt_tmp = ref;
+				while (prnt_tmp->next)
+					prnt_tmp = prnt_tmp->next;
+				if (prnt_tmp)
+					ft_printf_fd(STDERR_FILENO, "%s", prnt_tmp->data);
+				ft_printf_fd(STDERR_FILENO, "\n");
+				input += size_redir(input);
+			}
 		}
 	}
 	return (parser(ref));
