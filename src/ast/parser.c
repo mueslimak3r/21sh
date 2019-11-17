@@ -189,31 +189,21 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 	int		dir;
 
 	tmp = node->children;
-	if (!tmp)
+	if (!tmp || !tmp->lexeme)
 		return ;
 	src = ft_atoi(tmp->lexeme->data);
 	tmp = tmp->next;
 	dir = ft_strchr(tmp->lexeme->data, '<') ? -1 : 1;
 	tmp = tmp->next;
+	if (!tmp->lexeme)
+		return ;
 	dst = ft_atoi(tmp->lexeme->data);
-	if (dir == -1)
-	{
-		if (src == 1)
-			*out = dst;
-		else if (src == 0)
-			*in = dst;
-		else if (src == 2)
-			*err = dst;
-	}
-	else if (dir == 1)
-	{
-		if (dst == 1)
-			*out = src;
-		if (dst == 0)
-			*in = src;
-		if (dst == 2)
-			*err = src;
-	}
+	if (src == 1)
+		*out = dir == -1 ? dst : src;
+	if (src == 0)
+		*in = dir == -1 ? dst : src;
+	if (src == 2)
+		*err = dir == -1 ? dst : src;
 }
 
 /*
@@ -238,6 +228,8 @@ char				**concat_node(t_node *node, int *in, int *out, int *err)
 		if (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)
 				|| tmp->set == ARG)
 			sz += tmp->lexeme ? 1 : 0;
+		else if (tmp->set == EXPR)
+			redir_pipes(tmp, in, out, err);
 		tmp = tmp->next;
 	}
 	tmp = node->children;
