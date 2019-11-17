@@ -188,7 +188,7 @@ struct						s_term
 
 struct						s_stats
 {
-	int						f_d[2];
+	int						f_d[3];
 	int						ret;
 	int						exit;
 };
@@ -276,7 +276,7 @@ int				ft_alias(char *str);
 
 int				empty_buffer(int fd[2]);
 int		print_buffer(int fd[2]);
-int		execute_command(int in, int out, char **args);
+int		execute_command(int in, int out, int err, char **args);
 void			print_banner(int fd);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);

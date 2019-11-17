@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 06:15:05 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/17 12:35:37 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,12 +178,50 @@ t_node			*abstract(t_node *node)
 	return (new);
 }
 
+void				redir_pipes(t_node *node, int *in, int *out, int *err)
+{
+	// node was a parent in a node that is being executed
+	// it should contain a fd, a redir, and then another fd.
+	
+	t_node	*tmp;
+	int		src;
+	int		dst;
+	int		dir;
+
+	tmp = node->children;
+	if (!tmp)
+		return ;
+	src = ft_atoi(tmp->lexeme->data);
+	tmp = tmp->next;
+	dir = ft_strchr(tmp->lexeme->data, '<') ? -1 : 1;
+	tmp = tmp->next;
+	dst = ft_atoi(tmp->lexeme->data);
+	if (dir == -1)
+	{
+		if (src == 1)
+			*out = dst;
+		else if (src == 0)
+			*in = dst;
+		else if (src == 2)
+			*err = dst;
+	}
+	else if (dir == 1)
+	{
+		if (dst == 1)
+			*out = src;
+		if (dst == 0)
+			*in = src;
+		if (dst == 2)
+			*err = src;
+	}
+}
+
 /*
 ** concat_node
 ** Given a node, returns a string array of the data of the children's lexemes.
 */
 
-char				**concat_node(t_node *node)
+char				**concat_node(t_node *node, int *in, int *out, int *err)
 {
 	char	**ret;
 	t_node	*tmp;
@@ -195,18 +233,21 @@ char				**concat_node(t_node *node)
 	tmp = node->children;
 	ret = NULL;
 	sz = 0;
-	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
+	while (tmp)
 	{
-		sz += tmp->lexeme ? 1 : 0;
+		if (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)
+				|| tmp->set == ARG)
+			sz += tmp->lexeme ? 1 : 0;
 		tmp = tmp->next;
 	}
 	tmp = node->children;
 	ret = malloc(sizeof(char*) * (sz + 1));
 	i = 0;
-	while (tmp && (tmp->set == ARG || tmp->set == EXEC))
+	while (tmp)
 	{
-		if (tmp->lexeme && tmp->lexeme->data)
-			ret[i++] = ft_strdup(tmp->lexeme->data);
+		if (tmp->set == ARG || tmp->set == EXEC)
+			if (tmp->lexeme && tmp->lexeme->data)
+				ret[i++] = ft_strdup(tmp->lexeme->data);
 		tmp = tmp->next;
 	}
 	ret[i] = 0;
@@ -218,7 +259,7 @@ char				**concat_node(t_node *node)
 ** Executes a given node with children.
 */
 
-void				exec_node_parse(t_node *node, int in, int out)
+void				exec_node_parse(t_node *node, int *in, int *out, int *err)
 {
 	char	**disp;
 	int		i;
@@ -228,28 +269,23 @@ void				exec_node_parse(t_node *node, int in, int out)
 	if (node->children->set >= FD_R && node->children->set <= FD_A)
 	{
 		if (node->children->set == FD_R)
-			readfd(open(node->children->lexeme->data, O_RDONLY), out, 0);
+			readfd(open(node->children->lexeme->data, O_RDONLY), *out, 0);
 		else if (node->children->set == FD_W)
-			readfd(in, open(node->children->lexeme->data,
+			readfd(*in, open(node->children->lexeme->data,
 				O_WRONLY | O_CREAT | O_TRUNC, 0644), 1);
 		else if (node->children->set == FD_A)
-			readfd(in, open(node->children->lexeme->data,
+			readfd(*in, open(node->children->lexeme->data,
 				O_WRONLY | O_CREAT | O_APPEND, 0644), 1);
 		else
-		{
 			ft_readstdin_line(1, node->children->lexeme->data);
-			//write(out, g_term.line_in, ft_strlen(g_term.line_in));
-		}
 		return ;
 	}
-	disp = concat_node(node);
+	disp = concat_node(node, in, out, err);
 	if (run_builtins(disp, &g_term.env) == 2)
-		execute_command(in, out, disp);
+		execute_command(*in, *out, *err, disp);
 	i = 0;
 	while (disp[i])
-	{
 		ft_strdel(&disp[i++]);
-	}
 	free(disp);
 }
 
@@ -314,7 +350,7 @@ void			recurse(t_node *head, t_stats *stats)
 
 	t_node		*tmp;
 	t_node		*h2;
-	int			main_pipe[2];
+	int			main_pipe[3];
 	static int	pipes;
 
 	h2 = head;
@@ -327,6 +363,7 @@ void			recurse(t_node *head, t_stats *stats)
 	{
 		main_pipe[0] = 0;
 		main_pipe[1] = 1;
+		main_pipe[2] = 2;
 		tmp = h2->children;
 		pipes += (count_pipes(tmp) ? count_pipes(tmp) + 1 : 0);
 #ifdef TREE_DEBUG
@@ -357,7 +394,7 @@ void			recurse(t_node *head, t_stats *stats)
 		{
 			if (pipes)
 				pipe(main_pipe);
-			exec_node_parse(tmp->parent, stats->f_d[0], main_pipe[1]);
+			exec_node_parse(tmp->parent, &stats->f_d[0], &main_pipe[1], &main_pipe[2]);
 			if (pipes)
 			{
 				pipes -= 1;

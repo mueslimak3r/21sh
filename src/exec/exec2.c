@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/10/30 05:39:22 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/17 12:22:37 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	dup_close(int fd1, int fd2)
 	close(fd1);
 }
 
-int		execute_command(int in, int out, char **args)
+int		execute_command(int in, int out, int err, char **args)
 {
 	char	*name;
 	pid_t	pid;
@@ -33,6 +33,8 @@ int		execute_command(int in, int out, char **args)
 				dup_close(in, STDIN_FILENO);
 			if (out != 1)
 				dup_close(out, STDOUT_FILENO);
+			if (err != 2)
+				dup_close(err, STDERR_FILENO);
 			if (execve(name, args, g_term.env.envp) == -1)
 				exit(EXIT_SUCCESS);
 			exit(0);
