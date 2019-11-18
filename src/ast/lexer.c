@@ -70,6 +70,7 @@ int			handle_redirect(char *op, t_lexeme **head)
 		io_right = ft_strndup(op, j + 1);
 		new_lex(io_right, IO_NAME, head);
 		i += ft_strlen(io_right);
+		op += ft_strlen(io_right);
 	}
 	return (i);
 }
@@ -262,7 +263,7 @@ t_node		*lexer(char *input)
 	}
 	ft_printf_fd(STDERR_FILENO, "LEXEMES: ");
 	t_lexeme *prnt_tmp = ref;
-	while (prnt_tmp->next)
+	while (prnt_tmp)
 	{
 		ft_printf_fd(STDERR_FILENO, "  |type: %d, str: %s|  ", prnt_tmp->set, prnt_tmp->data);
 		prnt_tmp = prnt_tmp->next;
