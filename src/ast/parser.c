@@ -66,17 +66,51 @@ enum e_nodetype	classify(t_lexeme *lexeme)
 	if (lexeme->designation != BASE)
 		return (lexeme->designation);
 	if ((res = is_exec(lexeme)))
+	{
+		if (res <= 0)
+			ft_printf("err exec %s\n", lexeme->data);
 		return (res > 0 ? EXEC : ERR);
+	}
 	else if ((res = is_arg(lexeme)))
+	{
+		if (res <= 0)
+			ft_printf("err arg %s\n", lexeme->data);
 		return (res > 0 ? ARG : ERR);
+	}
 	else if ((res = is_mod(lexeme)))
+	{
+		if (res <= 0)
+			ft_printf("err mod %s %d\n", lexeme->data, res);
 		return (res > 0 ? MOD : ERR);
+	}
+	else if ((res = is_fd_lit(lexeme)))
+	{
+		if (res <= 0)
+			ft_printf("err io %s\n", lexeme->data);
+		return (res > 0 ? FD_LIT : ERR);
+	}
 	return (2);
 }
 
 /*
 ** classify helpers
 */
+
+int				is_fd_lit(t_lexeme *lexeme)
+{
+	if (!lexeme)
+		return (0);
+	if (lexeme->set == IO_NAME)
+	{
+		if (is_mod(lexeme->next) && lexeme->next->next && lexeme->next->next->set == IO_NAME)
+		{
+			lexeme->next->designation = REDIR;
+			lexeme->next->next->designation = FD_LIT; 
+		}
+		return (1);
+	}
+	return (-1);
+}
 
 int				is_mod(t_lexeme *lexeme)
 {
@@ -97,8 +131,11 @@ int				is_mod(t_lexeme *lexeme)
 				lexeme->next->designation;
 		}
 		if (!lexeme->next || (lexeme->next && !is_mod(lexeme->next)))
+		{
 			return (1);
-		return (-1);
+		}
+		if (lexeme->set == L_REDIRECT || lexeme->set == R_REDIRECT)
+			return (1);
 	}
 	return (0);
 }
@@ -108,7 +145,7 @@ int				is_arg(t_lexeme *lexeme)
 	if (!lexeme)
 		return (0);
 	if (lexeme->set == WORD && (!lexeme->next || (is_arg(lexeme->next)
-		|| is_mod(lexeme->next) > 0)))
+		|| is_mod(lexeme->next) > 0 || is_fd_lit(lexeme->next) > 0)))
 	{
 		if (is_arg(lexeme->next))
 			lexeme->next->designation = ARG;
@@ -124,7 +161,7 @@ int				is_exec(t_lexeme *lexeme)
 	if (!lexeme)
 		return (0);
 	if (lexeme->set == WORD && (!lexeme->next || (is_arg(lexeme->next)
-		|| is_mod(lexeme->next) > 0)))
+		|| is_mod(lexeme->next) > 0 || is_fd_lit(lexeme->next) > 0)))
 	{
 		if (is_arg(lexeme->next))
 			lexeme->next->designation = ARG;
@@ -362,13 +399,13 @@ void			recurse(t_node *head, t_stats *stats)
 
 		if (h2 && h2->lexeme)
 		{
-			write(STDERR_FILENO, "            ", st * 2);
+			write(STDERR_FILENO, "                ", st * 2);
 			ft_printf_fd(STDERR_FILENO, "[IN TREE || TYPE: %s, STR: %s]\n",
 				g_term.symbls[h2->lexeme->set], h2->lexeme->data);
 		}
 		else if (h2)
 		{
-			write(STDERR_FILENO, "            ", st * 2);
+			write(STDERR_FILENO, "                ", st * 2);
 			ft_printf_fd(STDERR_FILENO,
 				"[IN TREE || TYPE: parent, STR: N/A]\n");
 		}
@@ -433,12 +470,19 @@ t_node			*parser(t_lexeme *lexemes)
 	t_node	*head;
 	enum e_nodetype	classification;
 	int		invert;
+	int		abs;
 
 	invert = 0;
+	abs = 0;
 	head = new_node(EXPR, NULL, NULL, invert);
 	while (lexemes)
 	{
 		classification = classify(lexemes);
+		if (abs)
+		{
+			head = head->parent ? head->parent : abstract(head);
+			abs = 0;
+		}
 		if (classification == MOD)
 		{
 			if (invert)
@@ -463,6 +507,19 @@ t_node			*parser(t_lexeme *lexemes)
 				head = head->parent;
 			parse_error(head, lexemes);
 			return (NULL);
+		}
+		else if (classification == FD_LIT)
+		{
+			ft_printf("FD_LIT %s\n", lexemes->data);
+			invert = lexemes->next && lexemes->next->designation == REDIR ? 1 : 0;
+			if (lexemes->next && lexemes->next->designation == REDIR)
+				head = new_node(EXPR, NULL, head, invert);
+			else
+				abs = 1;
+		}
+		else if (classification == REDIR)
+		{
+			invert = 0;
 		}
 		new_node(classification, lexemes, head, invert);
 		if (lexemes->set == SEMI)

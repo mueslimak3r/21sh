@@ -99,6 +99,8 @@ enum						e_nodetype
 	FD_W,
 	FD_H,
 	FD_A,
+	REDIR,
+	FD_LIT,
 	ERR
 };
 
@@ -263,6 +265,7 @@ enum e_nodetype	classify(t_lexeme *lexeme);
 int				is_mod(t_lexeme *lexeme);
 int				is_arg(t_lexeme *lexeme);
 int				is_exec(t_lexeme *lexeme);
+int				is_fd_lit(t_lexeme *lexeme);
 char			**concat_node(t_node *node, int *in, int *out, int *err);
 
 /*
