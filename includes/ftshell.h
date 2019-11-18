@@ -81,9 +81,11 @@ enum						e_tokentype
 	SEMI,
 	LESS,
 	GREAT,
-	REDIRECT,
-	IO_NUMBER,
-	NEWLINE
+	NEWLINE,
+	L_REDIRECT,
+	R_REDIRECT,
+	IO_NAME,
+	FD_CLOSE,
 };
 
 enum						e_nodetype

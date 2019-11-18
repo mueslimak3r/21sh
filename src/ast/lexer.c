@@ -26,7 +26,49 @@ int			size_redir(char *op)
 		return (3);
 	return (2);
 }
+/*
+int			handle_redirect(char *op)
+{
+	int	i = 0;
+	int	found_redir_op = 0;
+	int	left_exp_size = 0;
+	while (op && op[i])
+	{
 
+	}
+}
+
+
+int			is_redirect(char *op)
+{
+	int i = 0;
+
+	
+	if (op[i] == '&')
+		i++;
+	else
+		while (ft_isdigit(op[i]))
+			i++;
+	if (op[i] && op[i] == '<' || op[i] == '>')
+	{
+		i++;
+		if (op[i] && op[i])
+	}
+	return (0);
+}
+
+
+int			size_redir(char *op)
+{
+	if (!op)
+		return (0);
+	if (!(!(ft_strncmp(op, ">&", 2)) || !(ft_strncmp(op, "<&", 2))))
+		return (0);
+	if (op && op + 1 && op + 2 && *(op + 2) == '-')
+		return (3);
+	return (2);
+}
+*/
 int			is_operator(char *op, int pos)
 {
 	int		i;
@@ -165,6 +207,7 @@ t_node		*lexer(char *input)
 				new_lex(ft_strndup(input, ft_strlen(g_term.symbls[op])), op, &ref);
 				input += ft_strlen(g_term.symbls[op]);
 			}
+			/*
 			else if (op == REDIRECT)
 			{
 				new_lex(ft_strndup(input, size_redir(input)), op, &ref);
@@ -177,6 +220,7 @@ t_node		*lexer(char *input)
 				ft_printf_fd(STDERR_FILENO, "\n");
 				input += size_redir(input);
 			}
+			*/
 		}
 	}
 	return (parser(ref));

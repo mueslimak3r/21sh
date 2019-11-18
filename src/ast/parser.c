@@ -82,7 +82,7 @@ int				is_mod(t_lexeme *lexeme)
 {
 	if (!lexeme)
 		return (0);
-	if (lexeme->set >= AND && lexeme->set <= IO_NUMBER)
+	if (lexeme->set >= AND && lexeme->set <= IO_NAME)
 	{
 		if (lexeme->next && (lexeme->set == LESS || lexeme->set == GREAT
 			|| lexeme->set == RDGREAT || lexeme->set == RDLESS))
