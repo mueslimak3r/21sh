@@ -230,10 +230,13 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 		return ;
 	src = ft_atoi(tmp->lexeme->data);
 	tmp = tmp->next;
+	if (!tmp || !tmp->lexeme)
+		return ;
 	dir = ft_strchr(tmp->lexeme->data, '<') ? -1 : 1;
 	tmp = tmp->next;
-	if (!tmp->lexeme)
+	if (!tmp || !tmp->lexeme)
 		return ;
+	ft_printf("redirecting pipes\n");
 	dst = ft_atoi(tmp->lexeme->data);
 	if (src == 1)
 		*out = dir == -1 ? dst : src;
@@ -266,7 +269,10 @@ char				**concat_node(t_node *node, int *in, int *out, int *err)
 				|| tmp->set == ARG)
 			sz += tmp->lexeme ? 1 : 0;
 		else if (tmp->set == EXPR)
+		{
+			ft_printf("thing\n");
 			redir_pipes(tmp, in, out, err);
+		}
 		tmp = tmp->next;
 	}
 	tmp = node->children;
@@ -419,7 +425,8 @@ void			recurse(t_node *head, t_stats *stats)
 			empty_buffer(stats->f_d);
 			empty_buffer(main_pipe);
 		}
-		if (tmp && (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)))
+		if (tmp && ((tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)) ||
+				(tmp->next && (tmp->next->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)))))
 		{
 			if (pipes)
 				pipe(main_pipe);
