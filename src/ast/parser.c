@@ -105,7 +105,9 @@ int				is_fd_lit(t_lexeme *lexeme)
 		if (is_mod(lexeme->next) && lexeme->next->next && lexeme->next->next->set == IO_NAME)
 		{
 			lexeme->next->designation = REDIR;
-			lexeme->next->next->designation = FD_LIT; 
+			lexeme->next->next->designation = FD_LIT;
+			if (is_arg(lexeme->next->next->next))
+				lexeme->next->next->next->designation = ARG; 
 		}
 		return (1);
 	}
@@ -226,6 +228,7 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 	int		dir;
 
 	tmp = node->children;
+	ft_printf("redirecting pipes\n");
 	if (!tmp || !tmp->lexeme)
 		return ;
 	src = ft_atoi(tmp->lexeme->data);
@@ -236,7 +239,17 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 	tmp = tmp->next;
 	if (!tmp || !tmp->lexeme)
 		return ;
-	ft_printf("redirecting pipes\n");
+	if (ft_strchr(tmp->lexeme->data, '-'))
+	{
+		ft_printf("closing %d\n", src);
+		if (src == 1)
+			*out = -1;
+		if (src == 2)
+			*err = -1;
+		if (src == 0)
+			*in = -1;
+		return ;
+	}
 	dst = ft_atoi(tmp->lexeme->data);
 	if (src == 1)
 		*out = dir == -1 ? dst : src;
@@ -270,7 +283,6 @@ char				**concat_node(t_node *node, int *in, int *out, int *err)
 			sz += tmp->lexeme ? 1 : 0;
 		else if (tmp->set == EXPR)
 		{
-			ft_printf("thing\n");
 			redir_pipes(tmp, in, out, err);
 		}
 		tmp = tmp->next;
@@ -286,6 +298,7 @@ char				**concat_node(t_node *node, int *in, int *out, int *err)
 		tmp = tmp->next;
 	}
 	ret[i] = 0;
+	i = 0;
 	return (ret);
 }
 
@@ -370,6 +383,20 @@ int				count_pipes(t_node *node)
 	return (ret);
 }
 
+int				exec_node_possible(t_node *node)
+{
+	t_node	*tmp;
+
+	tmp = node;
+	while (tmp)
+	{
+		if (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A))
+			return (1);
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
 /*
 ** recurse
 ** Main function for tree evaluation.
@@ -425,8 +452,7 @@ void			recurse(t_node *head, t_stats *stats)
 			empty_buffer(stats->f_d);
 			empty_buffer(main_pipe);
 		}
-		if (tmp && ((tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)) ||
-				(tmp->next && (tmp->next->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)))))
+		if (exec_node_possible(tmp))
 		{
 			if (pipes)
 				pipe(main_pipe);
@@ -506,7 +532,10 @@ t_node			*parser(t_lexeme *lexemes)
 		}
 		else if (classification == EXEC || (classification >= FD_R
 			&& classification <= FD_A))
+		{
+			ft_printf("reparented on %s %d\n", lexemes->data ? lexemes->data : "NULL", classification);
 			head = new_node(EXPR, NULL, head, invert);
+		}
 		else if (classification == ERR)
 		{
 			ft_printf_fd(STDERR_FILENO, "classifier returned error\n");
@@ -517,7 +546,6 @@ t_node			*parser(t_lexeme *lexemes)
 		}
 		else if (classification == FD_LIT)
 		{
-			ft_printf("FD_LIT %s\n", lexemes->data);
 			invert = lexemes->next && lexemes->next->designation == REDIR ? 1 : 0;
 			if (lexemes->next && lexemes->next->designation == REDIR)
 				head = new_node(EXPR, NULL, head, invert);
