@@ -251,7 +251,7 @@ int				run_dispatch(char **args, t_env *env);
 
 t_node			*lexer(char *input);
 int				is_operator(char *op, int pos);
-
+t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head);
 /*
 ** PARSER
 */

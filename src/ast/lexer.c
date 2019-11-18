@@ -38,6 +38,41 @@ int			handle_redirect(char *op)
 	}
 }
 
+*/
+
+int			handle_redirect(char *op, t_lexeme **head)
+{
+	int		i = 0;
+	char	*io_left = 0;
+	char	*io_right = NULL;
+	char	*redir = NULL;
+	if (!op)
+		return (0);
+	if (ft_isdigit(*op) || *op == '&')
+	{
+		io_left = (ft_isdigit(*op)) ? ft_itoa(ft_atoi(op)) : ft_strdup("&");
+		new_lex(io_left, IO_NAME, head);
+		i += ft_strlen(io_left);
+		op += ft_strlen(io_left);
+	}
+	if (op && (!ft_strncmp(op, "<&", 2) || !ft_strncmp(op, ">&", 2)))
+	{
+		redir = ft_strdup(!ft_strncmp(op, ">&", 2) ? ">&" : "<&");
+		new_lex(redir, (!ft_strncmp(op, ">&", 2) ? R_REDIRECT : L_REDIRECT), head);
+		i += 2;
+		op += 2;
+	}
+	if (op && *op && !ft_isspace(*op))
+	{
+		int j = 0;
+		while (op[j] && !ft_isspace(op[j]))
+			j++;
+		io_right = ft_strndup(op, j + 1);
+		new_lex(io_right, IO_NAME, head);
+		i += ft_strlen(io_right);
+	}
+	return (i);
+}
 
 int			is_redirect(char *op)
 {
@@ -47,17 +82,21 @@ int			is_redirect(char *op)
 	if (op[i] == '&')
 		i++;
 	else
-		while (ft_isdigit(op[i]))
+		while (op[i] && ft_isdigit(op[i]))
 			i++;
-	if (op[i] && op[i] == '<' || op[i] == '>')
+	if (op[i] && (op[i] == '<' || op[i] == '>'))
 	{
 		i++;
-		if (op[i] && op[i])
+		if (op[i] && op[i] == '&')
+		{
+			i++;
+			return (1);
+		}
 	}
 	return (0);
 }
 
-
+/*
 int			size_redir(char *op)
 {
 	if (!op)
@@ -76,9 +115,11 @@ int			is_operator(char *op, int pos)
 
 	i = 3;
 	ret = 0;
-	if (op && op + pos && (!(ft_strncmp(op + pos, ">&", 2)) || !(ft_strncmp(op + pos, "<&", 2))))
-		return (11);
-	while (g_term.symbls[i] && i < 11)
+	//if (op && op + pos && (!(ft_strncmp(op + pos, ">&", 2)) || !(ft_strncmp(op + pos, "<&", 2))))
+	//	return (11);
+	if (is_redirect(op + pos))
+		return (12);
+	while (g_term.symbls[i] && i < 12)
 	{
 		if (ft_strncmp(op + pos, g_term.symbls[i],
 			ft_strlen(g_term.symbls[i])) == 0)
@@ -202,26 +243,30 @@ t_node		*lexer(char *input)
 		input += i;
 		if (op > 1)
 		{
-			if (op < 11)
+			if (op < L_REDIRECT)
 			{
 				new_lex(ft_strndup(input, ft_strlen(g_term.symbls[op])), op, &ref);
 				input += ft_strlen(g_term.symbls[op]);
 			}
+			else if (op == L_REDIRECT)
+				input += handle_redirect(input, &ref);
 			/*
 			else if (op == REDIRECT)
 			{
 				new_lex(ft_strndup(input, size_redir(input)), op, &ref);
-				ft_printf_fd(STDERR_FILENO, "REDIRECT: ");
-				t_lexeme *prnt_tmp = ref;
-				while (prnt_tmp->next)
-					prnt_tmp = prnt_tmp->next;
-				if (prnt_tmp)
-					ft_printf_fd(STDERR_FILENO, "%s", prnt_tmp->data);
-				ft_printf_fd(STDERR_FILENO, "\n");
+				
 				input += size_redir(input);
 			}
 			*/
 		}
 	}
+	ft_printf_fd(STDERR_FILENO, "LEXEMES: ");
+	t_lexeme *prnt_tmp = ref;
+	while (prnt_tmp->next)
+	{
+		ft_printf_fd(STDERR_FILENO, "  |type: %d, str: %s|  ", prnt_tmp->set, prnt_tmp->data);
+		prnt_tmp = prnt_tmp->next;
+	}
+	ft_printf_fd(STDERR_FILENO, "\n");
 	return (parser(ref));
 }

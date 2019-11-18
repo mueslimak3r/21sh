@@ -169,7 +169,7 @@ void		shell_loop(void)
 
 void		define_symbols(void)
 {
-	static char	*symbols[15] = {
+	static char	*symbols[13] = {
 	"NONE",
 	"WORD",
 	"EXPANSION",
@@ -181,9 +181,7 @@ void		define_symbols(void)
 	";",
 	"<",
 	">",
-	"REDIRECT",
-	"IO_NUMBER",
-	"NEWLINE",
+	"\n",
 	NULL };
 
 	g_term.symbls = symbols;
