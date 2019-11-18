@@ -29,7 +29,6 @@ int		execute_command(int in, int out, int err, char **args)
 	{
 		if ((pid = fork()) == 0)
 		{
-			ft_printf("[%d][%d][%d]\n", in, out, err);
 			if (in < 0)
 				close(0);
 			else if (out < 0)

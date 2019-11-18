@@ -66,29 +66,13 @@ enum e_nodetype	classify(t_lexeme *lexeme)
 	if (lexeme->designation != BASE)
 		return (lexeme->designation);
 	if ((res = is_exec(lexeme)))
-	{
-		if (res <= 0)
-			ft_printf("err exec %s\n", lexeme->data);
 		return (res > 0 ? EXEC : ERR);
-	}
 	else if ((res = is_arg(lexeme)))
-	{
-		if (res <= 0)
-			ft_printf("err arg %s\n", lexeme->data);
 		return (res > 0 ? ARG : ERR);
-	}
 	else if ((res = is_mod(lexeme)))
-	{
-		if (res <= 0)
-			ft_printf("err mod %s %d\n", lexeme->data, res);
 		return (res > 0 ? MOD : ERR);
-	}
 	else if ((res = is_fd_lit(lexeme)))
-	{
-		if (res <= 0)
-			ft_printf("err io %s\n", lexeme->data);
 		return (res > 0 ? FD_LIT : ERR);
-	}
 	return (2);
 }
 
@@ -228,7 +212,6 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 	int		dir;
 
 	tmp = node->children;
-	ft_printf("redirecting pipes\n");
 	if (!tmp || !tmp->lexeme)
 		return ;
 	src = ft_atoi(tmp->lexeme->data);
@@ -448,7 +431,6 @@ void			recurse(t_node *head, t_stats *stats)
 			recurse(tmp, stats);
 		if (h2->lexeme && h2->lexeme->set == SEMI)
 		{
-			ft_printf_fd(STDERR_FILENO, "EMPTYING BUFFER\n");
 			empty_buffer(stats->f_d);
 			empty_buffer(main_pipe);
 		}
@@ -532,10 +514,7 @@ t_node			*parser(t_lexeme *lexemes)
 		}
 		else if (classification == EXEC || (classification >= FD_R
 			&& classification <= FD_A))
-		{
-			ft_printf("reparented on %s %d\n", lexemes->data ? lexemes->data : "NULL", classification);
 			head = new_node(EXPR, NULL, head, invert);
-		}
 		else if (classification == ERR)
 		{
 			ft_printf_fd(STDERR_FILENO, "classifier returned error\n");
@@ -553,9 +532,7 @@ t_node			*parser(t_lexeme *lexemes)
 				abs = 1;
 		}
 		else if (classification == REDIR)
-		{
 			invert = 0;
-		}
 		new_node(classification, lexemes, head, invert);
 		if (lexemes->set == SEMI)
 			head = new_node(EXPR, NULL, head, invert);
