@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/18 22:08:48 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 23:32:18 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,16 @@ void	dup_close(int fd1, int fd2, t_redir *list)
 
 	n = fd1;
 	tmp = list;
+	ft_printf("duping %d %d\n", fd1, fd2);
 	while (tmp)
 	{
+		ft_printf("redir: [%d][%d]\n", tmp->src, tmp->dst);
 		if (tmp->src == n && n > 0 && fd2 != tmp->dst)
 			n = tmp->dst;
 		tmp = tmp->next;
 	}
+	ft_printf("n: %d | fd1: %d | fd2: %d\n", n, fd1, fd2);
+	ft_printf("done\n");
 	dup2(n, fd2);
 }
 
@@ -35,12 +39,14 @@ void	reg_close(int fd, t_redir *list)
 
 	tmp = list;
 	n = fd;
+	ft_printf("closing\n");
 	while (tmp)
 	{
 		if (tmp->dst == n)
 			close(tmp->src);
 		tmp = tmp->next;
 	}
+	ft_printf("done\n");
 	close(n);
 }
 

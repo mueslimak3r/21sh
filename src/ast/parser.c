@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/18 22:08:50 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 23:32:21 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int				is_fd_lit(t_lexeme *lexeme)
 		return (0);
 	if (lexeme->set == IO_NAME)
 	{
-		if (is_mod(lexeme->next) && lexeme->next->next && lexeme->next->next->set == IO_NAME)
+		if (is_mod(lexeme->next) && lexeme->next->next && (lexeme->next->next->set == IO_NAME || lexeme->next->next->set == WORD))
 		{
 			lexeme->next->designation = REDIR;
 			lexeme->next->next->designation = FD_LIT;
@@ -223,6 +223,7 @@ void				redir_pipes(t_node *node, t_redir **list)
 	int		dir;
 	int		swp;
 
+	dst = 0;
 	tmp = node->children;
 	if (!tmp || !tmp->lexeme)
 		return ;
@@ -234,7 +235,15 @@ void				redir_pipes(t_node *node, t_redir **list)
 	tmp = tmp->next;
 	if (!tmp || !tmp->lexeme)
 		return ;
-	dst = ft_strchr(tmp->lexeme->data, '-') ? -1 : ft_atoi(tmp->lexeme->data);
+	ft_printf("here [%s]\n", tmp->lexeme->data);
+	if (!ft_strcmp(tmp->lexeme->data, "- ") || !ft_strcmp(tmp->lexeme->data, "-"))
+		dst = -1;
+	else if (!(dst = ft_atoi(tmp->lexeme->data)) && ft_strcmp(tmp->lexeme->data, "0"))
+	{
+		ft_printf("opening %s...\n", tmp->lexeme->data);
+		dst = open(tmp->lexeme->data, O_WRONLY | O_CREAT, 0644);
+	}
+	ft_printf("done %d\n", dst);
 	swp = 0;
 	if (dir == -1)
 	{
@@ -495,9 +504,11 @@ t_node			*parser(t_lexeme *lexemes)
 	enum e_nodetype	classification;
 	int		invert;
 	int		abs;
+	int		in_line;
 
 	invert = 0;
 	abs = 0;
+	in_line = 0;
 	head = new_node(EXPR, NULL, NULL, invert);
 	while (lexemes)
 	{
@@ -534,9 +545,16 @@ t_node			*parser(t_lexeme *lexemes)
 		}
 		else if (classification == FD_LIT)
 		{
-			invert = lexemes->next && lexemes->next->designation == REDIR ? 1 : 0;
-			if (lexemes->next && lexemes->next->designation == REDIR)
+			ft_printf("FD_LIT %s\n", lexemes->data);
+			invert = lexemes->next && 
+				(lexemes->next->designation == REDIR || lexemes->next->data[0] == '>'
+				 || lexemes->next->data[0] == '<') ? 1 : 0;
+			if (lexemes->next && (lexemes->next->designation == REDIR ||
+						lexemes->next->data[0] == '<' || lexemes->next->data[0] == '>'))
+			{
 				head = new_node(EXPR, NULL, head, invert);
+				lexemes->next->designation = REDIR;
+			}
 			else
 				abs = 1;
 		}
