@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:12:13 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/18 19:12:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/18 21:56:47 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int			is_nb_before_redir(char *op)
 	{
 		while (op[i] && ft_isdigit(op[i]))
 			i++;
-		if (op[i] && (op[i] == '>' || ft_strncmp(op + i, ">>", 2)))
+		if (op[i] && (op[i] == '>' || !ft_strncmp(op + i, ">>", 2)))
 			return (1);
 	}
 	return (0);
