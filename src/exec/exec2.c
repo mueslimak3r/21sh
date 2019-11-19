@@ -6,19 +6,64 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/17 12:22:37 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 20:32:35 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-void	dup_close(int fd1, int fd2)
+void	dup_close(int fd1, int fd2, t_redir *list)
 {
-	dup2(fd1, fd2);
-	close(fd1);
+	t_redir	*tmp;
+	int		n;
+
+	n = fd1;
+	tmp = list;
+	while (tmp)
+	{
+		if (tmp->src == n && n > 0 && fd2 != tmp->dst)
+			n = tmp->dst;
+		tmp = tmp->next;
+	}
+	dup2(n, fd2);
+	close(n);
+	ft_printf_fd(STDERR_FILENO, "duping %d %d\n", n, fd2);
 }
 
-int		execute_command(int in, int out, int err, char **args)
+void	reg_close(int fd, t_redir *list)
+{
+	t_redir *tmp;
+	int		n;
+
+	tmp = list;
+	n = fd;
+	while (tmp)
+	{
+		if (tmp->src == n && tmp->dst > 0)
+			n = tmp->dst;
+		tmp = tmp->next;
+	}
+	ft_printf_fd(STDERR_FILENO, "closing %d\n", n);
+	close(n);
+}
+
+void	handle_redirs(t_redir *list)
+{
+	t_redir *tmp;
+
+	tmp = list;
+	if (!tmp)
+		return ;
+	if (tmp && tmp->next)
+		handle_redirs(tmp->next);
+	if (tmp->dst == -1)
+		reg_close(tmp->src, list);
+	else
+		dup_close(tmp->src, tmp->dst, list);
+	tmp = tmp->next;
+}
+
+int		execute_command(int in, int out, int err, char **args, t_redir *list)
 {
 	char	*name;
 	pid_t	pid;
@@ -29,6 +74,14 @@ int		execute_command(int in, int out, int err, char **args)
 	{
 		if ((pid = fork()) == 0)
 		{
+			if (in > 0)
+				add_redir(in, 0, &list);
+			if (out != 1)
+				add_redir(out, 1, &list);
+			if (err != 2)
+				add_redir(err, 2, &list);
+			handle_redirs(list);
+			/*
 			if (in < 0)
 				close(0);
 			else if (out < 0)
@@ -41,6 +94,8 @@ int		execute_command(int in, int out, int err, char **args)
 				dup_close(out, STDOUT_FILENO);
 			if (err != 2 && out > 0)
 				dup_close(err, STDERR_FILENO);
+			*/
+			ft_printf("[%d][%d][%d]\n", in, out, err);
 			if (execve(name, args, g_term.env.envp) == -1)
 				exit(EXIT_SUCCESS);
 			exit(0);

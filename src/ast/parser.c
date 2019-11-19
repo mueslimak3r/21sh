@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/17 12:35:37 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 20:27:00 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,18 @@ t_node			*abstract(t_node *node)
 	return (new);
 }
 
-void				redir_pipes(t_node *node, int *in, int *out, int *err)
+void	add_redir(int src, int dst, t_redir **list)
+{
+	t_redir *tmp;
+
+	tmp = malloc(sizeof(*tmp));
+	tmp->src = src;
+	tmp->dst = dst;
+	tmp->next = *list;
+	*list = tmp;
+}
+
+void				redir_pipes(t_node *node, t_redir **list)
 {
 	// node was a parent in a node that is being executed
 	// it should contain a fd, a redir, and then another fd.
@@ -210,6 +221,7 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 	int		src;
 	int		dst;
 	int		dir;
+	int		swp;
 
 	tmp = node->children;
 	if (!tmp || !tmp->lexeme)
@@ -222,24 +234,16 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 	tmp = tmp->next;
 	if (!tmp || !tmp->lexeme)
 		return ;
-	if (ft_strchr(tmp->lexeme->data, '-'))
+	dst = ft_strchr(tmp->lexeme->data, '-') ? -1 : ft_atoi(tmp->lexeme->data);
+	swp = 0;
+	if (dir == -1)
 	{
-		ft_printf("closing %d\n", src);
-		if (src == 1)
-			*out = -1;
-		if (src == 2)
-			*err = -1;
-		if (src == 0)
-			*in = -1;
-		return ;
+		swp = src;
+		src = dst;
+		dst = swp;
 	}
-	dst = ft_atoi(tmp->lexeme->data);
-	if (src == 1)
-		*out = dir == -1 ? dst : src;
-	if (src == 0)
-		*in = dir == -1 ? dst : src;
-	if (src == 2)
-		*err = dir == -1 ? dst : src;
+	ft_printf("[%d]->[%d]\n", src, dst);
+	add_redir(src, dst, list);
 }
 
 /*
@@ -247,7 +251,8 @@ void				redir_pipes(t_node *node, int *in, int *out, int *err)
 ** Given a node, returns a string array of the data of the children's lexemes.
 */
 
-char				**concat_node(t_node *node, int *in, int *out, int *err)
+char				**concat_node(t_node *node, int *in, int *out, int *err,
+									t_redir **list)
 {
 	char	**ret;
 	t_node	*tmp;
@@ -256,6 +261,8 @@ char				**concat_node(t_node *node, int *in, int *out, int *err)
 
 	if (!node)
 		return (NULL);
+	if (!in || !out || !err)
+		;
 	tmp = node->children;
 	ret = NULL;
 	sz = 0;
@@ -265,9 +272,7 @@ char				**concat_node(t_node *node, int *in, int *out, int *err)
 				|| tmp->set == ARG)
 			sz += tmp->lexeme ? 1 : 0;
 		else if (tmp->set == EXPR)
-		{
-			redir_pipes(tmp, in, out, err);
-		}
+			redir_pipes(tmp, list);
 		tmp = tmp->next;
 	}
 	tmp = node->children;
@@ -294,7 +299,9 @@ void				exec_node_parse(t_node *node, int *in, int *out, int *err)
 {
 	char	**disp;
 	int		i;
+	t_redir	*redirects;
 
+	redirects = NULL;
 	if (!node || node->evaluated)
 		return ;
 	if (node->children->set >= FD_R && node->children->set <= FD_A)
@@ -311,9 +318,9 @@ void				exec_node_parse(t_node *node, int *in, int *out, int *err)
 			ft_readstdin_line(1, node->children->lexeme->data);
 		return ;
 	}
-	disp = concat_node(node, in, out, err);
+	disp = concat_node(node, in, out, err, &redirects);
 	if (run_builtins(disp, &g_term.env) == 2)
-		execute_command(*in, *out, *err, disp);
+		execute_command(*in, *out, *err, disp, redirects);
 	i = 0;
 	while (disp[i])
 		ft_strdel(&disp[i++]);
@@ -397,6 +404,7 @@ void			recurse(t_node *head, t_stats *stats)
 	t_node		*h2;
 	int			main_pipe[3];
 	static int	pipes;
+	t_redir		*redirects;
 
 	h2 = head;
 #ifdef TREE_DEBUG
@@ -404,6 +412,7 @@ void			recurse(t_node *head, t_stats *stats)
 	st++;
 #endif
 
+	redirects = NULL;
 	while (h2)
 	{
 		main_pipe[0] = 0;

@@ -63,6 +63,8 @@ typedef struct s_st_node	t_st_node;
 typedef struct s_st_leaf	t_st_leaf;
 typedef struct s_rope_node	t_rope_node;
 
+typedef struct s_redir		t_redir;
+
 struct winsize				g_window_size;
 struct s_term				g_term;
 struct s_ht					*g_env[HT_OVERHEAD];
@@ -102,6 +104,13 @@ enum						e_nodetype
 	REDIR,
 	FD_LIT,
 	ERR
+};
+
+struct s_redir
+{
+	int				src;
+	int				dst;
+	struct s_redir	*next;
 };
 
 typedef union				u_input
@@ -272,7 +281,7 @@ int				is_mod(t_lexeme *lexeme);
 int				is_arg(t_lexeme *lexeme);
 int				is_exec(t_lexeme *lexeme);
 int				is_fd_lit(t_lexeme *lexeme);
-char			**concat_node(t_node *node, int *in, int *out, int *err);
+char			**concat_node(t_node *node, int *in, int *out, int *err, t_redir **list);
 
 /*
 ** ALIASING
@@ -287,7 +296,7 @@ int				ft_alias(char *str);
 
 int				empty_buffer(int fd[2]);
 int		print_buffer(int fd[2]);
-int		execute_command(int in, int out, int err, char **args);
+int		execute_command(int in, int out, int err, char **args, t_redir *list);
 void			print_banner(int fd);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);
@@ -298,4 +307,5 @@ int				ft_env(char **envp);
 
 void			auto_complete(void);
 int				termcap_reset_cursor(int pos, int len);
+void			add_redir(int src, int dst, t_redir **list);
 #endif
