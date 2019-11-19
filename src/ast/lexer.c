@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 03:33:40 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/18 17:42:26 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,21 @@ int			is_redirect(char *op)
 	return (0);
 }
 
+int			is_nb_before_redir(char *op)
+{
+	int		i = 0;
+	if (!op)
+		return (0);
+	if (ft_isdigit(op[i]))
+	{
+		while (op[i] && ft_isdigit(op[i]))
+			i++;
+		if (op[i] && (op[i] == '>' || ft_strncmp(op + i, ">>", 2)))
+			return (1);
+	}
+	return (0);
+}
+
 /*
 int			size_redir(char *op)
 {
@@ -120,6 +135,8 @@ int			is_operator(char *op, int pos)
 	//	return (11);
 	if (is_redirect(op + pos))
 		return (12);
+	if (is_nb_before_redir(op + pos))
+		return (IO_NAME);
 	while (g_term.symbls[i] && i < 12)
 	{
 		if (ft_strncmp(op + pos, g_term.symbls[i],
@@ -251,6 +268,12 @@ t_node		*lexer(char *input)
 			}
 			else if (op == L_REDIRECT)
 				input += handle_redirect(input, &ref);
+			else if (op == IO_NAME)
+			{
+				char *io_name = ft_itoa(ft_atoi(input));
+				new_lex(io_name, op, &ref);
+				input += ft_strlen(io_name);
+			}
 			/*
 			else if (op == REDIRECT)
 			{
