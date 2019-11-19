@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/18 20:27:00 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 21:35:30 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,9 @@ char				**concat_node(t_node *node, int *in, int *out, int *err,
 	if (!node)
 		return (NULL);
 	if (!in || !out || !err)
+	{
 		;
+	}
 	tmp = node->children;
 	ret = NULL;
 	sz = 0;
@@ -404,7 +406,6 @@ void			recurse(t_node *head, t_stats *stats)
 	t_node		*h2;
 	int			main_pipe[3];
 	static int	pipes;
-	t_redir		*redirects;
 
 	h2 = head;
 #ifdef TREE_DEBUG
@@ -412,7 +413,6 @@ void			recurse(t_node *head, t_stats *stats)
 	st++;
 #endif
 
-	redirects = NULL;
 	while (h2)
 	{
 		main_pipe[0] = 0;
