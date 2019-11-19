@@ -449,6 +449,7 @@ void			recurse(t_node *head, t_stats *stats)
 			recurse(tmp, stats);
 		if (h2->lexeme && h2->lexeme->set == SEMI)
 		{
+			ft_printf("buffer emptying\n");
 			empty_buffer(stats->f_d);
 			empty_buffer(main_pipe);
 		}
@@ -504,11 +505,9 @@ t_node			*parser(t_lexeme *lexemes)
 	enum e_nodetype	classification;
 	int		invert;
 	int		abs;
-	int		in_line;
 
 	invert = 0;
 	abs = 0;
-	in_line = 0;
 	head = new_node(EXPR, NULL, NULL, invert);
 	while (lexemes)
 	{

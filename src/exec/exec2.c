@@ -12,80 +12,107 @@
 
 #include "ftshell.h"
 
-void	dup_close(int fd1, int fd2, t_redir *list)
-{
-	t_redir	*tmp;
-	int		n;
+int		g_in;
+int		g_out;
+int		g_err;
 
+int		dup_close(int fd1, int fd2, t_redir *list)
+{
+	int		n;
+	int		a;
+
+	if (!list)
+		return (0);
 	n = fd1;
-	tmp = list;
-	ft_printf("duping %d %d\n", fd1, fd2);
-	while (tmp)
+	ft_printf("dup %d %d\n", n, fd2);
+	if ((a = dup2(n,fd2)) == -1)
 	{
-		ft_printf("redir: [%d][%d]\n", tmp->src, tmp->dst);
-		if (tmp->src == n && n > 0 && fd2 != tmp->dst)
-			n = tmp->dst;
-		tmp = tmp->next;
+		ft_printf_fd(STDERR_FILENO, "-wtsh: Bad file descriptor: %d\n", n);
+		return (0);
 	}
-	ft_printf("n: %d | fd1: %d | fd2: %d\n", n, fd1, fd2);
-	ft_printf("done\n");
-	dup2(n, fd2);
+	ft_printf("%d\n", a);
+	return (1);
 }
 
 void	reg_close(int fd, t_redir *list)
 {
-	t_redir *tmp;
 	int		n;
 
-	tmp = list;
+	if (!list)
+		return ;
 	n = fd;
-	ft_printf("closing\n");
-	while (tmp)
-	{
-		if (tmp->dst == n)
-			close(tmp->src);
-		tmp = tmp->next;
-	}
-	ft_printf("done\n");
+	ft_printf("closing %d\n", fd);
 	close(n);
 }
 
-void	handle_redirs(t_redir *list)
+int		handle_redirs(t_redir *list)
+{
+	t_redir *tmp;
+	int		r;
+
+	r = 1;
+	tmp = list;
+	if (!tmp)
+		return (0);
+	if (tmp && tmp->next)
+		r = handle_redirs(tmp->next);
+	if (tmp->dst == -1)
+		reg_close(tmp->src, list);
+	else
+	{
+		if (!dup_close(tmp->dst, tmp->src, list))
+			return (0);
+	}
+	return (r);
+}
+
+void	mod_redirs(t_redir *list, int in, int out, int err)
 {
 	t_redir *tmp;
 
 	tmp = list;
-	if (!tmp)
-		return ;
-	if (tmp && tmp->next)
-		handle_redirs(tmp->next);
-	if (tmp->dst == -1)
-		reg_close(tmp->src, list);
-	else
-		dup_close(tmp->src, tmp->dst, list);
+	while (tmp)
+	{
+		if (tmp->src == 0)
+			tmp->src = in;
+		if (tmp->src == 1)
+			tmp->src = out;
+		if (tmp->src == 2)
+			tmp->src = err;
+		if (tmp->dst == 0)
+			tmp->dst = in;
+		if (tmp->dst == 1)
+			tmp->dst = out;
+		if (tmp->dst == 2)
+			tmp->dst = err;
+		tmp = tmp->next;
+	}
 }
 
 int		execute_command(int in, int out, int err, char **args, t_redir *list)
 {
 	char	*name;
-	int		io[2];
 	pid_t	pid;
+	int		restore[3];
 
 	name = NULL;
+	restore[0] = dup(in);
+	restore[1] = dup(out);
+	restore[2] = dup(err);
+	g_in = restore[0];
+	g_out = restore[1];
+	g_err = restore[2];
 	args[0] = find_alias(args[0]);
-	io[0] = in;
-	io[1] = out;
 	if (check_path(&name, args, g_term.env.envp))
 	{
 		if ((pid = fork()) == 0)
 		{
-			if (in > 0)
-				add_redir(in, 0, &list);
-			if (out != 1)
-				add_redir(out, 1, &list);
-			if (err != 2)
-				add_redir(err, 2, &list);
-			handle_redirs(list);
+			//mod_redirs(list, restore[0], restore[1], restore[2]);
+				add_redir(0, restore[0], &list);
+				add_redir(1, restore[1], &list);
+				add_redir(2, restore[2], &list);
+			if (!handle_redirs(list))
+				return (0);
 			/*
 			if (in < 0)
 				close(0);
@@ -105,6 +132,12 @@ int		execute_command(int in, int out, int err, char **args, t_redir *list)
 			exit(0);
 		}
 		waitpid(pid, 0, 0);
+		dup2(restore[0], in);
+		dup2(restore[1], out);
+		dup2(restore[2], err);
+		close(restore[0]);
+		close(restore[1]);
+		close(restore[2]);
 	}
 	if (name)
 		free(name);

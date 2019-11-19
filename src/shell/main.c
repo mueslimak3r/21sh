@@ -161,6 +161,7 @@ void		shell_loop(void)
 			continue ;
 		tree = lexer(g_term.curr_buff->buff_str);
 		recurse(tree, &stats);
+		ft_printf("done recursing\n");
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}
