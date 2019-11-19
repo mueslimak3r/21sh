@@ -253,7 +253,13 @@ int				run_dispatch(char **args, t_env *env);
 
 t_node			*lexer(char *input);
 int				is_operator(char *op, int pos);
-t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head);
+t_lexeme		*new_lex(char *data, enum e_tokentype type, t_lexeme **head);
+int				is_nb_before_redir(char *op);
+int				is_redirect(char *op);
+int				handle_redirect(char *op, t_lexeme **head);
+int				handle_quote(char *input);
+char			*add_lex_op(t_lexeme **head, char *line, int op);
+
 /*
 ** PARSER
 */
