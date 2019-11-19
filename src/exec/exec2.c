@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/17 12:22:37 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 19:22:52 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,39 @@ void	dup_close(int fd1, int fd2)
 	close(fd1);
 }
 
+void	exec_child(int *io, int err, char *name, char **args)
+{
+	if (io[0] < 0)
+		close(0);
+	else if (io[1] < 0)
+		close(1);
+	else if (err < 0)
+		close(2);
+	if (io[0] > 0)
+		dup_close(io[0], STDIN_FILENO);
+	if (io[1] != 1 && io[1] > 0)
+		dup_close(io[1], STDOUT_FILENO);
+	if (err != 2 && io[1] > 0)
+		dup_close(err, STDERR_FILENO);
+	if (execve(name, args, g_term.env.envp) == -1)
+		exit(EXIT_SUCCESS);
+	exit(0);
+}
+
 int		execute_command(int in, int out, int err, char **args)
 {
 	char	*name;
+	int		io[2];
 	pid_t	pid;
 
 	name = NULL;
 	args[0] = find_alias(args[0]);
+	io[0] = in;
+	io[1] = out;
 	if (check_path(&name, args, g_term.env.envp))
 	{
 		if ((pid = fork()) == 0)
-		{
-			if (in < 0)
-				close(0);
-			else if (out < 0)
-				close(1);
-			else if (err < 0)
-				close(2);
-			if (in > 0)
-				dup_close(in, STDIN_FILENO);
-			if (out != 1 && out > 0)
-				dup_close(out, STDOUT_FILENO);
-			if (err != 2 && out > 0)
-				dup_close(err, STDERR_FILENO);
-			if (execve(name, args, g_term.env.envp) == -1)
-				exit(EXIT_SUCCESS);
-			exit(0);
-		}
+			exec_child(io, err, name, args);
 		waitpid(pid, 0, 0);
 	}
 	if (name)

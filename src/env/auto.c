@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 10:34:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/13 22:15:56 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 19:17:34 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,19 +86,16 @@ void		get_dir(t_st_node **tree, char *path)
 
 void		auto_complete(void)
 {
-	char	*in;
-	int		ls;
-	char	*dir;
-	char	*xstr;
-	char	**split;
-	int		i;
-	char	*treestr;
+	char		*in;
+	int			ls;
+	char		*dir;
+	char		*xstr;
+	char		**split;
+	int			i;
+	char		*treestr;
 	t_st_node	*tree;
 
 	treestr = NULL;
-	/*if (!g_term.curr_buff->rope)
-		return ;
-	treestr = rope_getline(g_term.curr_buff->rope, 1);*/
 	tree = NULL;
 	split = ft_strsplit(treestr, ' ');
 	i = 0;
@@ -119,7 +116,6 @@ void		auto_complete(void)
 	xstr = path_expansions(dir);
 	free(dir);
 	get_dir(&tree, xstr);
-	//add_to_rope(match_sub(&tree, str));
 	reprint_buffer(g_term.curr_buff);
 	dir = NULL;
 }
