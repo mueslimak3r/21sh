@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/18 20:41:19 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 22:08:48 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ void	dup_close(int fd1, int fd2, t_redir *list)
 		tmp = tmp->next;
 	}
 	dup2(n, fd2);
-	close(n);
-	ft_printf_fd(STDERR_FILENO, "duping %d %d\n", n, fd2);
 }
 
 void	reg_close(int fd, t_redir *list)
@@ -39,11 +37,10 @@ void	reg_close(int fd, t_redir *list)
 	n = fd;
 	while (tmp)
 	{
-		if (tmp->src == n && tmp->dst > 0)
-			n = tmp->dst;
+		if (tmp->dst == n)
+			close(tmp->src);
 		tmp = tmp->next;
 	}
-	ft_printf_fd(STDERR_FILENO, "closing %d\n", n);
 	close(n);
 }
 
@@ -60,7 +57,6 @@ void	handle_redirs(t_redir *list)
 		reg_close(tmp->src, list);
 	else
 		dup_close(tmp->src, tmp->dst, list);
-	tmp = tmp->next;
 }
 
 int		execute_command(int in, int out, int err, char **args, t_redir *list)
@@ -98,7 +94,6 @@ int		execute_command(int in, int out, int err, char **args, t_redir *list)
 			if (err != 2 && out > 0)
 				dup_close(err, STDERR_FILENO);
 			*/
-			ft_printf("[%d][%d][%d]\n", in, out, err);
 			if (execve(name, args, g_term.env.envp) == -1)
 				exit(EXIT_SUCCESS);
 			exit(0);
