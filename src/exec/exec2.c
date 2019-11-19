@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/18 20:32:35 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 20:41:19 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,13 @@ void	handle_redirs(t_redir *list)
 int		execute_command(int in, int out, int err, char **args, t_redir *list)
 {
 	char	*name;
+	int		io[2];
 	pid_t	pid;
 
 	name = NULL;
 	args[0] = find_alias(args[0]);
+	io[0] = in;
+	io[1] = out;
 	if (check_path(&name, args, g_term.env.envp))
 	{
 		if ((pid = fork()) == 0)

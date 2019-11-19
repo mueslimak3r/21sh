@@ -3,7 +3,7 @@ CC := gcc
 
 all: $(NAME)
 
-MODULES := src/ast src/env src/exec src/shell src/termcaps src/history_buffer includes
+MODULES := src/ast src/env src/exec src/shell src/termcaps includes
 LIBDIRS := libft
 LIBS := -lncurses -Llibft -lft
 CFLAGS += -Ilibft/includes -Iincludes -Wall -Werror -Wextra -g -fsanitize=address

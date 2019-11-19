@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 16:06:16 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/18 19:16:27 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,10 @@ int		reprint_buffer(t_tbuff *buff)
 			index -= PROMPT_SIZE;
 		else
 			index = 0;
-		//ft_printf_fd(STDERR_FILENO, "p from %d\n", index);
 		if (buff->buff_str)
 			ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str +
 					(g_term.conf.cursor[1] > 0 ? index : 0));
 	}
-	//tputs(tgetstr("cr", NULL), 0, ft_charput);
-	//for (int i = 0; i < g_term.conf.cursor[0]; i++)
-	//		tputs(tgetstr("nd", NULL), 0, ft_charput);
 	return (0);
 }
 
@@ -92,10 +88,8 @@ int     move_cursor(int amt, int affect_tc)
 			for (int i = 1; i < amt % g_term.conf.termsize[0]; i++)
 				tputs(tgetstr("nd", NULL), 0, ft_charput);
 		}
-		//ft_printf_fd(STDERR_FILENO, "ayy x %d y %d trmsz: %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1], g_term.conf.termsize[0]);
         g_term.conf.cursor[1] += (g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0];
 		g_term.conf.cursor[0] = (g_term.conf.cursor[0] + (amt % g_term.conf.termsize[0])) % g_term.conf.termsize[0];
-        // + (amt % g_term.conf.termsize[0]);
         g_term.conf.curlines = g_term.conf.cursor[1] + 1;
 		//ft_printf_fd(STDERR_FILENO, "ayy2 x %d y %d trmsz: %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1], g_term.conf.termsize[0]);
     }
