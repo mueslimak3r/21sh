@@ -282,7 +282,7 @@ int				is_mod(t_lexeme *lexeme);
 int				is_arg(t_lexeme *lexeme);
 int				is_exec(t_lexeme *lexeme);
 int				is_fd_lit(t_lexeme *lexeme);
-char			**concat_node(t_node *node, int *in, int *out, int *err, t_redir **list);
+char			**concat_node(t_node *node, t_redir **list);
 
 /*
 ** ALIASING
@@ -296,8 +296,8 @@ int				ft_alias(char *str);
 */
 
 int				empty_buffer(int fd[2]);
-int		print_buffer(int fd[2]);
-int		execute_command(int in, int out, int err, char **args, t_redir *list);
+int				print_buffer(int fd[2]);
+int				execute_command(int in, int out, char **args, t_redir *list);
 void			print_banner(int fd);
 int				ft_printf_fd(int fd, const char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);

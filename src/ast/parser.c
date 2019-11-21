@@ -6,13 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 00:50:04 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 02:23:18 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-#define TREE_DEBUG
+//#define TREE_DEBUG
 
 /*
 ** new_node
@@ -297,8 +297,7 @@ void				redir_pipes(t_node *node, t_redir **list)
 ** Given a node, returns a string array of the data of the children's lexemes.
 */
 
-char				**concat_node(t_node *node, int *in, int *out, int *err,
-									t_redir **list)
+char				**concat_node(t_node *node, t_redir **list)
 {
 	char	**ret;
 	t_node	*tmp;
@@ -307,10 +306,6 @@ char				**concat_node(t_node *node, int *in, int *out, int *err,
 
 	if (!node)
 		return (NULL);
-	if (!in || !out || !err)
-	{
-		;
-	}
 	tmp = node->children;
 	ret = NULL;
 	sz = 0;
@@ -343,7 +338,7 @@ char				**concat_node(t_node *node, int *in, int *out, int *err,
 ** Executes a given node with children.
 */
 
-void				exec_node_parse(t_node *node, int *in, int *out, int *err)
+void				exec_node_parse(t_node *node, int *in, int *out)
 {
 	char	**disp;
 	int		i;
@@ -366,9 +361,9 @@ void				exec_node_parse(t_node *node, int *in, int *out, int *err)
 			ft_readstdin_line(1, node->children->lexeme->data);
 		return ;
 	}
-	disp = concat_node(node, in, out, err, &redirects);
+	disp = concat_node(node, &redirects);
 	if (run_builtins(disp, &g_term.env) == 2)
-		execute_command(*in, *out, *err, disp, redirects);
+		execute_command(*in, *out, disp, redirects);
 	i = 0;
 	while (disp[i])
 		ft_strdel(&disp[i++]);
@@ -413,9 +408,11 @@ int				count_pipes(t_node *node)
 	while (node)
 	{
 		if (node->lexeme && (node->lexeme->set == PIPE || node->lexeme->set == LESS
-					|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT
-					|| node->lexeme->set == RDLESS))
+			|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT ||
+			node->lexeme->set == RDLESS))
+		{
 			ret++;
+		}
 		node = node->next;
 	}
 	return (ret);
@@ -466,7 +463,7 @@ void			recurse(t_node *head, t_stats *stats)
 		main_pipe[1] = 1;
 		err = 2;
 		tmp = h2->children;
-		pipes += (count_pipes(tmp) ? count_pipes(tmp) + 1 : 0);
+		pipes += (count_pipes(tmp));// ? count_pipes(tmp) + 1 : 0);
 #ifdef TREE_DEBUG
 
 		if (h2 && h2->lexeme)
@@ -495,10 +492,10 @@ void			recurse(t_node *head, t_stats *stats)
 		{
 			if (pipes)
 			{
-				ft_printf_fd(STDERR_FILENO, "new pipe\n");
 				pipe(main_pipe);
+				//ft_printf_fd(STDERR_FILENO, "pipes %d new pipe in %d out %d\n", pipes, main_pipe[0], main_pipe[1]);
 			}
-			exec_node_parse(tmp->parent, &stats->f_d[0], &main_pipe[1], &err);
+			exec_node_parse(tmp->parent, &stats->f_d[0], &main_pipe[1]);
 			if (pipes)
 			{
 				pipes -= 1;
@@ -523,8 +520,6 @@ t_node			*invertify(t_node *head)
 
 	if (!head || !head->children)
 		return (NULL);
-	//print_list(head);
-	//ft_printf_fd(STDERR_FILENO, "INVERT\n");
 	tmp = head->children;
 	nxt = NULL;
 	lst = NULL;
@@ -536,7 +531,6 @@ t_node			*invertify(t_node *head)
 		tmp = nxt;
 	}
 	head->children = lst;
-	//print_list(head);
 	return (head->parent ? head->parent : abstract(head));
 }
 
@@ -585,7 +579,7 @@ t_node			*parser(t_lexeme *lexemes)
 		}
 		else if (classification == FD_LIT)
 		{
-			ft_printf("FD_LIT %s\n", lexemes->data);
+			//ft_printf("FD_LIT %s\n", lexemes->data);
 			invert = lexemes->next && 
 				(lexemes->next->designation == REDIR || lexemes->next->data[0] == '>'
 				 || lexemes->next->data[0] == '<') ? 1 : 0;
