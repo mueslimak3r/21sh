@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:12:13 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/18 21:56:47 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 02:41:25 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,17 @@ int			handle_redirect(char *op, t_lexeme **head)
 	redir = NULL;
 	if (!op)
 		return (0);
-	if (ft_isdigit(*op) || *op == '&')
+	if (ft_isdigit(*op))
 	{
-		io_left = (ft_isdigit(*op)) ? ft_itoa(ft_atoi(op)) : ft_strdup("&");
+		io_left = ft_itoa(ft_atoi(op));
 		new_lex(io_left, IO_NAME, head);
 		i += ft_strlen(io_left);
 		op += ft_strlen(io_left);
 	}
-	if (op && (!ft_strncmp(op, "<&", 2) || !ft_strncmp(op, ">&", 2)))
+	else if (op && (!ft_strncmp(op, "<&", 2) || !ft_strncmp(op, ">&", 2) || !ft_strncmp(op, "&>", 2) || !ft_strncmp(op, "&>", 2)))
 	{
-		redir = ft_strdup(!ft_strncmp(op, ">&", 2) ? ">&" : "<&");
-		new_lex(redir, (!ft_strncmp(op, ">&", 2) ?
-			R_REDIRECT : L_REDIRECT), head);
+		redir = ft_strndup(op, 2);
+		new_lex(redir, ((!ft_strncmp(op, ">&", 2) || !ft_strncmp(op, "&>", 2)) ? R_REDIRECT : L_REDIRECT), head);
 		i += 2;
 		op += 2;
 	}
@@ -63,10 +62,15 @@ int			handle_redirect(char *op, t_lexeme **head)
 int			is_redirect(char *op)
 {
 	int i;
+	int	found_amp;
 
+	found_amp = 0;
 	i = 0;
 	if (op[i] == '&')
+	{
+		found_amp = 1;
 		i++;
+	}
 	else
 		while (op[i] && ft_isdigit(op[i]))
 			i++;
@@ -78,6 +82,8 @@ int			is_redirect(char *op)
 			i++;
 			return (1);
 		}
+		else if (found_amp)
+			return (1);
 	}
 	return (0);
 }

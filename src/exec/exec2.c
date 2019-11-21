@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 02:23:44 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 03:03:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ int		dup_close(int fd1, int fd2)//, t_redir *list)
 		ft_printf_fd(STDERR_FILENO, "-wtsh: Bad file descriptor: %d\n", fd1);
 		return (0);
 	}
-	if (fd1 > 2)
-		close(fd1);
+	//if (fd1 > 2)
+	close(fd1);
 	return (1);
 }
 
@@ -80,12 +80,14 @@ int		execute_command(int in, int out, char **args, t_redir *list)
 			if (!handle_redirs(list))
 				return (0);
 			if (execve(name, args, g_term.env.envp) == -1)
+			{
 				exit(EXIT_SUCCESS);
+			}
 			exit(0);
 		}
+		waitpid(pid, 0, 0);
 		if (in > 2)
 			close(in);
-		waitpid(pid, 0, 0);
 	}
 	if (name)
 		free(name);
@@ -128,5 +130,7 @@ int		empty_buffer(int fd[2])
 		buf[read_bytes] = 0;
 		ft_printf_fd(STDERR_FILENO, "%s", buf);
 	}
+	if (fd[0] > 2)
+		close(fd[0]);
 	return (1);
 }
