@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 12:54:19 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 13:27:26 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,14 @@ int		find_exec(char *arg, char *envp, char **result)
 	int				size;
 
 	line = envp;
+	ft_printf("jere\n");
 	if (resolve_path(arg))
 	{
 		*result = ft_strdup(arg);
 		return (1);
 	}
+	if (!line)
+		return (0);
 	while (*line)
 	{
 		size = ((ft_strchr(line, ':') < line) ? 0 :
@@ -109,11 +112,11 @@ int		get_env(char **envp, char *name, char **env_var)
 int		check_path(char **name, char **args, char **envp)
 {
 	char			*env_var;
+	int				res;
 
 	env_var = NULL;
-	if (!get_env(envp, "PATH", &env_var))
-		return (0);
-	if (!(find_exec(*args, ft_strjoin(env_var, ":"), name)))
+	res = get_env(envp, "PATH", &env_var);
+	if (!(find_exec(*args, res ? ft_strjoin(env_var, ":") : NULL, name)))
 		return (ft_returnfree(&env_var, 0));
 	return (ft_returnfree(&env_var, 1));
 }

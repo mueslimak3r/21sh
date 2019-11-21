@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 18:30:16 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 13:27:30 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,11 @@ int				load_envp(void)
 	while (i < HT_OVERHEAD)
 	{
 		if (g_env[i])
+		{
 			g_term.env.envp[b++] =
-				ft_strjoin(g_env[i]->content_name, g_env[i]->content);
+				ft_strjoin(g_env[i]->content_name,
+						g_env[i]->content);
+		}
 		i++;
 	}
 	g_term.env.envp[b] = 0;
@@ -105,6 +108,8 @@ int				run_builtins(char **args, t_env *env)
 		return (ft_env(env->envp));
 	else if (ft_strcmp(args[0], "export") == 0)
 		return (ft_export(args[1]));
+	else if (ft_strcmp(args[0], "unset") == 0)
+		return (ft_unsetenv(args[1]));
 	else if (ft_strcmp(args[0], "alias") == 0)
 		return (ft_alias(args[1]));
 	else if (ft_strcmp(args[0], "cd") == 0)
