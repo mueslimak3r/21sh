@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 12:50:34 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 12:54:17 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ int		execute_command(int in, int out, char **args, t_redir *list)
 		if (in > 2)
 			close(in);
 	}
+	else
+		ft_printf_fd(STDERR_FILENO, "-wtsh: %s: command not found\n", args[0]);
 	if (name)
 		free(name);
 	return (1);

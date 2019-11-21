@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 12:50:33 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 12:54:19 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int		resolve_path(char *arg)
 
 	path = NULL;
 	name = NULL;
+	//ft_printf("x\n");
+
 	if ((pos = last_slash(arg)) < 0)
 		return (0);
 	path = ft_strsub(arg, 0, pos + 1);
