@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/18 23:32:21 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 00:50:04 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,43 +216,80 @@ void				redir_pipes(t_node *node, t_redir **list)
 {
 	// node was a parent in a node that is being executed
 	// it should contain a fd, a redir, and then another fd.
+	//		for ints l & r io -2 means both 1 & 0
 	
-	t_node	*tmp;
-	int		src;
-	int		dst;
-	int		dir;
-	int		swp;
+	int		left_io = -1;
+	int		right_io = -1;
+	int		dir = 0;
 
-	dst = 0;
+	t_node	*tmp;
 	tmp = node->children;
+
 	if (!tmp || !tmp->lexeme)
 		return ;
-	src = ft_atoi(tmp->lexeme->data);
-	tmp = tmp->next;
-	if (!tmp || !tmp->lexeme)
-		return ;
-	dir = ft_strchr(tmp->lexeme->data, '<') ? -1 : 1;
-	tmp = tmp->next;
-	if (!tmp || !tmp->lexeme)
-		return ;
-	ft_printf("here [%s]\n", tmp->lexeme->data);
-	if (!ft_strcmp(tmp->lexeme->data, "- ") || !ft_strcmp(tmp->lexeme->data, "-"))
-		dst = -1;
-	else if (!(dst = ft_atoi(tmp->lexeme->data)) && ft_strcmp(tmp->lexeme->data, "0"))
+	if (tmp->lexeme->set == IO_NAME)
 	{
-		ft_printf("opening %s...\n", tmp->lexeme->data);
-		dst = open(tmp->lexeme->data, O_WRONLY | O_CREAT, 0644);
+		left_io = ft_atoi(tmp->lexeme->data);
+		tmp = tmp->next;
 	}
-	ft_printf("done %d\n", dst);
-	swp = 0;
-	if (dir == -1)
+	if (!tmp || !tmp->lexeme)
+		return ;
+	if (tmp->lexeme->set == L_REDIRECT || tmp->lexeme->set == R_REDIRECT)
 	{
-		swp = src;
-		src = dst;
-		dst = swp;
+		dir = tmp->lexeme->set == L_REDIRECT ? -1 : 1;
+		if (ft_strchr(tmp->lexeme->data, '&') && ft_strchr(tmp->lexeme->data, '&') < ft_strchr(tmp->lexeme->data, (tmp->lexeme->set == L_REDIRECT ? '<' : '>')))
+		{
+			if (left_io == -1)
+				left_io = -2;
+			else
+			{
+				ft_printf_fd(STDERR_FILENO, "redir syntax err\n");
+				return ;
+			}
+		}
+		else if (ft_strchr(tmp->lexeme->data, '&'))
+		{
+			right_io = -2;
+		}
+		if (left_io == -1)
+			left_io = 1;
+		tmp = tmp->next;
 	}
-	ft_printf("[%d]->[%d]\n", src, dst);
-	add_redir(src, dst, list);
+	else
+	{
+		ft_printf_fd(STDERR_FILENO, "redir syntax err\n");
+		return ;
+	}
+	if (!tmp || !tmp->lexeme)
+		return ;
+	if (tmp->lexeme->set == IO_NAME)
+	{
+		if (!ft_strncmp(tmp->lexeme->data, "-", 1))
+		{
+			add_redir((dir == -1 ? -1 : left_io), (dir == -1 ? left_io : -1), list);
+			return ;
+		}
+		else
+			right_io = ft_atoi(tmp->lexeme->data);
+	}
+	if (dir == 0 || left_io == -1 || right_io == -1 || (left_io == -2 && right_io == -2))
+	{
+		ft_printf_fd(STDERR_FILENO, "redir syntax err\n");
+		return ;
+	}
+	ft_printf("[%d]->[%d]\n", (dir == -1 ? right_io : left_io), (dir == -1 ? left_io : right_io));
+	if (left_io == -2)
+	{
+		add_redir((dir == -1 ? right_io : 1), (dir == -1 ? 1 : right_io), list);
+		add_redir((dir == -1 ? right_io : 2), (dir == -1 ? 2 : right_io), list);
+	}
+	else if (right_io == -2)
+	{
+		add_redir((dir == -1 ? 1 : left_io), (dir == -1 ? left_io : 1), list);
+		add_redir((dir == -1 ? 2 : left_io), (dir == -1 ? left_io : 2), list);
+	}
+	else
+		add_redir((dir == -1 ? right_io : left_io), (dir == -1 ? left_io : right_io), list);
 }
 
 /*
@@ -377,7 +414,7 @@ int				count_pipes(t_node *node)
 	{
 		if (node->lexeme && (node->lexeme->set == PIPE || node->lexeme->set == LESS
 					|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT
-					|| node->lexeme->set == SEMI || node->lexeme->set == RDLESS))
+					|| node->lexeme->set == RDLESS))
 			ret++;
 		node = node->next;
 	}
@@ -413,7 +450,8 @@ void			recurse(t_node *head, t_stats *stats)
 
 	t_node		*tmp;
 	t_node		*h2;
-	int			main_pipe[3];
+	int			main_pipe[2];
+	int			err;
 	static int	pipes;
 
 	h2 = head;
@@ -426,7 +464,7 @@ void			recurse(t_node *head, t_stats *stats)
 	{
 		main_pipe[0] = 0;
 		main_pipe[1] = 1;
-		main_pipe[2] = 2;
+		err = 2;
 		tmp = h2->children;
 		pipes += (count_pipes(tmp) ? count_pipes(tmp) + 1 : 0);
 #ifdef TREE_DEBUG
@@ -441,7 +479,7 @@ void			recurse(t_node *head, t_stats *stats)
 		{
 			write(STDERR_FILENO, "                ", st * 2);
 			ft_printf_fd(STDERR_FILENO,
-				"[IN TREE || TYPE: parent, STR: N/A]\n");
+				"[IN TREE || TYPE: parent SET: %d, STR: N/A]\n", h2->set);
 		}
 #endif
 
@@ -456,8 +494,11 @@ void			recurse(t_node *head, t_stats *stats)
 		if (exec_node_possible(tmp))
 		{
 			if (pipes)
+			{
+				ft_printf_fd(STDERR_FILENO, "new pipe\n");
 				pipe(main_pipe);
-			exec_node_parse(tmp->parent, &stats->f_d[0], &main_pipe[1], &main_pipe[2]);
+			}
+			exec_node_parse(tmp->parent, &stats->f_d[0], &main_pipe[1], &err);
 			if (pipes)
 			{
 				pipes -= 1;

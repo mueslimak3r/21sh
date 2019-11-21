@@ -201,7 +201,8 @@ struct						s_term
 
 struct						s_stats
 {
-	int						f_d[3];
+	int						f_d[2];
+	int						fd_err[2];
 	int						ret;
 	int						exit;
 };

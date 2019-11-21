@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/14 15:59:24 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/20 23:52:46 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ void		shell_loop(void)
 			continue ;
 		tree = lexer(g_term.curr_buff->buff_str);
 		recurse(tree, &stats);
-		ft_printf("done recursing\n");
+		ft_printf_fd(STDERR_FILENO, "done recursing\n");
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}
