@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/30 05:39:30 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 12:50:33 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,27 @@ int		check_dir(char *name, char *path)
 	return (0);
 }
 
+int		resolve_path(char *arg)
+{
+	int		pos;
+	char	*path;
+	char	*name;
+
+	path = NULL;
+	name = NULL;
+	if ((pos = last_slash(arg)) < 0)
+		return (0);
+	path = ft_strsub(arg, 0, pos + 1);
+	name = ft_strsub(arg, pos + 1, ft_strlen(arg));
+	if (check_dir(name, path))
+	{
+		free(path);
+		free(name);
+		return (1);
+	}
+	return (0);
+}
+
 int		find_exec(char *arg, char *envp, char **result)
 {
 	char			*line;
@@ -39,6 +60,11 @@ int		find_exec(char *arg, char *envp, char **result)
 	int				size;
 
 	line = envp;
+	if (resolve_path(arg))
+	{
+		*result = ft_strdup(arg);
+		return (1);
+	}
 	while (*line)
 	{
 		size = ((ft_strchr(line, ':') < line) ? 0 :

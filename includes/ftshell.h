@@ -305,6 +305,7 @@ unsigned long	djb2(char *str);
 int				readfd(int fd1, int fd2, int cd2);
 int				ft_cd(char *path);
 int				ft_env(char **envp);
+int				last_slash(const char *in);
 
 void			auto_complete(void);
 int				termcap_reset_cursor(int pos, int len);

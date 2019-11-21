@@ -6,13 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 10:34:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/18 19:17:34 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 12:50:36 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-static int	last_slash(const char *in)
+int	last_slash(const char *in)
 {
 	int		ret;
 	int		i;
