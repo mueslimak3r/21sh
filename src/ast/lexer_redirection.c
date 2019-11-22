@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:12:13 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 02:41:25 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 16:11:51 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int			handle_redirect(char *op, t_lexeme **head)
 		i += ft_strlen(io_left);
 		op += ft_strlen(io_left);
 	}
-	else if (op && (!ft_strncmp(op, "<&", 2) || !ft_strncmp(op, ">&", 2) || !ft_strncmp(op, "&>", 2) || !ft_strncmp(op, "&>", 2)))
+	if (op && (!ft_strncmp(op, "<&", 2) || !ft_strncmp(op, ">&", 2) || !ft_strncmp(op, "&>", 2) || !ft_strncmp(op, "&>", 2)))
 	{
 		redir = ft_strndup(op, 2);
 		new_lex(redir, ((!ft_strncmp(op, ">&", 2) || !ft_strncmp(op, "&>", 2)) ? R_REDIRECT : L_REDIRECT), head);
@@ -80,10 +80,14 @@ int			is_redirect(char *op)
 		if (op[i] && op[i] == '&')
 		{
 			i++;
+			ft_printf_fd(STDERR_FILENO, "found redir\n");
 			return (1);
 		}
 		else if (found_amp)
+		{
+			ft_printf_fd(STDERR_FILENO, "found redir\n");
 			return (1);
+		}
 	}
 	return (0);
 }
@@ -100,7 +104,10 @@ int			is_nb_before_redir(char *op)
 		while (op[i] && ft_isdigit(op[i]))
 			i++;
 		if (op[i] && (op[i] == '>' || !ft_strncmp(op + i, ">>", 2)))
+		{
+			ft_printf_fd(STDERR_FILENO, "found nb before redir\n");
 			return (1);
+		}
 	}
 	return (0);
 }

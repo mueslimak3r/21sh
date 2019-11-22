@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 12:54:17 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 16:15:29 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ int		dup_close(int fd1, int fd2)//, t_redir *list)
 		ft_printf_fd(STDERR_FILENO, "-wtsh: Bad file descriptor: %d\n", fd1);
 		return (0);
 	}
-	//if (fd1 > 2)
-	close(fd1);
+	if (fd1 > 2)
+		close(fd1);
 	return (1);
 }
 
