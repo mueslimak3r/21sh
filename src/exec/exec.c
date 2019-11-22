@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 13:27:26 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 21:19:33 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ int		resolve_path(char *arg)
 
 	path = NULL;
 	name = NULL;
-	//ft_printf("x\n");
-
 	if ((pos = last_slash(arg)) < 0)
 		return (0);
 	path = ft_strsub(arg, 0, pos + 1);
@@ -55,39 +53,36 @@ int		resolve_path(char *arg)
 	return (0);
 }
 
+int		exec_size(char *line)
+{
+	return ((ft_strchr(line, ':') < line) ? 0 : (ft_strchr(line, ':') - line));
+}
+
 int		find_exec(char *arg, char *envp, char **result)
 {
 	char			*line;
 	char			*path;
 	int				size;
 
-	line = envp;
-	ft_printf("jere\n");
 	if (resolve_path(arg))
 	{
 		*result = ft_strdup(arg);
 		return (1);
 	}
-	if (!line)
+	if (!(line = envp))
 		return (0);
 	while (*line)
 	{
-		size = ((ft_strchr(line, ':') < line) ? 0 :
-			(ft_strchr(line, ':') - line));
-		if (size)
-		{
-			path = ft_strsub(line, 0, size);
-			line += line + size ? size + 1 : size;
-			if (check_dir(arg, path))
-			{
-				*result = ft_makepath(path, arg, '/');
-				free(envp);
-				return (ft_returnfree(&path, 1));
-			}
-			free(path);
-		}
-		else
+		if (!(size = exec_size(line)) || !(path = ft_strsub(line, 0, size)))
 			break ;
+		line += line + size ? size + 1 : size;
+		if (check_dir(arg, path))
+		{
+			*result = ft_makepath(path, arg, '/');
+			free(envp);
+			return (ft_returnfree(&path, 1));
+		}
+		free(path);
 	}
 	return (ft_returnfree(&envp, 0));
 }

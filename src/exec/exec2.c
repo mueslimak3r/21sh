@@ -6,17 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 17:18:14 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 21:11:46 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-int		g_in;
-int		g_out;
-int		g_err;
-
-int		dup_close(int fd1, int fd2)//, t_redir *list)
+int		dup_close(int fd1, int fd2)
 {
 	int		a;
 
@@ -37,9 +33,7 @@ void	reg_close(int fd, t_redir *list)
 	if (!list)
 		return ;
 	n = fd;
-	ft_printf("closing %d\n", fd);
 	close(n);
-	ft_printf("closed %d\n", fd);
 }
 
 int		handle_redirs(t_redir *list)
@@ -67,36 +61,27 @@ int		execute_command(int in, int out, char **args, t_redir *list)
 {
 	char	*name;
 	pid_t	pid;
+
 	name = NULL;
 	args[0] = find_alias(args[0]);
-	ft_printf_fd(STDERR_FILENO, "in %d out %d\n", in, out);
-	if (check_path(&name, args, g_term.env.envp))
+	if (!check_path(&name, args, g_term.env.envp))
+		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
+	reset_term();
+	if ((pid = fork()) == 0)
 	{
-		ft_printf_fd(STDERR_FILENO, "name: %s\n", name);
-		reset_term();
-		if ((pid = fork()) == 0)
-		{
-			dup2(in, 0);
-			dup2(out, 1);
-			if (!handle_redirs(list))
-				return (0);
-			set_sighandle_child();
-			if (execve(name, args, g_term.env.envp) == -1)
-			{
-				exit(EXIT_SUCCESS);
-			}
-			exit(0);
-		}
-		waitpid(pid, 0, 0);
-		init_term();
-		set_sighandle();
-		if (in > 2)
-			close(in);
+		dup2(in, 0);
+		dup2(out, 1);
+		if (!handle_redirs(list))
+			return (0);
+		set_sighandle_child();
+		execve(name, args, g_term.env.envp);
+		exit(0);
 	}
-	else
-		ft_printf_fd(STDERR_FILENO, "-wtsh: %s: command not found\n", args[0]);
-	if (name)
-		free(name);
+	waitpid(pid, 0, 0);
+	init_term();
+	set_sighandle();
+	in > 2 ? close(in) : 0;
+	name ? free(name) : 0;
 	return (1);
 }
 
