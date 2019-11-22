@@ -218,24 +218,32 @@ struct						s_stats
 /*
 ** TERMCAPS
 */
-int		ft_charput(int c);
+int				ft_charput(int c);
 void			reset_term(void);
 void			init_term(void);
 int				term_write(char *str, int fd, int len);
-
+bool			validate_term(void);
 /*
 ** SIGNALS
 */
 void			set_sighandle_child(void);
 void			set_sighandle(void);
 int				handle_controls(unsigned long code, char *str);
+void			sig_int(int nb);
+void			sig_stop(int nb);
+void			sig_resize(int nb);
+void			sig_suspend(int nb);
+void			sig_resume(int nb);
 
 /*
 ** SHELL
 */
 
+int				get_input(void);
+void			shell_reset_stuff(t_stats *stats);
+int				has_hd(char *thing, char *hd);
 void			shell_loop(void);
-int				ft_readstdin_line(int hd, char *stop);
+int				ft_readstdin_line(int hd);
 int				read_rcfile(void);
 
 /*
@@ -307,7 +315,7 @@ int				empty_buffer(int fd[2]);
 int				print_buffer(int fd[2]);
 int				execute_command(int in, int out, char **args, t_redir *list);
 void			print_banner(int fd);
-int				ft_printf_fd(int fd, const char *fmt, ...);
+int				ft_printf_fd(int fd, char *fmt, ...);
 int				parse_error(t_node *head, t_lexeme *error);
 unsigned long	djb2(char *str);
 int				readfd(int fd1, int fd2, int cd2);

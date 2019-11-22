@@ -1,2 +1,4 @@
 DIR := src/shell
-SRC += $(DIR)/builtin.c  $(DIR)/error.c  $(DIR)/flavor.c  $(DIR)/main.c $(DIR)/signals.c  $(DIR)/utils.c
+SRC +=	$(DIR)/builtin.c  $(DIR)/error.c  $(DIR)/flavor.c 	\
+		$(DIR)/main.c $(DIR)/signals.c $(DIR)/signals2.c	\
+		$(DIR)/utils.c $(DIR)/utils2.c $(DIR)/reading.c
