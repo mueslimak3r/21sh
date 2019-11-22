@@ -6,7 +6,7 @@
 /*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:17:44 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 15:58:30 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 21:24:43 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,17 @@ char			*find_env(char *name)
 	return (tmp ? (char*)(tmp->content) : NULL);
 }
 
+static int		reset_return(unsigned long hash)
+{
+	if (g_env[hash % HT_OVERHEAD])
+	{
+		free(g_env[hash % HT_OVERHEAD]);
+		g_env[hash % HT_OVERHEAD] = NULL;
+		load_envp();
+	}
+	return (1);
+}
+
 int				ft_unsetenv(char *name)
 {
 	unsigned long	hash;
@@ -43,15 +54,8 @@ int				ft_unsetenv(char *name)
 
 	hash = djb2(name);
 	tmp = g_env[hash % HT_OVERHEAD];
-	if (!tmp)
-		return (1);
-	if (!tmp->next)
-	{
-		free(g_env[hash % HT_OVERHEAD]);
-		g_env[hash % HT_OVERHEAD] = NULL;
-		load_envp();
-		return (1);
-	}
+	if (!tmp || !tmp->next)
+		return (reset_return(hash));
 	prev = NULL;
 	while (tmp && (unsigned long)(tmp->content_size) != hash)
 	{
