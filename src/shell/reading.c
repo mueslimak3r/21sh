@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 19:48:20 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 21:00:27 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int			interpret_input(int hd, t_input *thing, char *buf)
 	int cursor_pos;
 
 	ft_memcpy(thing->arr_form, buf, 4);
-	if ((handle_controls(thing->long_form, buf)) < 1)
+	if ((handle_controls(thing->long_form)) < 1)
 	{
 		cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0])
 								+ g_term.conf.cursor[0] - PROMPT_SIZE;

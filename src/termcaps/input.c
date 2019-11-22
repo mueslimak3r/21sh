@@ -6,13 +6,13 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 20:54:51 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 21:01:30 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-int			term_write(char *str, int fd, int cmd)
+int				term_write(char *str, int fd, int cmd)
 {
 	int		des;
 
@@ -40,12 +40,12 @@ int			term_write(char *str, int fd, int cmd)
 	return (1);
 }
 
-int			ft_charput(int c)
+int				ft_charput(int c)
 {
 	return (write(1, &c, 1));
 }
 
-int			reprint_buffer(t_tbuff *buff)
+int				reprint_buffer(t_tbuff *buff)
 {
 	int		index;
 
@@ -224,10 +224,6 @@ int				handle_controls(unsigned long code, char *str)
 
 	ret = 0;
 	cursor_pos = calc_termsize() - PROMPT_SIZE;
-	if (!str)
-	{
-		//..
-	}
 	if (code == DELETE)
 	{
 		if (cursor_pos >= 0)

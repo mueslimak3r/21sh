@@ -228,7 +228,7 @@ bool			validate_term(void);
 */
 void			set_sighandle_child(void);
 void			set_sighandle(void);
-int				handle_controls(unsigned long code, char *str);
+int				handle_controls(unsigned long code);
 void			sig_int(int nb);
 void			sig_stop(int nb);
 void			sig_resize(int nb);
