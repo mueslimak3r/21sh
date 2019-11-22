@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strsplit_space.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/21 22:50:28 by calamber          #+#    #+#             */
+/*   Updated: 2019/11/21 22:52:33 by calamber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 char	**ft_strsplit_space(char const *s)
@@ -9,9 +21,8 @@ char	**ft_strsplit_space(char const *s)
 
 	h = 0;
 	i = -1;
-	if (!s)
-		return (NULL);
-	if (!(p = (char **)ft_memalloc(sizeof(char *) * (ft_cntwords_space(s) + 1))))
+	if (!s || !(p = (char **)ft_memalloc(sizeof(char *) *
+					(ft_cntwords_space(s) + 1))))
 		return (NULL);
 	while (!(p[h] = NULL) && (++i) < (int)ft_strlen(s))
 	{

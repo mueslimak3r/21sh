@@ -1,34 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_cntwords_space.c                                :+:      :+:    :+:   */
+/*   tree_redir2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/11/21 22:51:05 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 22:51:09 by calamber         ###   ########.fr       */
+/*   Created: 2019/11/21 22:48:44 by calamber          #+#    #+#             */
+/*   Updated: 2019/11/21 22:48:47 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ftshell.h"
 
-int	ft_cntwords_space(const char *t)
+void	add_redir(int src, int dst, t_redir **list)
 {
-	int i;
-	int count;
+	t_redir *tmp;
 
-	i = -1;
-	i += 1;
-	count = -1;
-	count += 1;
-	while (t[i] != '\0')
-	{
-		while (ft_isspace(t[i]))
-			i++;
-		if (!ft_isspace(t[i]))
-			count++;
-		while (!ft_isspace(t[i]) && t[i])
-			i++;
-	}
-	return (count);
+	tmp = ft_memalloc(sizeof(*tmp));
+	tmp->src = src;
+	tmp->dst = dst;
+	tmp->next = *list;
+	*list = tmp;
 }

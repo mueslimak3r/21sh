@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tree_traverse.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
+/*   Updated: 2019/11/21 22:14:36 by calamber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ftshell.h"
 
 static int		exec_node_possible(t_node *node)
@@ -53,7 +65,7 @@ void			recurse(t_node *head, t_stats *stats)
 	}
 }
 
-static void			free_arr(char **arr)
+static void		free_arr(char **arr)
 {
 	int	i;
 
@@ -69,7 +81,7 @@ static void			free_arr(char **arr)
 ** Executes a given node with children.
 */
 
-void				exec_node_parse(t_node *node, int *in, int *out)
+void			exec_node_parse(t_node *node, int *in, int *out)
 {
 	char	**disp;
 	t_redir	*redirects;
@@ -87,8 +99,6 @@ void				exec_node_parse(t_node *node, int *in, int *out)
 		else if (node->children->set == FD_A)
 			readfd(*in, open(node->children->lexeme->data,
 				O_WRONLY | O_CREAT | O_APPEND, 0644), 1);
-		//else
-		//	ft_readstdin_line(1, node->children->lexeme->data);
 		return ;
 	}
 	disp = concat_node(node, &redirects);

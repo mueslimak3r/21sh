@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_get_word.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/21 22:51:17 by calamber          #+#    #+#             */
+/*   Updated: 2019/11/21 22:54:35 by calamber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
-char    *ft_get_word(char *s, int nb)
+char		*ft_get_word(char *s, int nb)
 {
     int		size;
 	char	*ret;
@@ -10,10 +22,8 @@ char    *ft_get_word(char *s, int nb)
 
 	word = 0;
 	i = -1;
-	ret = NULL;
-	if (!s)
+	if (!s || !(size = (int)ft_strlen(s)))
 		return (NULL);
-	size = (int)ft_strlen(s);
 	while (++i < size)
 	{
 		while (ft_isspace(s[i]) && s[i])

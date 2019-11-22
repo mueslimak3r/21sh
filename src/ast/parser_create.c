@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_create.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/21 22:12:09 by calamber          #+#    #+#             */
+/*   Updated: 2019/11/21 22:37:28 by calamber         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ftshell.h"
 
-t_node              *new_abstract_node(t_node *node)
+t_node			*new_abstract_node(t_node *node)
 {
 	t_node	*new;
 
@@ -59,7 +71,7 @@ t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme,
 ** Given a node, returns a string array of the data of the children's lexemes.
 */
 
-static int			concat_get_size(t_node *node, t_redir **list)
+static int		concat_get_size(t_node *node, t_redir **list)
 {
 	t_node	*tmp;
 	int		ret;
@@ -72,13 +84,13 @@ static int			concat_get_size(t_node *node, t_redir **list)
 				|| tmp->set == ARG)
 			ret += tmp->lexeme ? 1 : 0;
 		else if (tmp->set == EXPR)
-			redir_pipes(tmp, list);
+			redir_pipes(tmp->children, list);
 		tmp = tmp->next;
 	}
 	return (ret);
 }
 
-char				**concat_node(t_node *node, t_redir **list)
+char			**concat_node(t_node *node, t_redir **list)
 {
 	char	**ret;
 	t_node	*tmp;

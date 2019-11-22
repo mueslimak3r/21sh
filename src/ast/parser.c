@@ -6,15 +6,15 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 20:52:53 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 22:09:33 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-t_node			*handle_mod(t_node *head, t_lexeme *lexemes, int *invert)
+t_node	*handle_mod(t_node *head, t_lexeme *lexemes, int *inv)
 {
-	if (*invert)
+	if (*inv)
 		head = head->parent ? head->parent : abstract(head);
 	if (head->children)
 		head = head->parent ? head->parent : abstract(head);
@@ -23,60 +23,76 @@ t_node			*handle_mod(t_node *head, t_lexeme *lexemes, int *invert)
 		parse_error(head, lexemes);
 		return (NULL);
 	}
-	*invert = lexemes->set == LESS || lexemes->set == RDLESS ? 1 : 0;
+	*inv = (lexemes->set == LESS || lexemes->set == RDLESS) ? 1 : 0;
 	return (head);
 }
 
-t_node			*parser(t_lexeme *lexemes)
+t_node	*handle_fd_lit(t_node *head, t_lexeme *lexemes, int *inv, int *abs)
 {
-	t_node	*head;
-	enum e_nodetype	classification;
-	int		invert;
-	int		abs;
+	*inv = (lexemes->next && (lexemes->next->designation == REDIR ||
+	lexemes->next->data[0] == '>' || lexemes->next->data[0] == '<')) ? 1 : 0;
+	if (lexemes->next && (lexemes->next->designation == REDIR ||
+		lexemes->next->data[0] == '<' || lexemes->next->data[0] == '>'))
+	{
+		head = new_node(EXPR, NULL, head, *inv);
+		lexemes->next->designation = REDIR;
+	}
+	else
+		*abs = 1;
+	return (head);
+}
 
-	invert = 0;
+t_node	*parser_type_handler(t_node *head, t_lexeme *lexemes,
+	int *inv, int *abs)
+{
+	enum e_nodetype classification;
+
+	classification = classify(lexemes);
+	if (classification == MOD)
+	{
+		if (!(head = handle_mod(head, lexemes, inv)))
+			return (NULL);
+	}
+	else if (classification == EXEC || (classification >= FD_R &&
+		classification <= FD_A))
+		head = new_node(EXPR, NULL, head, *inv);
+	else if (classification == ERR)
+	{
+		parse_error(head, lexemes);
+		return (NULL);
+	}
+	else if (classification == FD_LIT)
+		head = handle_fd_lit(head, lexemes, inv, abs);
+	else if (classification == REDIR)
+		*inv = 0;
+	return (head);
+}
+
+/*
+** int mod uses bit flags 0x1 for abstraction and 0x2 for inversion
+*/
+
+t_node	*parser(t_lexeme *lexemes)
+{
+	t_node			*head;
+	enum e_nodetype	classification;
+	int				inv;
+	int				abs;
+
+	inv = 0;
 	abs = 0;
-	head = new_node(EXPR, NULL, NULL, invert);
+	head = new_node(EXPR, NULL, NULL, inv);
 	while (lexemes)
 	{
 		classification = classify(lexemes);
-		if (abs)
-		{
-			head = head->parent ? head->parent : abstract(head);
+		if (abs && ((head = head->parent ? head->parent
+							: abstract(head)) || !head))
 			abs = 0;
-		}
-		if (classification == MOD)
-		{
-			if (!(head = handle_mod(head, lexemes, &invert)))
-				return (NULL);
-		}
-		else if (classification == EXEC || (classification >= FD_R &&
-			classification <= FD_A))
-			head = new_node(EXPR, NULL, head, invert);
-		else if (classification == ERR)
-		{
-			parse_error(head, lexemes);
+		if (!(head = parser_type_handler(head, lexemes, &inv, &abs)))
 			return (NULL);
-		}
-		else if (classification == FD_LIT)
-		{
-			invert = lexemes->next && 
-				(lexemes->next->designation == REDIR || lexemes->next->data[0] == '>'
-				 || lexemes->next->data[0] == '<') ? 1 : 0;
-			if (lexemes->next && (lexemes->next->designation == REDIR ||
-						lexemes->next->data[0] == '<' || lexemes->next->data[0] == '>'))
-			{
-				head = new_node(EXPR, NULL, head, invert);
-				lexemes->next->designation = REDIR;
-			}
-			else
-				abs = 1;
-		}
-		else if (classification == REDIR)
-			invert = 0;
-		new_node(classification, lexemes, head, invert);
+		new_node(classification, lexemes, head, inv);
 		if (lexemes->set == SEMI)
-			head = new_node(EXPR, NULL, head, invert);
+			head = new_node(EXPR, NULL, head, inv);
 		lexemes = lexemes->next;
 	}
 	while (head->parent)
