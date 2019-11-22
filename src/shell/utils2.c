@@ -6,13 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:20:52 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 21:29:16 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 22:19:50 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-int			has_hd(char *thing, char *hd)
+int				has_hd(char *thing, char *hd)
 {
 	char	**split;
 	int		i;
@@ -36,7 +36,7 @@ int			has_hd(char *thing, char *hd)
 	return (ret);
 }
 
-int			termcap_reset_cursor(int pos, int len)
+int				termcap_reset_cursor(int pos, int len)
 {
 	int		a;
 
@@ -46,7 +46,7 @@ int			termcap_reset_cursor(int pos, int len)
 	return (1);
 }
 
-void		shell_reset_stuff(t_stats *stats)
+void			shell_reset_stuff(t_stats *stats)
 {
 	g_term.sigs.sigint = false;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
@@ -57,7 +57,18 @@ void		shell_reset_stuff(t_stats *stats)
 	g_term.conf.curlines = 1;
 }
 
-int			ft_charput(int c)
+int				ft_charput(int c)
 {
 	return (write(1, &c, 1));
+}
+
+unsigned long	djb2(char *str)
+{
+	unsigned long	hash;
+	int				c;
+
+	hash = 5381;
+	while ((c = *str++))
+		hash = ((hash << 5) + hash) + c;
+	return (hash);
 }

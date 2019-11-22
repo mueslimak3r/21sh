@@ -6,22 +6,11 @@
 /*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:17:44 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 21:24:43 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 22:19:48 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-
-unsigned long	djb2(char *str)
-{
-	unsigned long	hash;
-	int				c;
-
-	hash = 5381;
-	while ((c = *str++))
-		hash = ((hash << 5) + hash) + c;
-	return (hash);
-}
 
 char			*find_env(char *name)
 {
