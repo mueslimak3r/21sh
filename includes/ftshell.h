@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			  */
-/*														  :::	   ::::::::   */
-/*	 ftshell.h											:+:		 :+:	:+:   */
-/*													  +:+ +:+		  +:+	  */
-/*	 By: calamber <calamber@student.42.fr>			+#+  +:+	   +#+		  */
-/*												  +#+#+#+#+#+	+#+			  */
-/*	 Created: 2019/10/11 15:39:28 by alkozma		   #+#	  #+#			  */
-/*	 Updated: 2019/10/16 17:18:38 by alkozma		  ###	########.fr		  */
-/*																			  */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ftshell.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
+/*   Updated: 2019/11/21 21:51:19 by alkozma          ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FTSHELL_H
@@ -23,9 +23,7 @@
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
-#include <sys/select.h>
-
-//# define PATHMAX 255
+# include <sys/select.h>
 
 # define SPACE 0x20
 # define ENTER 0xA
@@ -108,11 +106,11 @@ enum						e_nodetype
 	ERR
 };
 
-struct s_redir
+struct						s_redir
 {
-	int				src;
-	int				dst;
-	struct s_redir	*next;
+	int						src;
+	int						dst;
+	struct s_redir			*next;
 };
 
 typedef union				u_input
@@ -161,23 +159,22 @@ typedef struct				s_env
 	int						size;
 }							t_env;
 
-struct s_rope_node
+struct						s_rope_node
 {
-	int			length;
-	int			removed_length;
-	t_rope_node	*parent;
-	t_rope_node	*left;
-	t_rope_node	*right;
-	char		str[LEAF_SIZE + 1];
+	int						length;
+	int						removed_length;
+	t_rope_node				*parent;
+	t_rope_node				*left;
+	t_rope_node				*right;
+	char					str[LEAF_SIZE + 1];
 };
 
-struct s_tbuff
+struct						s_tbuff
 {
-	//int						input_line_size[2];
-	char				*buff_str;
-	int					len;
-	struct s_tbuff		*next;
-	struct s_tbuff		*prev;
+	char					*buff_str;
+	int						len;
+	struct s_tbuff			*next;
+	struct s_tbuff			*prev;
 };
 
 struct						s_shellconf
@@ -218,123 +215,128 @@ struct						s_stats
 /*
 ** TERMCAPS
 */
-int				ft_charput(int c);
-void			reset_term(void);
-void			init_term(void);
-int				term_write(char *str, int fd, int len);
-bool			validate_term(void);
+int							ft_charput(int c);
+void						reset_term(void);
+void						init_term(void);
+int							term_write(char *str, int fd, int len);
+bool						validate_term(void);
 /*
 ** SIGNALS
 */
-void			set_sighandle_child(void);
-void			set_sighandle(void);
-int				handle_controls(unsigned long code);
-void			sig_int(int nb);
-void			sig_stop(int nb);
-void			sig_resize(int nb);
-void			sig_suspend(int nb);
-void			sig_resume(int nb);
+void						set_sighandle_child(void);
+void						set_sighandle(void);
+int							handle_controls(unsigned long code);
+void						sig_int(int nb);
+void						sig_stop(int nb);
+void						sig_resize(int nb);
+void						sig_suspend(int nb);
+void						sig_resume(int nb);
 
 /*
 ** SHELL
 */
 
-int				get_input(void);
-void			shell_reset_stuff(t_stats *stats);
-int				has_hd(char *thing, char *hd);
-void			shell_loop(void);
-int				ft_readstdin_line(int hd);
-int				read_rcfile(void);
+int							get_input(void);
+void						shell_reset_stuff(t_stats *stats);
+int							has_hd(char *thing, char *hd);
+void						shell_loop(void);
+int							ft_readstdin_line(int hd);
+int							read_rcfile(void);
 
 /*
 ** INPUT BUFFER
 */
 
-void			tbuff_new(t_tbuff **buff);
-int				reprint_buffer(t_tbuff *buff);
-void			tbuff_line_insert(t_tbuff *buff, char *in, int pos);
-void        	t_buff_line_rm(t_tbuff *buff, int pos, int size);
-void			tbuff_free(t_tbuff **buff);
-void			tbuff_move_cursor(t_tbuff *buff, unsigned long code, char *str);
-int				move_cursor(int amt, int affect_tc);
-void        	tbuff_line_setsize(t_tbuff *buff, int amt);
+void						tbuff_new(t_tbuff **buff);
+int							reprint_buffer(t_tbuff *buff);
+void						tbuff_line_insert(t_tbuff *buff, char *in, int pos);
+void						t_buff_line_rm(t_tbuff *buff, int pos, int size);
+void						tbuff_free(t_tbuff **buff);
+void						tbuff_move_cursor(t_tbuff *buff,
+								unsigned long code, char *str);
+int							move_cursor(int amt, int affect_tc);
+void						tbuff_line_setsize(t_tbuff *buff, int amt);
 /*
 ** ENVIRONMENT
 */
 
-char			*find_env(char *name);
-char			*path_expansions(char *path);
-int				ft_unsetenv(char *name);
-int				ft_setenv(char *name, char *val);
-int				init_env(void);
-int				ft_export(char *str);
-int				load_envp(void);
-int				run_builtins(char **args, t_env *env);
-int				check_path(char **name, char **args, char **envp);
-int				run_dispatch(char **args, t_env *env);
+char						*find_env(char *name);
+char						*path_expansions(char *path);
+int							ft_unsetenv(char *name);
+int							ft_setenv(char *name, char *val);
+int							init_env(void);
+int							ft_export(char *str);
+int							load_envp(void);
+int							run_builtins(char **args, t_env *env);
+int							check_path(char **name, char **args, char **envp);
+int							run_dispatch(char **args, t_env *env);
 
 /*
 ** LEXER
 */
 
-t_node			*lexer(char *input);
-int				is_operator(char *op, int pos);
-t_lexeme		*new_lex(char *data, enum e_tokentype type, t_lexeme **head);
-int				is_nb_before_redir(char *op);
-int				is_redirect(char *op);
-int				handle_redirect(char *op, t_lexeme **head);
-int				handle_quote(char *input);
-char			*add_lex_op(t_lexeme **head, char *line, int op);
+t_node						*lexer(char *input);
+int							is_operator(char *op, int pos);
+t_lexeme					*new_lex(char *data, enum e_tokentype type,
+										t_lexeme **head);
+int							is_nb_before_redir(char *op);
+int							is_redirect(char *op);
+int							handle_redirect(char *op, t_lexeme **head);
+int							handle_quote(char *input);
+char						*add_lex_op(t_lexeme **head, char *line, int op);
 
 /*
 ** PARSER
 */
 
-t_node			*parser(t_lexeme *lexemes);
-void			clean_tree(t_node *head);
-enum e_nodetype	classify(t_lexeme *lexeme);
-int				is_mod(t_lexeme *lexeme);
-int				is_arg(t_lexeme *lexeme);
-int				is_exec(t_lexeme *lexeme);
-int				is_fd_lit(t_lexeme *lexeme);
-char			**concat_node(t_node *node, t_redir **list);
-t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme,
+t_node						*parser(t_lexeme *lexemes);
+void						clean_tree(t_node *head);
+enum e_nodetype				classify(t_lexeme *lexeme);
+int							is_mod(t_lexeme *lexeme);
+int							is_arg(t_lexeme *lexeme);
+int							is_exec(t_lexeme *lexeme);
+int							is_fd_lit(t_lexeme *lexeme);
+char						**concat_node(t_node *node, t_redir **list);
+t_node						*new_node(enum e_nodetype set, t_lexeme *lexeme,
 										t_node *parent, int dir);
-t_node			*abstract(t_node *node);
-t_node              *new_abstract_node(t_node *node);
-int				count_pipes(t_node *node);
+t_node						*abstract(t_node *node);
+t_node						*new_abstract_node(t_node *node);
+int							count_pipes(t_node *node);
 /*
 ** AST
 */
 
-void			exec_node_parse(t_node *node, int *in, int *out);
-void			recurse(t_node *head, t_stats *stats);
-void				redir_pipes(t_node *node, t_redir **list);
+void						exec_node_parse(t_node *node, int *in, int *out);
+void						recurse(t_node *head, t_stats *stats);
+void						redir_pipes(t_node *node, t_redir **list);
 
 /*
 ** ALIASING
 */
 
-char			*find_alias(char *name);
-int				ft_alias(char *str);
+char						*find_alias(char *name);
+int							ft_alias(char *str);
 
 /*
 ** HELPERS
 */
 
-int				empty_buffer(int fd[2]);
-int				print_buffer(int fd[2]);
-int				execute_command(int in, int out, char **args, t_redir *list);
-void			print_banner(int fd);
-int				ft_printf_fd(int fd, char *fmt, ...);
-int				parse_error(t_node *head, t_lexeme *error);
-unsigned long	djb2(char *str);
-int				readfd(int fd1, int fd2, int cd2);
-int				ft_cd(char *path);
-int				ft_env(char **envp);
-int				last_slash(const char *in);
-int				calc_termsize(void);
+int							empty_buffer(int fd[2]);
+int							print_buffer(int fd[2]);
+int							execute_command(int in, int out,
+								char **args, t_redir *list);
+void						print_banner(int fd);
+int							ft_printf_fd(int fd, char *fmt, ...);
+int							parse_error(t_node *head, t_lexeme *error);
+unsigned long				djb2(char *str);
+int							readfd(int fd1, int fd2, int cd2);
+int							ft_cd(char *path);
+int							ft_env(char **envp);
+int							last_slash(const char *in);
+int							calc_termsize(void);
+int							resolve_path(char *arg);
+int							check_dir(char *name, char *path);
 
-int				termcap_reset_cursor(int pos, int len);
-void			add_redir(int src, int dst, t_redir **list);
+int							termcap_reset_cursor(int pos, int len);
+void						add_redir(int src, int dst, t_redir **list);
 #endif

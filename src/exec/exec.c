@@ -6,52 +6,11 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 21:21:26 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 21:43:48 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-
-int		check_dir(char *name, char *path)
-{
-	struct dirent	*pdirent;
-	DIR				*pdir;
-
-	pdir = opendir(path);
-	if (!pdir)
-		return (0);
-	while ((pdirent = readdir(pdir)) != 0)
-	{
-		if (ft_strcmp(pdirent->d_name, name) == 0)
-		{
-			closedir(pdir);
-			return (1);
-		}
-	}
-	closedir(pdir);
-	return (0);
-}
-
-int		resolve_path(char *arg)
-{
-	int		pos;
-	char	*path;
-	char	*name;
-
-	path = NULL;
-	name = NULL;
-	if ((pos = last_slash(arg)) < 0)
-		return (0);
-	path = ft_strsub(arg, 0, pos + 1);
-	name = ft_strsub(arg, pos + 1, ft_strlen(arg));
-	if (check_dir(name, path))
-	{
-		free(path);
-		free(name);
-		return (1);
-	}
-	return (0);
-}
 
 int		exec_size(char *line)
 {
@@ -65,16 +24,14 @@ int		find_exec(char *arg, char *envp, char **result)
 	int				size;
 
 	if (resolve_path(arg))
-	{
-		*result = ft_strdup(arg);
-		return (1);
-	}
+		return ((*result = ft_strdup(arg)) ? 1 : 0);
 	if (!(line = envp))
 		return (0);
 	while (*line)
 	{
-		if (!(size = exec_size(line)) || !(path = ft_strsub(line, 0, size)))
+		if (!(size = exec_size(line)))
 			break ;
+		path = ft_strsub(line, 0, size);
 		line += line + size ? size + 1 : size;
 		if (check_dir(arg, path))
 		{

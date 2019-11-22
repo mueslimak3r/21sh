@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 21:11:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 21:40:51 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,30 +82,6 @@ int		execute_command(int in, int out, char **args, t_redir *list)
 	set_sighandle();
 	in > 2 ? close(in) : 0;
 	name ? free(name) : 0;
-	return (1);
-}
-
-int		print_buffer(int fd[2])
-{
-	char	buf[42];
-	int		tmpfd[2];
-	int		read_bytes;
-
-	if (fd[0] == 0)
-		return (0);
-	if (pipe(tmpfd) == -1)
-		return (0);
-	while ((read_bytes = read(fd[0], &buf, 41)) > 0)
-	{
-		buf[read_bytes] = 0;
-		ft_printf_fd(STDERR_FILENO, "PRINTBUF: %s", buf);
-		ft_printf_fd(tmpfd[1], "%s", buf);
-		if (read_bytes == 0)
-			break ;
-	}
-	close(tmpfd[1]);
-	close(fd[0]);
-	fd[0] = tmpfd[0];
 	return (1);
 }
 
