@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 00:37:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/18 19:16:27 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 16:10:41 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,10 +157,6 @@ int		handle_controls(unsigned long code, char *str)
 		g_term.conf.cursor[0] = PROMPT_SIZE;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
-	}
-	else if (code == TAB)
-	{
-		auto_complete();
 	}
 	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
 	{

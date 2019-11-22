@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 15:59:58 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 16:10:56 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ int				load_envp(void)
 		}
 		i++;
 	}
-	ft_printf_fd(STDERR_FILENO, "set %d env vars\n", b);
 	g_term.env.envp[b] = 0;
 	g_term.env.size = b;
 	return (1);

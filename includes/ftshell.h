@@ -307,7 +307,6 @@ int				ft_cd(char *path);
 int				ft_env(char **envp);
 int				last_slash(const char *in);
 
-void			auto_complete(void);
 int				termcap_reset_cursor(int pos, int len);
 void			add_redir(int src, int dst, t_redir **list);
 #endif
