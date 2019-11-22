@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strcat_cpy.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/11/21 22:55:59 by alkozma           #+#    #+#             */
+/*   Updated: 2019/11/21 22:56:54 by alkozma          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
-void        ft_strcat_cpy(char *dst, char const *s1, char const *s2, int size)
+void	ft_strcat_cpy(char *dst, char const *s1, char const *s2, int size)
 {
 	int		i;
 	int		j;
