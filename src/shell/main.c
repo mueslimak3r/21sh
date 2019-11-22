@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 18:23:52 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 18:35:57 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int			has_hd(char *thing, char *hd)
 	free(split);
 	split = NULL;
 	return (ret);
+	
 }
 
 int			termcap_reset_cursor(int pos, int len)
