@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 21:01:30 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 21:03:33 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ static int		handle_enter(void)
 	return (1);
 }
 
-int				handle_controls(unsigned long code, char *str)
+int				handle_controls(unsigned long code)
 {
 	int ret;
 	int	cursor_pos;
