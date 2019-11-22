@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:20:52 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 19:39:47 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 21:29:16 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,9 @@ void		shell_reset_stuff(t_stats *stats)
 	stats->f_d[1] = 1;
 	g_term.conf.cursor[1] = 0;
 	g_term.conf.curlines = 1;
+}
+
+int			ft_charput(int c)
+{
+	return (write(1, &c, 1));
 }
