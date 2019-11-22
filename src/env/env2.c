@@ -6,7 +6,7 @@
 /*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:17:44 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 13:27:28 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 15:58:30 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int				ft_unsetenv(char *name)
 	{
 		free(g_env[hash % HT_OVERHEAD]);
 		g_env[hash % HT_OVERHEAD] = NULL;
+		load_envp();
 		return (1);
 	}
 	prev = NULL;
