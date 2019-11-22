@@ -6,13 +6,11 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 03:03:12 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 19:34:04 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-
-//#define TREE_DEBUG
 
 /*
 ** new_node
@@ -20,7 +18,8 @@
 ** Will add to parent's list of children.
 */
 
-t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent, int dir)
+t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme,
+		t_node *parent, int dir)
 {
 	t_node	*new;
 	t_node	*tmp;
@@ -31,18 +30,14 @@ t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme, t_node *parent, int di
 	new->set = set;
 	new->lexeme = lexeme;
 	new->parent = parent;
-	new->next = NULL;
+	new->next = dir ? parent->children : NULL;
 	new->evaluated = 0;
 	new->children = NULL;
 	if (!parent)
 		return (new);
 	tmp = parent->children;
 	if (dir)
-	{
-		new->next = tmp;
-		parent->children = new;
-		return (new);
-	}
+		return ((parent->children = new));
 	while (tmp && tmp->next)
 		tmp = tmp->next;
 	if (tmp)
@@ -86,12 +81,14 @@ int				is_fd_lit(t_lexeme *lexeme)
 		return (0);
 	if (lexeme->set == IO_NAME)
 	{
-		if (is_mod(lexeme->next) && lexeme->next->next && (lexeme->next->next->set == IO_NAME || lexeme->next->next->set == WORD))
+		if (is_mod(lexeme->next) && lexeme->next->next && (
+				lexeme->next->next->set == IO_NAME ||
+				lexeme->next->next->set == WORD))
 		{
 			lexeme->next->designation = REDIR;
 			lexeme->next->next->designation = FD_LIT;
 			if (is_arg(lexeme->next->next->next))
-				lexeme->next->next->next->designation = ARG; 
+				lexeme->next->next->next->designation = ARG;
 		}
 		return (1);
 	}
@@ -165,13 +162,11 @@ int				is_exec(t_lexeme *lexeme)
 ** Replaces passed node's position in parent's list of children.
 */
 
-t_node			*abstract(t_node *node)
+static t_node	*new_abstract_node(t_node *node)
 {
-	t_node	*parent;
-	t_node	*tmp;
 	t_node	*new;
 
-	new = malloc(sizeof(t_node));
+	new = malloc(sizeof(*new));
 	new->set = EXPR;
 	new->lexeme = NULL;
 	if (!node)
@@ -183,19 +178,27 @@ t_node			*abstract(t_node *node)
 	}
 	new->next = node->next;
 	new->children = node;
+	return (new);
+}
+
+t_node			*abstract(t_node *node)
+{
+	t_node	*tmp;
+	t_node	*new;
+
+	new = new_abstract_node(node);
+	if (!node)
+		return (new);
 	if (!node->parent)
 	{
 		node->parent = new;
 		new->parent = NULL;
 	}
-	parent = node->parent;
-	tmp = parent->children;
-	if (tmp && tmp != node)
+	if ((tmp = node->parent->children) && tmp != node)
 	{
 		while (tmp->next && tmp->next != node)
 			tmp = tmp->next;
-		if (tmp)
-			tmp->next = new;
+		tmp->next = new;
 	}
 	node->next = NULL;
 	return (new);
@@ -214,17 +217,12 @@ void	add_redir(int src, int dst, t_redir **list)
 
 void				redir_pipes(t_node *node, t_redir **list)
 {
-	// node was a parent in a node that is being executed
-	// it should contain a fd, a redir, and then another fd.
-	//		for ints l & r io -2 means both 1 & 0
-	
 	int		left_io = -1;
 	int		right_io = -1;
 	int		dir = 0;
 
 	t_node	*tmp;
 	tmp = node->children;
-
 	if (!tmp || !tmp->lexeme)
 		return ;
 	if (tmp->lexeme->set == IO_NAME)
@@ -297,6 +295,25 @@ void				redir_pipes(t_node *node, t_redir **list)
 ** Given a node, returns a string array of the data of the children's lexemes.
 */
 
+static int			concat_get_size(t_node *node, t_redir **list)
+{
+	t_node	*tmp;
+	int		ret;
+
+	ret = 0;
+	tmp = node->children;
+	while (tmp)
+	{
+		if (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)
+				|| tmp->set == ARG)
+			ret += tmp->lexeme ? 1 : 0;
+		else if (tmp->set == EXPR)
+			redir_pipes(tmp, list);
+		tmp = tmp->next;
+	}
+	return (ret);
+}
+
 char				**concat_node(t_node *node, t_redir **list)
 {
 	char	**ret;
@@ -308,16 +325,7 @@ char				**concat_node(t_node *node, t_redir **list)
 		return (NULL);
 	tmp = node->children;
 	ret = NULL;
-	sz = 0;
-	while (tmp)
-	{
-		if (tmp->set == EXEC || (tmp->set >= FD_R && tmp->set <= FD_A)
-				|| tmp->set == ARG)
-			sz += tmp->lexeme ? 1 : 0;
-		else if (tmp->set == EXPR)
-			redir_pipes(tmp, list);
-		tmp = tmp->next;
-	}
+	sz = concat_get_size(node, list);
 	tmp = node->children;
 	ret = malloc(sizeof(char*) * (sz + 1));
 	i = 0;
@@ -338,10 +346,20 @@ char				**concat_node(t_node *node, t_redir **list)
 ** Executes a given node with children.
 */
 
+static void			free_arr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+	arr = NULL;
+}
+
 void				exec_node_parse(t_node *node, int *in, int *out)
 {
 	char	**disp;
-	int		i;
 	t_redir	*redirects;
 
 	redirects = NULL;
@@ -364,10 +382,7 @@ void				exec_node_parse(t_node *node, int *in, int *out)
 	disp = concat_node(node, &redirects);
 	if (run_builtins(disp, &g_term.env) == 2)
 		execute_command(*in, *out, disp, redirects);
-	i = 0;
-	while (disp[i])
-		ft_strdel(&disp[i++]);
-	free(disp);
+	free_arr(disp);
 }
 
 /*
@@ -407,9 +422,11 @@ int				count_pipes(t_node *node)
 	ret = 0;
 	while (node)
 	{
-		if (node->lexeme && (node->lexeme->set == PIPE || node->lexeme->set == LESS
-			|| node->lexeme->set == RDGREAT || node->lexeme->set == GREAT ||
-			node->lexeme->set == RDLESS))
+		if (node->lexeme && (node->lexeme->set == PIPE
+			|| node->lexeme->set == LESS
+			|| node->lexeme->set == RDGREAT
+			|| node->lexeme->set == GREAT
+			|| node->lexeme->set == RDLESS))
 		{
 			ret++;
 		}
@@ -437,79 +454,38 @@ int				exec_node_possible(t_node *node)
 ** Main function for tree evaluation.
 */
 
+static void		recurse_empty(int main_pipe[2], t_stats *stats)
+{
+	empty_buffer(stats->f_d);
+	empty_buffer(main_pipe);
+}
+
 void			recurse(t_node *head, t_stats *stats)
 {
-#ifdef TREE_DEBUG
-
-	static int	st = 0;
-
-#endif
-
 	t_node		*tmp;
 	t_node		*h2;
 	int			main_pipe[2];
-	int			err;
 	static int	pipes;
 
 	h2 = head;
-#ifdef TREE_DEBUG
-
-	st++;
-#endif
-
 	while (h2)
 	{
 		main_pipe[0] = 0;
 		main_pipe[1] = 1;
-		err = 2;
-		tmp = h2->children;
-		pipes += (count_pipes(tmp));// ? count_pipes(tmp) + 1 : 0);
-#ifdef TREE_DEBUG
-
-		if (h2 && h2->lexeme)
-		{
-			write(STDERR_FILENO, "                ", st * 2);
-			ft_printf_fd(STDERR_FILENO, "[IN TREE || TYPE: %s, STR: %s]\n",
-				g_term.symbls[h2->lexeme->set], h2->lexeme->data);
-		}
-		else if (h2)
-		{
-			write(STDERR_FILENO, "                ", st * 2);
-			ft_printf_fd(STDERR_FILENO,
-				"[IN TREE || TYPE: parent SET: %d, STR: N/A]\n", h2->set);
-		}
-#endif
-
-		if (tmp)
-			recurse(tmp, stats);
+		pipes += (count_pipes(h2->children));
+		(tmp = h2->children) ? recurse(tmp, stats) : 0;
 		if (h2->lexeme && h2->lexeme->set == SEMI)
-		{
-			ft_printf("buffer emptying\n");
-			empty_buffer(stats->f_d);
-			empty_buffer(main_pipe);
-		}
+			recurse_empty(main_pipe, stats);
 		if (exec_node_possible(tmp))
 		{
-			if (pipes)
-			{
-				pipe(main_pipe);
-				ft_printf_fd(STDERR_FILENO, "pipes %d new pipe in %d out %d\n", pipes, main_pipe[0], main_pipe[1]);
-			}
+			pipes ? pipe(main_pipe) : 0;
 			exec_node_parse(tmp->parent, &stats->f_d[0], &main_pipe[1]);
-			if (pipes)
-			{
-				pipes -= 1;
-				close(main_pipe[1]);
-			}
+			pipes ? close(main_pipe[1]) : 0;
+			pipes -= pipes ? 1 : 0;
 			stats->f_d[0] = main_pipe[0];
 		}
 		h2 = h2->next;
 	}
-#ifdef TREE_DEBUG
-
-	st--;
-#endif
-
 }
 
 t_node			*invertify(t_node *head)
@@ -560,7 +536,6 @@ t_node			*parser(t_lexeme *lexemes)
 				head = head->parent ? head->parent : abstract(head);
 			else
 			{
-				ft_printf_fd(STDERR_FILENO, "error: mod with not children\n");
 				parse_error(head, lexemes);
 				return (NULL);
 			}
@@ -571,15 +546,11 @@ t_node			*parser(t_lexeme *lexemes)
 			head = new_node(EXPR, NULL, head, invert);
 		else if (classification == ERR)
 		{
-			ft_printf_fd(STDERR_FILENO, "classifier returned error\n");
-			while (head && head->parent)
-				head = head->parent;
 			parse_error(head, lexemes);
 			return (NULL);
 		}
 		else if (classification == FD_LIT)
 		{
-			//ft_printf("FD_LIT %s\n", lexemes->data);
 			invert = lexemes->next && 
 				(lexemes->next->designation == REDIR || lexemes->next->data[0] == '>'
 				 || lexemes->next->data[0] == '<') ? 1 : 0;
@@ -603,4 +574,3 @@ t_node			*parser(t_lexeme *lexemes)
 		head = head->parent;
 	return (head);
 }
-#undef TREE_DEBUG
