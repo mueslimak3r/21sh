@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 03:00:39 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 18:23:52 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,26 @@ int			termcap_reset_cursor(int pos, int len)
 	return (1);
 }
 
+int			check_fd(int fd)
+{
+	fd_set set;
+	struct timeval timeout;
+	int rv;
+
+	FD_ZERO(&set);
+	FD_SET(fd, &set);
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 10000;
+	rv = select(fd + 1, &set, NULL, NULL, &timeout);
+	if (rv == -1)
+		return (0);
+	else if (rv == 0)
+		return (0);
+	else
+		return (1);
+	return (0);
+}
+
 int			ft_readstdin_line(int hd, char *stop)
 {
 	char	buf[BUFF_SIZE + 1];
@@ -99,14 +119,26 @@ int			ft_readstdin_line(int hd, char *stop)
 	tmp = NULL;
 	
 	ft_memset(buf, 0, BUFF_SIZE + 1);
-	ft_printf_fd(STDERR_FILENO, "%s", hd ? HDPROMPT : PROMPT);
+	ft_printf_fd(STDERR_FILENO, "\n%s", hd ? HDPROMPT : PROMPT);
 	
 	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
 	g_term.conf.cursor[1] = 0;
 	g_term.conf.curlines = 1;
 	thing.long_form = 0;
-	while ((ret = read(0, &buf, 4)) >= 0)
+	ret = 0;
+	while (!g_term.sigs.sigint)
 	{
+		if (!(check_fd(0) && ((ret = read(0, &buf, 4)) > 0)))
+			continue ;
+		if (buf[0] == 4)
+		{
+			if (!g_term.sigs.sigint)
+			{
+				close(0);
+				ret = -1;
+			}
+			break;
+		}
 		ft_memcpy(thing.arr_form, buf, 4);
 		if ((handle_controls(thing.long_form, buf)) < 1)
 		{
@@ -130,8 +162,10 @@ int			ft_readstdin_line(int hd, char *stop)
 			term_write(hd ? HDPROMPT : PROMPT, STDERR_FILENO, 1);
 		}
 		ft_memset(buf, 0, BUFF_SIZE + 1);
+		if (g_term.sigs.sigint)
+			break ;
 	}
-	return (0);
+	return (ret);
 }
 
 void		shell_loop(void)
@@ -139,27 +173,38 @@ void		shell_loop(void)
 	int			quit;
 	t_stats		stats;
 	t_node		*tree;
-
+	int			res;
 	quit = 0;
 
+	res = 0;
 	g_term.buff = NULL;
 	g_term.curr_buff = NULL;
 	tree = NULL;
 	read_rcfile();
 	while (!quit)
 	{
+		g_term.sigs.sigint = false;
 		g_term.conf.termsize[0] = g_window_size.ws_col;
 		g_term.conf.termsize[1] = g_window_size.ws_row;
+		if (g_term.sigs.sigint)
+			continue ;
 		if (!g_term.buff || (g_term.buff && g_term.buff->buff_str && *(g_term.buff->buff_str)))
 			tbuff_new(&g_term.buff);
 		g_term.curr_buff = g_term.buff;
-		if (!ft_readstdin_line(0, NULL))
+		if (!(res = ft_readstdin_line(0, NULL)))
 			continue ;
+		if (res < 0)
+			quit = 1;
 		stats.f_d[0] = 0;
 		stats.f_d[1] = 1;
-		if (!g_term.curr_buff || !g_term.curr_buff->buff_str || (g_term.curr_buff->buff_str && !*(g_term.curr_buff->buff_str)))
+		if (g_term.sigs.sigint || !g_term.curr_buff || !g_term.curr_buff->buff_str || (g_term.curr_buff->buff_str && !*(g_term.curr_buff->buff_str)))
 			continue ;
 		tree = lexer(g_term.curr_buff->buff_str);
+		if (g_term.sigs.sigint)
+		{
+			clean_tree(tree);
+			continue ;
+		}
 		recurse(tree, &stats);
 		ft_printf_fd(STDERR_FILENO, "done recursing\n");
 		empty_buffer(stats.f_d);

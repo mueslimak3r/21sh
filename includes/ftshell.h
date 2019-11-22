@@ -23,6 +23,7 @@
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
+#include <sys/select.h>
 
 //# define PATHMAX 255
 
@@ -50,6 +51,7 @@
 # define HT_OVERHEAD 5000
 
 typedef struct s_term		t_term;
+typedef struct s_term_sigs	t_term_sigs;
 typedef struct s_shellconf	t_shellconf;
 typedef struct s_stats		t_stats;
 typedef struct s_tbuff		t_tbuff;
@@ -187,6 +189,11 @@ struct						s_shellconf
 	int						curlines;
 };
 
+struct						s_term_sigs
+{
+	bool					sigint;
+};
+
 struct						s_term
 {
 	struct s_env			env;
@@ -194,6 +201,7 @@ struct						s_term
 	t_tbuff					*buff;
 	t_tbuff					*curr_buff;
 	t_shellconf				conf;
+	t_term_sigs				sigs;
 	struct termios			old_term;
 	struct termios			new_term;
 	int						rows;
@@ -218,7 +226,7 @@ int				term_write(char *str, int fd, int len);
 /*
 ** SIGNALS
 */
-
+void			set_sighandle_child(void);
 void			set_sighandle(void);
 int				handle_controls(unsigned long code, char *str);
 

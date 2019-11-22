@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 16:15:29 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 17:18:14 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,14 @@ int		execute_command(int in, int out, char **args, t_redir *list)
 	if (check_path(&name, args, g_term.env.envp))
 	{
 		ft_printf_fd(STDERR_FILENO, "name: %s\n", name);
+		reset_term();
 		if ((pid = fork()) == 0)
 		{
 			dup2(in, 0);
 			dup2(out, 1);
 			if (!handle_redirs(list))
 				return (0);
+			set_sighandle_child();
 			if (execve(name, args, g_term.env.envp) == -1)
 			{
 				exit(EXIT_SUCCESS);
@@ -86,6 +88,8 @@ int		execute_command(int in, int out, char **args, t_redir *list)
 			exit(0);
 		}
 		waitpid(pid, 0, 0);
+		init_term();
+		set_sighandle();
 		if (in > 2)
 			close(in);
 	}
