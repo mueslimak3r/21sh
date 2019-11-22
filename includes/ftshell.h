@@ -291,7 +291,6 @@ char			*add_lex_op(t_lexeme **head, char *line, int op);
 */
 
 t_node			*parser(t_lexeme *lexemes);
-void			recurse(t_node *head, t_stats *stats);
 void			clean_tree(t_node *head);
 enum e_nodetype	classify(t_lexeme *lexeme);
 int				is_mod(t_lexeme *lexeme);
@@ -299,6 +298,18 @@ int				is_arg(t_lexeme *lexeme);
 int				is_exec(t_lexeme *lexeme);
 int				is_fd_lit(t_lexeme *lexeme);
 char			**concat_node(t_node *node, t_redir **list);
+t_node			*new_node(enum e_nodetype set, t_lexeme *lexeme,
+										t_node *parent, int dir);
+t_node			*abstract(t_node *node);
+t_node              *new_abstract_node(t_node *node);
+int				count_pipes(t_node *node);
+/*
+** AST
+*/
+
+void			exec_node_parse(t_node *node, int *in, int *out);
+void			recurse(t_node *head, t_stats *stats);
+void				redir_pipes(t_node *node, t_redir **list);
 
 /*
 ** ALIASING
