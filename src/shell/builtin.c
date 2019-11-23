@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 05:01:29 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/22 21:31:40 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/22 21:36:52 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ char	*path_expansions(char *path)
 	tmp = NULL;
 	if (!path)
 		return (NULL);
-	if (path[0] == '~')
-		ret = ft_strjoin(find_env("HOME"), path + 1);
 	else if (path[0] == '-' && !path[1])
 		ret = ft_strdup(find_env("OLDPWD") ?
 			find_env("OLDPWD") : find_env("PWD"));
