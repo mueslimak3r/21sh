@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 21:32:02 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/22 22:02:11 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,18 @@ static int		handle_up_down(int code)
 	int		len;
 
 	i = g_term.conf.curlines;
-	if (code == DOWN && (!g_term.curr_buff || !g_term.curr_buff->prev))
+	if (code == DOWN && (!g_term.curr_buff || !g_term.curr_buff->next))
 		return (0);
-	if (g_term.curr_buff && g_term.curr_buff->next)
+	if (g_term.curr_buff && (
+				(g_term.curr_buff->next && code == DOWN)
+				|| (g_term.curr_buff->prev && code == UP)))
 	{
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
 		while (i-- > 1)
 			tputs(tgetstr("sr", NULL), 0, ft_charput);
 		tputs(tgetstr("cd", NULL), 0, ft_charput);
 		g_term.curr_buff = code == UP
-			? g_term.curr_buff->next : g_term.curr_buff->prev;
+			? g_term.curr_buff->prev : g_term.curr_buff->next;
 		len = g_term.curr_buff->len;
 		g_term.conf.cursor[0] = PROMPT_SIZE;
 		g_term.conf.cursor[1] = 0;

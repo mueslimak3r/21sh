@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/18 19:44:30 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/22 21:54:21 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,25 @@
 void		tbuff_new(t_tbuff **buff)
 {
 	t_tbuff *new;
+	t_tbuff	*tmp;
 
 	if (!(new = ft_memalloc(sizeof(t_tbuff))))
 		return ;
+	tmp = *buff;
+	while (tmp && tmp->next)
+		tmp = tmp->next;
 	if (*buff)
 	{
-		new->prev = (*buff)->prev;
-		if ((*buff)->prev)
-			(*buff)->prev->next = new;
-		(*buff)->prev = new;
-		new->next = *buff;
+		new->prev = tmp;
+		tmp->next = new;
+		new->next = NULL;
 	}
 	else
 	{
 		new->next = NULL;
 		new->prev = NULL;
 	}
+	ft_printf("prev: %s\n", tmp ? tmp->buff_str : "NULL");
 	new->len = 0;
 	new->buff_str = NULL;
 	*buff = new;
