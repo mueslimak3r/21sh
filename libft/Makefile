@@ -6,24 +6,9 @@
 #    By: calamber <calamber@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/29 23:01:53 by calamber          #+#    #+#              #
-#    Updated: 2019/11/14 07:06:51 by calamber         ###   ########.fr        #
+#    Updated: 2019/11/21 23:10:21 by calamber         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-#CC := gcc
-#INCLUDE := -Ift_printf/includes -I.
-#FLAGS := -Wall -Wextra -Werror # -g -fsanitize=address
-#NAME := libft.a
-#SRC_LIST :=
-#include ft_printf/Makefile
-#OBJ := $(SRC_LIST:.c=.o)
-
-#$(NAME): $(OBJ)
-#	@ar rc $(NAME) $(OBJ)
-#	@ranlib $(NAME)
-
-#%.o: %.c
-#	@$(CC) $(FLAGS) $(INCLUDE) -c -o $@ $<
 
 NAME = libft.a
 CC := gcc

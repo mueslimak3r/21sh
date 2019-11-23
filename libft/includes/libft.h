@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/21 16:24:04 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/14 02:19:28 by calamber         ###   ########.fr       */
+/*   Updated: 2019/11/21 23:02:28 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ void				ft_arraydel(char **array);
 char				*ft_makepath(char *s1, char *s2, char c);
 char				*ft_strndup(const char *src, size_t len);
 int					ft_returnfree(char **ptr, int ret);
-//char				*ft_readstdin_line(void);
 int					ft_checkifc(char in, char c);
 void				*ft_realloc(void *thing, size_t orig_size, size_t size);
 char				*ft_strjoin_array(char **strs, char *tok);
@@ -103,8 +102,8 @@ int					ft_atoi_base(char *str, const int base);
 char				ft_isspace(unsigned char c);
 int					ft_cntwords_space(const char *t);
 char				**ft_strsplit_space(char const *s);
-char    *ft_get_word(char *s, int nb);
-void		ft_termcap(char *cmd, int fd);
-int     ft_isnumber(char *str, int len);
-void        ft_strcat_cpy(char *dst, char const *s1, char const *s2, int size);
+void				ft_termcap(char *cmd, int fd);
+int					ft_isnumber(char *str, int len);
+void				ft_strcat_cpy(char *dst, char const *s1,
+									char const *s2, int size);
 #endif

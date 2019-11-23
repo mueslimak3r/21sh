@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 22:40:32 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/21 23:11:15 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,5 @@ t_node		*lexer(char *input)
 		if (op > 1)
 			input = add_lex_op(&ref, input, op);
 	}
-	print_lex(ref);
 	return (parser(ref));
 }
