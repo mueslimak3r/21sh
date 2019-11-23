@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/22 21:54:21 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/11/22 22:04:03 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void		tbuff_new(t_tbuff **buff)
 		new->next = NULL;
 		new->prev = NULL;
 	}
-	ft_printf("prev: %s\n", tmp ? tmp->buff_str : "NULL");
 	new->len = 0;
 	new->buff_str = NULL;
 	*buff = new;
