@@ -43,7 +43,7 @@
 # define LEAF_SIZE 5
 
 # define PROMPT "@>"
-# define PROMPT_SIZE 2
+# define PROMPT_SIZE (int)(ft_strlen(find_env("PWD")) + 1)
 # define HDPROMPT " >"
 # define TYPES
 # define HT_OVERHEAD 5000
@@ -339,4 +339,5 @@ int							check_dir(char *name, char *path);
 
 int							termcap_reset_cursor(int pos, int len);
 void						add_redir(int src, int dst, t_redir **list);
+void						print_prompt(int hd);
 #endif

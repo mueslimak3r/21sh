@@ -47,7 +47,7 @@ int			interpret_input(int hd, t_input *thing, char *buf)
 	}
 	else if (thing->long_form == ENTER && !hd)
 	{
-		g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
+		g_term.conf.cursor[0] = PROMPT_SIZE + 1;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
 		return (1);
@@ -58,8 +58,14 @@ int			interpret_input(int hd, t_input *thing, char *buf)
 
 void		print_prompt(int hd)
 {
-	ft_printf_fd(STDERR_FILENO, "\n%s", hd ? HDPROMPT : PROMPT);
-	g_term.conf.cursor[0] = ft_strlen(hd ? HDPROMPT : PROMPT);
+	char	*pwd;
+
+	pwd = find_env("PWD");
+	ft_printf_fd(STDERR_FILENO, "%s>", pwd);
+	if (hd == 2)
+	{
+		g_term.conf.cursor[0] = PROMPT_SIZE + 1;
+	}
 }
 
 int			ft_readstdin_line(int hd)
@@ -69,7 +75,7 @@ int			ft_readstdin_line(int hd)
 	t_input	thing;
 
 	ft_memset(buf, 0, BUFF_SIZE + 1);
-	print_prompt(hd);
+	print_prompt(hd ? hd : 2);
 	thing.long_form = 0;
 	ret = 0;
 	while (!g_term.sigs.sigint)

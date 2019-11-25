@@ -52,11 +52,7 @@ void		sig_stop(int nb)
 
 void		sig_int(int nb)
 {
-	char c;
-
-	c = 4;
+	ft_printf_fd(STDERR_FILENO, "\n");
 	if (nb)
-	{
 		g_term.sigs.sigint = true;
-	}
 }

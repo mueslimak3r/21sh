@@ -19,7 +19,7 @@ int				reprint_buffer(t_tbuff *buff)
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
 	if (g_term.conf.cursor[1] == 0)
-		ft_printf_fd(STDERR_FILENO, "%s", PROMPT);
+		print_prompt(0);
 	if (buff)
 	{
 		index = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) - 1;
@@ -98,9 +98,7 @@ static int		handle_tc(int amt)
 int				move_cursor(int amt, int affect_tc)
 {
 	int size;
-	int	i;
 
-	i = 0;
 	size = calc_termsize();
 	if (amt == 0 || !g_term.curr_buff ||
 			(g_term.conf.cursor[0] + amt < 2 && g_term.conf.cursor[1] == 0))

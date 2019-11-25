@@ -51,6 +51,7 @@ int		ft_cd(char *path)
 	}
 	else
 	{
+		ft_printf_fd(STDERR_FILENO, "-wtsh: cd: %s: No such file or directory\n", tmp);
 		free(tmp);
 		return (-1);
 	}

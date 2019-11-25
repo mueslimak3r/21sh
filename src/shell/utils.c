@@ -50,7 +50,7 @@ void		init_term(void)
 
 void		reset_term(void)
 {
-	ft_putchar_fd('\n', STDERR_FILENO);
+	//ft_putchar_fd('\n', STDERR_FILENO);
 	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
 }
 

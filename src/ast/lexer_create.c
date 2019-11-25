@@ -35,6 +35,7 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 {
 	t_lexeme	*new;
 	char		*env;
+	char		*tmp;
 
 	new = malloc(sizeof(t_lexeme));
 	new->set = type;
@@ -48,11 +49,13 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 		new->data = env ? ft_strdup(env) : NULL;
 		free(data);
 	}
-	if (data[0] == '~' && (!data[1] || data[1] == ' '))
+	if (data[0] == '~')
 	{
 		env = find_env("HOME");
-		new->data = env ? ft_strdup(env) : NULL;
+		tmp = ft_strjoin(env, data + 1);
+		new->data = env ? ft_strdup(tmp) : NULL;
 		free(data);
+		free(tmp);
 	}
 	return (new_lex_helper(head, new));
 }
