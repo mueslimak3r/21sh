@@ -69,8 +69,6 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 		subshell(in, out, args, list);
 	set_sighandle();
 	in[0] > 2 ? close(in[0]) : 0;
-	//close(in[0]);
-	//out[1] > 2 ? close(out[1]) : 0;
 	g_term.pid = pid;
 	return (1);
 }
@@ -82,8 +80,6 @@ int		empty_buffer(int fd[2])
 	//ft_printf_fd(STDERR_FILENO, "printing buff\n");
 	if (fd[0] != 0)
 	{
-		if (fd[1] > 2)
-			close(fd[1]);
 		while ((read_bytes = read(fd[0], &buf, 41)) > 0)
 		{
 			buf[read_bytes] = 0;
