@@ -23,8 +23,10 @@ int		subshell(int *in, int *out, char **args, t_redir *list)
 	waitpid(pid, 0, 0);
     init_term();
 	set_sighandle();
-	in[0] > 2 ? close(in[0]) : 0;
-    out[1] > 2 ? close(out[1]) : 0;
+	//in[0] > 2 ? close(in[0]) : 0;
+	//in[1] > 2 ? close(in[1]) : 0;
+	//out[0] > 2 ? close(out[1]) : 0;
+    //out[1] > 2 ? close(out[1]) : 0;
 	name ? free(name) : 0;
 	return (1);
 }

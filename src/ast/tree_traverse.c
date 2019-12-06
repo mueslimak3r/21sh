@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/05 15:55:35 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/05 20:17:10 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ static void		recurse_empty(int main_pipe[2], t_stats *stats)
 	if (g_term.pid > -1)
 		waitpid(g_term.pid, 0, 0);
 	empty_buffer(stats->f_d);
-	empty_buffer(main_pipe);
 }
 
 /*
@@ -52,6 +51,7 @@ void			recurse(t_node *head, t_stats *stats)
 		main_pipe[0] = 0;
 		main_pipe[1] = 1;
 		pipes += (count_pipes(h2->children));
+		ft_printf_fd(STDERR_FILENO, "p count: %d\n", pipes);
 		(tmp = h2->children) ? recurse(tmp, stats) : 0;
 		if (h2->lexeme && (h2->lexeme->set == SEMI | h2->lexeme->set == AND))
 			recurse_empty(main_pipe, stats);

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/05 18:09:33 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/05 20:13:42 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 {
 	pid_t	pid;
 
+	ft_printf_fd(STDERR_FILENO, "name: %s in0: %d in1: %d out0: %d out1: %d\n", args[0], in[0], in[1], out[0], out[1]);
 	if ((pid = fork()) == 0)
 	{
 		subshell(in, out, args, list);
@@ -71,7 +72,7 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 	in[0] > 2 ? close(in[0]) : 0;
 	in[1] > 2 ? close(in[1]) : 0;
 	//close(in[0]);
-	out[1] > 2 ? close(out[1]) : 0;
+	//out[1] > 2 ? close(out[1]) : 0;
 	g_term.pid = pid;
 	return (1);
 }
@@ -80,15 +81,17 @@ int		empty_buffer(int fd[2])
 {
 	char	buf[42];
 	int		read_bytes;
-
-	if (fd[0] == 0)
-		return (1);
-	while ((read_bytes = read(fd[0], &buf, 41)) > 0)
+	ft_printf_fd(STDERR_FILENO, "printing buff\n");
+	if (fd[0] != 0)
 	{
-		buf[read_bytes] = 0;
-		ft_printf_fd(STDERR_FILENO, "%s", buf);
+		while ((read_bytes = read(fd[0], &buf, 41)) > 0)
+		{
+			buf[read_bytes] = 0;
+			ft_printf_fd(STDERR_FILENO, "%s", buf);
+		}
+		if (fd[0] > 2)
+			close(fd[0]);
 	}
-	if (fd[0] > 2)
-		close(fd[0]);
+	ft_printf_fd(STDERR_FILENO, "\n");
 	return (1);
 }
