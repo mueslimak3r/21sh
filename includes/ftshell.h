@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftshell.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 21:51:19 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/05 15:34:36 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,6 +202,7 @@ struct						s_term
 	struct termios			old_term;
 	struct termios			new_term;
 	int						rows;
+	int						pid;
 };
 
 struct						s_stats
@@ -235,13 +236,14 @@ void						sig_resume(int nb);
 /*
 ** SHELL
 */
-
+int							handle_redirs(t_redir *list);
 int							get_input(void);
 void						shell_reset_stuff(t_stats *stats);
 int							has_hd(char *thing, char *hd);
 void						shell_loop(void);
 int							ft_readstdin_line(int hd);
 int							read_rcfile(void);
+int							subshell(int *in, int *out, char **args, t_redir *list);
 
 /*
 ** INPUT BUFFER
@@ -323,7 +325,7 @@ int							ft_alias(char *str);
 
 int							empty_buffer(int fd[2]);
 int							print_buffer(int fd[2]);
-int							execute_command(int in, int out,
+int							execute_command(int *in, int *out,
 								char **args, t_redir *list);
 void						print_banner(int fd);
 int							ft_printf_fd(int fd, char *fmt, ...);

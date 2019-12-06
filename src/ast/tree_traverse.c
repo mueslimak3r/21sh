@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree_traverse.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 22:14:36 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/05 15:55:35 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ static int		exec_node_possible(t_node *node)
 
 static void		recurse_empty(int main_pipe[2], t_stats *stats)
 {
+	if (g_term.pid > -1)
+		waitpid(g_term.pid, 0, 0);
 	empty_buffer(stats->f_d);
 	empty_buffer(main_pipe);
 }
@@ -51,15 +53,16 @@ void			recurse(t_node *head, t_stats *stats)
 		main_pipe[1] = 1;
 		pipes += (count_pipes(h2->children));
 		(tmp = h2->children) ? recurse(tmp, stats) : 0;
-		if (h2->lexeme && h2->lexeme->set == SEMI)
+		if (h2->lexeme && (h2->lexeme->set == SEMI | h2->lexeme->set == AND))
 			recurse_empty(main_pipe, stats);
 		if (exec_node_possible(tmp))
 		{
 			pipes ? pipe(main_pipe) : 0;
-			exec_node_parse(tmp->parent, &stats->f_d[0], &main_pipe[1]);
-			pipes ? close(main_pipe[1]) : 0;
+			exec_node_parse(tmp->parent, stats->f_d, main_pipe);
+			//pipes ? close(main_pipe[1]) : 0;
 			pipes -= pipes ? 1 : 0;
 			stats->f_d[0] = main_pipe[0];
+			stats->f_d[1]= main_pipe[1];
 		}
 		h2 = h2->next;
 	}
@@ -92,17 +95,17 @@ void			exec_node_parse(t_node *node, int *in, int *out)
 	if (node->children->set >= FD_R && node->children->set <= FD_A)
 	{
 		if (node->children->set == FD_R)
-			readfd(open(node->children->lexeme->data, O_RDONLY), *out, 0);
+			readfd(open(node->children->lexeme->data, O_RDONLY), out[1], 0);
 		else if (node->children->set == FD_W)
-			readfd(*in, open(node->children->lexeme->data,
+			readfd(in[0], open(node->children->lexeme->data,
 				O_WRONLY | O_CREAT | O_TRUNC, 0644), 1);
 		else if (node->children->set == FD_A)
-			readfd(*in, open(node->children->lexeme->data,
+			readfd(in[0], open(node->children->lexeme->data,
 				O_WRONLY | O_CREAT | O_APPEND, 0644), 1);
 		return ;
 	}
 	disp = concat_node(node, &redirects);
 	if (run_builtins(disp, &g_term.env) == 2)
-		execute_command(*in, *out, disp, redirects);
+		execute_command(in, out, disp, redirects);
 	free_arr(disp);
 }

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 22:36:42 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/05 18:09:33 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,31 +57,22 @@ int		handle_redirs(t_redir *list)
 	return (r);
 }
 
-int		execute_command(int in, int out, char **args, t_redir *list)
+int		execute_command(int *in, int *out, char **args, t_redir *list)
 {
-	char	*name;
 	pid_t	pid;
 
-	name = NULL;
-	args[0] = find_alias(args[0]);
-	if (!check_path(&name, args, g_term.env.envp))
-		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
-	reset_term();
 	if ((pid = fork()) == 0)
 	{
-		dup2(in, 0);
-		dup2(out, 1);
-		if (!handle_redirs(list))
-			return (0);
-		set_sighandle_child();
-		execve(name, args, g_term.env.envp);
+		subshell(in, out, args, list);
+		//in > 2 ? close(in) : 0;
 		exit(0);
 	}
-	waitpid(pid, 0, 0);
-	init_term();
 	set_sighandle();
-	in > 2 ? close(in) : 0;
-	name ? free(name) : 0;
+	in[0] > 2 ? close(in[0]) : 0;
+	in[1] > 2 ? close(in[1]) : 0;
+	//close(in[0]);
+	out[1] > 2 ? close(out[1]) : 0;
+	g_term.pid = pid;
 	return (1);
 }
 
@@ -91,7 +82,7 @@ int		empty_buffer(int fd[2])
 	int		read_bytes;
 
 	if (fd[0] == 0)
-		return (0);
+		return (1);
 	while ((read_bytes = read(fd[0], &buf, 41)) > 0)
 	{
 		buf[read_bytes] = 0;
