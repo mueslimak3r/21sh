@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/05 20:13:42 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/05 20:18:43 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 	in[0] > 2 ? close(in[0]) : 0;
 	in[1] > 2 ? close(in[1]) : 0;
 	//close(in[0]);
-	//out[1] > 2 ? close(out[1]) : 0;
+	out[1] > 2 ? close(out[1]) : 0;
 	g_term.pid = pid;
 	return (1);
 }
