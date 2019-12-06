@@ -66,11 +66,7 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 	ft_printf_fd(STDERR_FILENO, "name: %s in0: %d in1: %d out0: %d out1: %d\n", args[0], in[0], in[1], out[0], out[1]);
 	in[1] > 2 ? close(in[1]) : 0;
 	if ((pid = fork()) == 0)
-	{
 		subshell(in, out, args, list);
-		//in > 2 ? close(in) : 0;
-		exit(0);
-	}
 	set_sighandle();
 	in[0] > 2 ? close(in[0]) : 0;
 	//close(in[0]);
