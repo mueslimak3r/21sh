@@ -31,7 +31,9 @@ void		shell_loop(void)
 		if (res == 0)
 			continue ;
 		tree = lexer(g_term.curr_buff->buff_str);
+		ft_printf_fd(STDERR_FILENO, "before\n");
 		recurse(tree, &stats);
+		ft_printf_fd(STDERR_FILENO, "after\n");
 		if (g_term.pid > -1)
 			waitpid(g_term.pid, 0, 0);
 		empty_buffer(stats.f_d);

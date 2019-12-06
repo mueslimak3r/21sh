@@ -10,6 +10,8 @@ int		subshell(int *in, int *out, char **args, t_redir *list)
 	if (!check_path(&name, args, g_term.env.envp))
 		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
 	reset_term();
+	in[1] > 2 ? close(in[1]) : 0;
+	out[0] > 2 ? close(out[0]) : 0;
     if ((pid = fork()) == 0)
 	{
 		dup2(in[0], 0);
@@ -28,5 +30,6 @@ int		subshell(int *in, int *out, char **args, t_redir *list)
 	//out[0] > 2 ? close(out[1]) : 0;
     //out[1] > 2 ? close(out[1]) : 0;
 	name ? free(name) : 0;
+	exit(0);
 	return (1);
 }
