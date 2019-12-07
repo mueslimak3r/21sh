@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/06 21:26:27 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 23:12:17 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void		print_prompt(int hd)
 	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
 	//ft_printf_fd(STDERR_FILENO, "PS: |%d| hd: |%d|", g_term.conf.prompt_size, hd);
 	ft_printf_fd(STDERR_FILENO, "%s>", pwd);
-
 }
 
 int			ft_readstdin_line(t_tbuff *tbuff, int hd)
@@ -71,6 +70,7 @@ int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	print_prompt(hd);
 	zero_cursor();
+	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	thing.long_form = 0;
 	ret = 0;
 	while (!g_term.sigs.sigint)

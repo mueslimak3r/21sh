@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 21:05:33 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 22:38:01 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,19 @@ static int		handle_up_down(int code)
 
 static int		handle_arrows(int code)
 {
+	int	pos;
+
+	pos = calc_termsize();
 	if (code == UP || code == DOWN)
 		return (handle_up_down(code));
-	if ( (code == LEFT && ((g_term.conf.cursor[0] - 1 > g_term.conf.prompt_size && g_term.conf.cursor[1] == 0) || g_term.conf.cursor[1] > 0))
+	if ((code == LEFT && pos - 1 >= 0)
 	 || 
-		(code == RIGHT && !(((g_term.conf.cursor[1] * g_term.conf.termsize[0]) +
-			g_term.conf.cursor[0] - g_term.conf.prompt_size) >= g_term.curr_buff->len)))
+		(code == RIGHT && pos + 1 <= g_term.curr_buff->len))
 	{
 		move_cursor(code == LEFT ? -1 : 1, 1);
-		tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);	
+		if ((code == RIGHT && g_term.conf.cursor[0] + 1 < g_term.conf.termsize[0]) ||
+		(code == LEFT && g_term.conf.cursor[0] - 1 >= 0))
+			tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);	
 	}
 	return (0);
 }
@@ -83,7 +87,7 @@ int				handle_controls(unsigned long code)
 	int	cursor_pos;
 
 	ret = 0;
-	cursor_pos = calc_termsize() - g_term.conf.prompt_size;
+	cursor_pos = calc_termsize();
 	if (code == DELETE)
 	{
 		if (cursor_pos >= 0)
