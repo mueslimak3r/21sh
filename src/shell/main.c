@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/05 15:52:49 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 16:24:06 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void		shell_loop(void)
 			waitpid(g_term.pid, 0, 0);
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
+		tbuff_free(&g_term.hd_buff);
 	}
 	tbuff_free(&g_term.buff);
 }

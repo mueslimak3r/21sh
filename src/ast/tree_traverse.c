@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/05 20:17:10 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 16:50:03 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,12 @@ void			exec_node_parse(t_node *node, int *in, int *out)
 		else if (node->children->set == FD_A)
 			readfd(in[0], open(node->children->lexeme->data,
 				O_WRONLY | O_CREAT | O_APPEND, 0644), 1);
+		else
+		{
+			;
+			//ft_readstdin_line(g_term.hd_buff, 1, node->children->lexeme->data);
+			// print to out[1]
+		}
 		return ;
 	}
 	disp = concat_node(node, &redirects);
