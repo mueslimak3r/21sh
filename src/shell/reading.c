@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/05 18:11:00 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 16:50:37 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int			check_fd(int fd)
 	return (0);
 }
 
-int			interpret_input(int hd, t_input *thing, char *buf)
+int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 {
 	int cursor_pos;
 
@@ -41,13 +41,13 @@ int			interpret_input(int hd, t_input *thing, char *buf)
 	{
 		cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0])
 								+ g_term.conf.cursor[0] - PROMPT_SIZE;
-		tbuff_line_insert(g_term.curr_buff, buf, cursor_pos);
-		reprint_buffer(g_term.curr_buff);
-		termcap_reset_cursor(cursor_pos, ft_strlen(g_term.curr_buff->buff_str));
+		tbuff_line_insert(tbuff, buf, cursor_pos);
+		reprint_buffer(tbuff);
+		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
 	else if (thing->long_form == ENTER && !hd)
 	{
-		g_term.conf.cursor[0] = PROMPT_SIZE + 1;
+		g_term.conf.cursor[0] = PROMPT_SIZE;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
 		return (1);
@@ -64,11 +64,11 @@ void		print_prompt(int hd)
 	ft_printf_fd(STDERR_FILENO, "%s>", pwd);
 	if (hd == 2)
 	{
-		g_term.conf.cursor[0] = PROMPT_SIZE + 1;
+		g_term.conf.cursor[0] = PROMPT_SIZE;
 	}
 }
 
-int			ft_readstdin_line(int hd)
+int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 {
 	char	buf[BUFF_SIZE + 1];
 	int		ret;
@@ -84,7 +84,7 @@ int			ft_readstdin_line(int hd)
 			continue ;
 		if (buf[0] == 4)
 		{
-			if (!g_term.sigs.sigint && (!g_term.curr_buff->buff_str))
+			if (!g_term.sigs.sigint && (!tbuff->buff_str))
 			{
 				close(0);
 				ret = -1;
@@ -92,7 +92,7 @@ int			ft_readstdin_line(int hd)
 			}
 			buf[0] = 0;
 		}
-		if (interpret_input(hd, &thing, buf))
+		if (interpret_input(hd, &thing, buf, tbuff))
 			return (1);
 	}
 	return (ret);
@@ -108,7 +108,7 @@ int			get_input(void)
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
 	g_term.curr_buff = g_term.buff;
-	if ((res = ft_readstdin_line(0)) == 1)
+	if ((res = ft_readstdin_line(g_term.curr_buff, 0)) == 1)
 		ret = 1;
 	if (res < 0)
 		ret = -1;

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 16:33:23 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/06 16:53:31 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,7 @@ struct						s_term
 	char					**symbls;
 	t_tbuff					*buff;
 	t_tbuff					*curr_buff;
+	t_tbuff					*hd_buff;
 	t_shellconf				conf;
 	t_term_sigs				sigs;
 	struct termios			old_term;
@@ -241,7 +242,7 @@ int							get_input(void);
 void						shell_reset_stuff(t_stats *stats);
 int							has_hd(char *thing, char *hd);
 void						shell_loop(void);
-int							ft_readstdin_line(int hd);
+int							ft_readstdin_line(t_tbuff *tbuff, int hd);
 int							read_rcfile(void);
 int							subshell(int *in, int *out, char **args, t_redir *list);
 
