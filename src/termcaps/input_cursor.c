@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 21:31:59 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/06 16:34:22 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,12 @@ int				move_cursor(int amt, int affect_tc)
 	int size;
 
 	size = calc_termsize();
-	if (amt == 0 || !g_term.curr_buff ||
-			(g_term.conf.cursor[0] + amt < 2 && g_term.conf.cursor[1] == 0))
+	if (amt == 0 || !g_term.curr_buff->buff_str ||
+			(g_term.conf.cursor[0] + amt <= PROMPT_SIZE && g_term.conf.cursor[1] == 0))
+	{
+		//write(1, "[", 1);
 		return (0);
+	}
 	else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
 	{
 		if (affect_tc)
@@ -115,7 +118,7 @@ int				move_cursor(int amt, int affect_tc)
 			handle_tc(amt);
 		handle_cursor(amt, 1);
 	}
-	else if (g_term.curr_buff && size - PROMPT_SIZE
+	else if (g_term.curr_buff->buff_str && size - PROMPT_SIZE
 			<= (int)ft_strlen(g_term.curr_buff->buff_str))
 		g_term.conf.cursor[0] += amt;
 	return (1);

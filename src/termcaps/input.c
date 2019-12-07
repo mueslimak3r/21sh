@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/05 18:10:25 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 16:41:39 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,15 @@ static int		handle_arrows(int code)
 {
 	if (code == UP || code == DOWN)
 		return (handle_up_down(code));
-	if ((code == LEFT && !(g_term.conf.cursor[0] - 1 < 2
-		&& g_term.conf.cursor[1] == 0))
+	if ((code == LEFT && (g_term.conf.cursor[0] - 1 > PROMPT_SIZE
+		|| g_term.conf.cursor[1] != 0))
 		|| (code == RIGHT
 			&& !(((g_term.conf.cursor[1] * g_term.conf.termsize[0]) +
 			g_term.conf.cursor[0] - PROMPT_SIZE) >= g_term.curr_buff->len)))
 	{
-		tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
 		move_cursor(code == LEFT ? -1 : 1, 1);
+		tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
+			
 	}
 	return (0);
 }
