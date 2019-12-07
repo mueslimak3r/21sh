@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 16:41:39 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/06 21:05:33 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int		handle_up_down(int code)
 		g_term.curr_buff = code == UP
 			? g_term.curr_buff->prev : g_term.curr_buff->next;
 		len = g_term.curr_buff->len;
-		g_term.conf.cursor[0] = PROMPT_SIZE;
+		g_term.conf.cursor[0] = g_term.conf.prompt_size;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
 		reprint_buffer(g_term.curr_buff);
@@ -44,24 +44,25 @@ static int		handle_arrows(int code)
 {
 	if (code == UP || code == DOWN)
 		return (handle_up_down(code));
-	if ((code == LEFT && (g_term.conf.cursor[0] - 1 > PROMPT_SIZE
-		|| g_term.conf.cursor[1] != 0))
-		|| (code == RIGHT
-			&& !(((g_term.conf.cursor[1] * g_term.conf.termsize[0]) +
-			g_term.conf.cursor[0] - PROMPT_SIZE) >= g_term.curr_buff->len)))
+	if ( (code == LEFT && ((g_term.conf.cursor[0] - 1 > g_term.conf.prompt_size && g_term.conf.cursor[1] == 0) || g_term.conf.cursor[1] > 0))
+	 || 
+		(code == RIGHT && !(((g_term.conf.cursor[1] * g_term.conf.termsize[0]) +
+			g_term.conf.cursor[0] - g_term.conf.prompt_size) >= g_term.curr_buff->len)))
 	{
 		move_cursor(code == LEFT ? -1 : 1, 1);
-		tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
-			
+		tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);	
 	}
 	return (0);
 }
 
-static int		zero_cursor(void)
+int		zero_cursor(void)
 {
-	g_term.conf.cursor[0] = PROMPT_SIZE;
-	g_term.conf.cursor[1] = 0;
-	g_term.conf.curlines = 1;
+	int	size;
+
+	size = g_term.conf.prompt_size;
+	g_term.conf.cursor[1] = size / g_term.conf.termsize[0];
+	g_term.conf.cursor[0] = size % g_term.conf.termsize[0];
+	g_term.conf.curlines = g_term.conf.cursor[1] + 1;
 	return (1);
 }
 
@@ -82,7 +83,7 @@ int				handle_controls(unsigned long code)
 	int	cursor_pos;
 
 	ret = 0;
-	cursor_pos = calc_termsize() - PROMPT_SIZE;
+	cursor_pos = calc_termsize() - g_term.conf.prompt_size;
 	if (code == DELETE)
 	{
 		if (cursor_pos >= 0)

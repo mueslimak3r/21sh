@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/06 16:50:37 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 21:26:27 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,19 +39,14 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 	ft_memcpy(thing->arr_form, buf, 4);
 	if ((handle_controls(thing->long_form)) < 1)
 	{
-		cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0])
-								+ g_term.conf.cursor[0] - PROMPT_SIZE;
+		cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size;
 		tbuff_line_insert(tbuff, buf, cursor_pos);
 		reprint_buffer(tbuff);
+		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
 		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
 	else if (thing->long_form == ENTER && !hd)
-	{
-		g_term.conf.cursor[0] = PROMPT_SIZE;
-		g_term.conf.cursor[1] = 0;
-		g_term.conf.curlines = 1;
 		return (1);
-	}
 	ft_memset(buf, 0, BUFF_SIZE + 1);
 	return (0);
 }
@@ -61,11 +56,10 @@ void		print_prompt(int hd)
 	char	*pwd;
 
 	pwd = find_env("PWD");
+	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
+	//ft_printf_fd(STDERR_FILENO, "PS: |%d| hd: |%d|", g_term.conf.prompt_size, hd);
 	ft_printf_fd(STDERR_FILENO, "%s>", pwd);
-	if (hd == 2)
-	{
-		g_term.conf.cursor[0] = PROMPT_SIZE;
-	}
+
 }
 
 int			ft_readstdin_line(t_tbuff *tbuff, int hd)
@@ -75,7 +69,8 @@ int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 	t_input	thing;
 
 	ft_memset(buf, 0, BUFF_SIZE + 1);
-	print_prompt(hd ? hd : 2);
+	print_prompt(hd);
+	zero_cursor();
 	thing.long_form = 0;
 	ret = 0;
 	while (!g_term.sigs.sigint)

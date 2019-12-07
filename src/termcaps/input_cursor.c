@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input.c                                            :+:      :+:    :+:   */
+/*   input_cursor.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 16:34:22 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/06 21:26:01 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@ int				reprint_buffer(t_tbuff *buff)
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
 	if (g_term.conf.cursor[1] == 0)
-		print_prompt(0);
+		print_prompt(g_term.conf.prompt_size > 2 ? 0 : 1);
 	if (buff)
 	{
 		index = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) - 1;
 		if (index <= 0)
 			index = 0;
-		else if (index - PROMPT_SIZE >= 0)
-			index -= PROMPT_SIZE;
+		else if (g_term.conf.cursor[1] == 0 && index - g_term.conf.prompt_size >= 0)
+			index -= g_term.conf.prompt_size;
 		else
 			index = 0;
 		if (buff->buff_str)
@@ -65,8 +65,7 @@ static int		handle_cursor(int amt, int dir)
 
 int				calc_termsize(void)
 {
-	return ((g_term.conf.cursor[1] * g_term.conf.termsize[0])
-			+ g_term.conf.cursor[0] - 1);
+	return ((g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size);
 }
 
 static int		handle_tc(int amt)
@@ -101,7 +100,7 @@ int				move_cursor(int amt, int affect_tc)
 
 	size = calc_termsize();
 	if (amt == 0 || !g_term.curr_buff->buff_str ||
-			(g_term.conf.cursor[0] + amt <= PROMPT_SIZE && g_term.conf.cursor[1] == 0))
+			(g_term.conf.cursor[1] == 0 && g_term.conf.cursor[0] + amt < g_term.conf.prompt_size))
 	{
 		//write(1, "[", 1);
 		return (0);
@@ -118,8 +117,7 @@ int				move_cursor(int amt, int affect_tc)
 			handle_tc(amt);
 		handle_cursor(amt, 1);
 	}
-	else if (g_term.curr_buff->buff_str && size - PROMPT_SIZE
-			<= (int)ft_strlen(g_term.curr_buff->buff_str))
+	else if (g_term.curr_buff->buff_str && size + amt <= (int)ft_strlen(g_term.curr_buff->buff_str))
 		g_term.conf.cursor[0] += amt;
 	return (1);
 }

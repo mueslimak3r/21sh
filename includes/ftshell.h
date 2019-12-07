@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 16:53:31 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/06 21:01:44 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@
 # define LEAF_SIZE 5
 
 # define PROMPT "@>"
-# define PROMPT_SIZE (int)(ft_strlen(find_env("PWD")) + 1)
 # define HDPROMPT " >"
 # define TYPES
 # define HT_OVERHEAD 5000
@@ -179,7 +178,7 @@ struct						s_tbuff
 
 struct						s_shellconf
 {
-
+	int						prompt_size;
 	int						g_routes[5000];
 	int						termsize[2];
 	int						cursor[2];
@@ -222,6 +221,8 @@ void						reset_term(void);
 void						init_term(void);
 int							term_write(char *str, int fd, int len);
 bool						validate_term(void);
+int							zero_cursor(void);
+
 /*
 ** SIGNALS
 */

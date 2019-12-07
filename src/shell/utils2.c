@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:20:52 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/06 16:23:44 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/06 21:04:55 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ void			shell_reset_stuff(t_stats *stats)
 	stats->f_d[0] = 0;
 	stats->f_d[1] = 1;
 	g_term.conf.cursor[1] = 0;
+	g_term.conf.cursor[0] = 0;
+	g_term.conf.prompt_size = 0;
 	g_term.conf.curlines = 1;
 	g_term.pid = -1;
 	g_term.hd_buff = NULL;
