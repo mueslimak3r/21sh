@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 23:23:48 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/07 20:26:07 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int				reprint_buffer(t_tbuff *buff)
 	if (buff)
 	{
 		index = (g_term.conf.cursor[1] * g_term.conf.termsize[0]);
-		index -= (g_term.conf.cursor[1] == 0) ? 0 : g_term.conf.prompt_size - 1;
+		index -= (g_term.conf.cursor[1] == 0) ? 0 : g_term.conf.prompt_size;
 		if (buff->buff_str)
 			ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str +
 					(g_term.conf.cursor[1] > 0 ? index : 0));
@@ -102,7 +102,7 @@ int				move_cursor(int amt, int affect_tc)
 		{
 			handle_tc(amt);
 		}
-		handle_cursor(amt, 0);
+		handle_cursor(amt, 1);
 	}
 	else if (g_term.conf.cursor[0] + amt < 0)
 	{

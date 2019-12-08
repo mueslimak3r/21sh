@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 04:10:16 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 19:18:04 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/07 20:16:48 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void		sig_resize(int nb)
 	if (nb)
 	{
 		GET_SCREENSIZE;
+		g_term.conf.termsize[0] = g_window_size.ws_col;
+		g_term.conf.termsize[1] = g_window_size.ws_row;
 	}
 }
 
