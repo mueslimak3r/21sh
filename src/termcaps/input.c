@@ -72,7 +72,6 @@ int		zero_cursor(void)
 
 static int		handle_enter(void)
 {
-	ft_printf_fd(STDERR_FILENO, "*|*\nx|%d|y|%d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
 	if (g_term.curr_buff && g_term.curr_buff->buff_str)
 		while (g_term.conf.curlines > 1)
 			g_term.conf.curlines--;

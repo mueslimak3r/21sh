@@ -34,7 +34,7 @@ void	reg_close(int fd, t_redir *list)
 	if (!list)
 		return ;
 	n = fd;
-	ft_printf_fd(STDERR_FILENO, "reg close %d\n", fd);
+	//ft_printf_fd(STDERR_FILENO, "reg close %d\n", fd);
 	close(n);
 }
 
@@ -63,7 +63,7 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 {
 	pid_t	pid;
 
-	ft_printf_fd(STDERR_FILENO, "name: %s in0: %d in1: %d out0: %d out1: %d\n", args[0], in[0], in[1], out[0], out[1]);
+	//ft_printf_fd(STDERR_FILENO, "name: %s in0: %d in1: %d out0: %d out1: %d\n", args[0], in[0], in[1], out[0], out[1]);
 	in[1] > 2 ? close(in[1]) : 0;
 	if ((pid = fork()) == 0)
 		subshell(in, out, args, list);

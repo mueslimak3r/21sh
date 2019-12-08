@@ -73,6 +73,6 @@ t_node		*lexer(char *input)
 		if (op > 1)
 			input = add_lex_op(&ref, input, op);
 	}
-	print_lex(ref);
+	//print_lex(ref);
 	return (parser(ref));
 }

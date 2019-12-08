@@ -28,7 +28,6 @@ static int		exec_node_possible(t_node *node)
 
 static void		recurse_empty(t_stats *stats)
 {
-	ft_printf_fd(STDERR_FILENO, "recurse empty\n");
 	if (g_term.pid > -1)
 		waitpid(g_term.pid, 0, 0);
 	empty_buffer(stats->f_d);
@@ -52,7 +51,6 @@ void			recurse(t_node *head, t_stats *stats)
 		main_pipe[0] = 0;
 		main_pipe[1] = 1;
 		pipes += (count_pipes(h2->children));
-		ft_printf_fd(STDERR_FILENO, "p count: %d\n", pipes);
 		(tmp = h2->children) ? recurse(tmp, stats) : 0;
 		if (h2->lexeme && (h2->lexeme->set == SEMI || h2->lexeme->set == AND))
 			recurse_empty(stats);
