@@ -19,7 +19,7 @@ void		sig_resume(int nb)
 		init_term();
 		set_sighandle();
 		if (g_term.curr_buff)
-			reprint_buffer(g_term.curr_buff);
+			reprint_buffer(g_term.curr_buff, 0);
 	}
 }
 

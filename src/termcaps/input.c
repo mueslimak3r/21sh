@@ -34,7 +34,7 @@ static int		handle_up_down(int code)
 		g_term.conf.cursor[0] = g_term.conf.prompt_size;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
-		reprint_buffer(g_term.curr_buff);
+		reprint_buffer(g_term.curr_buff, 0);
 		move_cursor(len, 0);
 	}
 	return (1);
@@ -44,7 +44,7 @@ static int		handle_arrows(int code)
 {
 	int	pos;
 
-	pos = calc_termsize();
+	pos = calc_pos();
 	if (code == UP || code == DOWN)
 		return (handle_up_down(code));
 	if ((code == LEFT && pos - 1 >= 0)
@@ -72,6 +72,7 @@ int		zero_cursor(void)
 
 static int		handle_enter(void)
 {
+	ft_printf_fd(STDERR_FILENO, "*|*\nx|%d|y|%d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
 	if (g_term.curr_buff && g_term.curr_buff->buff_str)
 		while (g_term.conf.curlines > 1)
 			g_term.conf.curlines--;
@@ -87,20 +88,22 @@ int				handle_controls(unsigned long code)
 	int	cursor_pos;
 
 	ret = 0;
-	cursor_pos = calc_termsize();
+	cursor_pos = calc_pos();
 	if (code == DELETE)
 	{
-		if (cursor_pos >= 0)
+		if (cursor_pos > 0)
 		{
-			t_buff_line_rm(g_term.curr_buff, cursor_pos, 1);
-			reprint_buffer(g_term.curr_buff);
-			termcap_reset_cursor(cursor_pos - 1,
+			t_buff_line_rm(g_term.curr_buff, --cursor_pos, 1);
+			reprint_buffer(g_term.curr_buff, cursor_pos);
+			move_cursor(-1, 1);
+			termcap_reset_cursor(cursor_pos,
 					ft_strlen(g_term.curr_buff->buff_str));
 		}
 	}
 	else if (code == ENTER)
 		handle_enter();
-	else if (code == UP || code == DOWN || code == LEFT || code == RIGHT)
+	else if (code == UP || code == DOWN ||
+		code == LEFT || code == RIGHT)
 		handle_arrows(code);
 	else
 		ret -= 1;

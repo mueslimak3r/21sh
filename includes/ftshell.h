@@ -252,7 +252,7 @@ int							subshell(int *in, int *out, char **args, t_redir *list);
 */
 
 void						tbuff_new(t_tbuff **buff);
-int							reprint_buffer(t_tbuff *buff);
+int							reprint_buffer(t_tbuff *buff, int pos);
 void						tbuff_line_insert(t_tbuff *buff, char *in, int pos);
 void						t_buff_line_rm(t_tbuff *buff, int pos, int size);
 void						tbuff_free(t_tbuff **buff);
@@ -337,7 +337,7 @@ int							readfd(int fd1, int fd2, int cd2);
 int							ft_cd(char *path);
 int							ft_env(char **envp);
 int							last_slash(const char *in);
-int							calc_termsize(void);
+int							calc_pos(void);
 int							resolve_path(char *arg);
 int							check_dir(char *name, char *path);
 

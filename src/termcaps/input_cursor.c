@@ -12,7 +12,7 @@
 
 #include "ftshell.h"
 
-int				reprint_buffer(t_tbuff *buff)
+int				reprint_buffer(t_tbuff *buff, int pos)
 {
 	int		index;
 
@@ -20,13 +20,11 @@ int				reprint_buffer(t_tbuff *buff)
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
 	if (g_term.conf.cursor[1] == 0)
 		print_prompt(g_term.conf.prompt_size > 2 ? 0 : 1);
-	if (buff)
+	if (buff && buff->buff_str)
 	{
-		index = (g_term.conf.cursor[1] * g_term.conf.termsize[0]);
-		index -= (g_term.conf.cursor[1] == 0) ? 0 : g_term.conf.prompt_size;
-		if (buff->buff_str)
-			ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str +
-					(g_term.conf.cursor[1] > 0 ? index : 0));
+		index = pos;
+		ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str + (index -
+		g_term.conf.cursor[0] + (g_term.conf.cursor[1] == 0 ? g_term.conf.prompt_size : 0)));
 	}
 	return (0);
 }
@@ -47,14 +45,14 @@ static int		handle_cursor(int amt, int dir)
 	}
 	else
 	{
-		g_term.conf.cursor[1] -= -(cursor[0] + amt) / termsize[0];
-		g_term.conf.cursor[0] = -(cursor[0] + amt) % termsize[0];
+		g_term.conf.cursor[1] -= 1 + (-amt / termsize[0]);
+		g_term.conf.cursor[0] = amt == -1 ? termsize[0] - 1 : -amt % termsize[0];
 	}
 	g_term.conf.curlines = g_term.conf.cursor[1] + 1;
 	return (1);
 }
 
-int				calc_termsize(void)
+int				calc_pos(void)
 {
 	return ((g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size);
 }
@@ -70,7 +68,7 @@ static int		handle_tc(int amt)
 		while (i++ < (g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0])
 			tputs(tgetstr("sf", NULL), 0, ft_charput);
 		i = 0;
-		while (++i <= amt % g_term.conf.termsize[0])
+		while (++i < amt % g_term.conf.termsize[0])
 			tputs(tgetstr("nd", NULL), 0, ft_charput);
 	}
 	else
@@ -98,11 +96,19 @@ int				move_cursor(int amt, int affect_tc)
 	}
 	else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
 	{
+		//int tmpp[2] = { g_term.conf.cursor[0], g_term.conf.cursor[1] };
 		if (affect_tc)
 		{
 			handle_tc(amt);
 		}
-		handle_cursor(amt, 1);
+		handle_cursor(amt, 0);
+		/*
+		ft_printf_fd(STDERR_FILENO, "x|%d|y|%d||x|%d|y|%d", tmpp[0], tmpp[1], g_term.conf.cursor[0], g_term.conf.cursor[1]);
+		while (1)
+		{
+			;
+		}
+		*/
 	}
 	else if (g_term.conf.cursor[0] + amt < 0)
 	{

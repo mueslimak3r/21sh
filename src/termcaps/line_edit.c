@@ -35,7 +35,6 @@ void		t_buff_line_rm(t_tbuff *buff, int pos, int size)
 	free(buff->buff_str);
 	buff->buff_str = new;
 	buff->len -= size;
-	move_cursor(-size, 1);
 }
 
 void		tbuff_insert_helper(t_tbuff *buff, char *in, int pos, int in_size)
@@ -59,7 +58,6 @@ void		tbuff_insert_helper(t_tbuff *buff, char *in, int pos, int in_size)
 	ft_strdel(&(buff->buff_str));
 	buff->buff_str = tmp;
 	buff->len = new_size;
-	move_cursor(in_size, 1);
 }
 
 void		tbuff_line_insert(t_tbuff *buff, char *in, int pos)
@@ -75,7 +73,6 @@ void		tbuff_line_insert(t_tbuff *buff, char *in, int pos)
 			ft_strdel(&(buff->buff_str));
 		buff->buff_str = ft_strdup(in);
 		buff->len = in_size;
-		move_cursor(in_size, 1);
 		return ;
 	}
 	tbuff_insert_helper(buff, in, pos, in_size);

@@ -39,15 +39,15 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 	ft_memcpy(thing->arr_form, buf, 4);
 	if ((handle_controls(thing->long_form)) < 1)
 	{
-		cursor_pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size;
+		cursor_pos = calc_pos();//(g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size;
 		tbuff_line_insert(tbuff, buf, cursor_pos);
-		reprint_buffer(tbuff);
+		reprint_buffer(tbuff, cursor_pos);
+		move_cursor(ft_strlen(buf), 1);
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
-		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
+		//termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
 	else if (thing->long_form == ENTER && !hd)
 		return (1);
-	ft_memset(buf, 0, BUFF_SIZE + 1);
 	return (0);
 }
 
@@ -67,7 +67,6 @@ int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 	int		ret;
 	t_input	thing;
 
-	ft_memset(buf, 0, BUFF_SIZE + 1);
 	print_prompt(hd);
 	zero_cursor();
 	//tputs(tgetstr("am", NULL), 0, ft_charput);
@@ -75,6 +74,7 @@ int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 	ret = 0;
 	while (!g_term.sigs.sigint)
 	{
+		ft_memset(buf, 0, BUFF_SIZE + 1);
 		if (!(check_fd(0) && ((ret = read(0, &buf, 4)) > 0)))
 			continue ;
 		if (buf[0] == 4)
