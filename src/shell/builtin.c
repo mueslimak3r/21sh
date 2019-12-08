@@ -40,14 +40,20 @@ int		ft_cd(char *path)
 {
 	struct stat	stats;
 	char		*tmp;
+	char		*buf;
 
+	buf = NULL;
 	if (!(tmp = path_expansions(path)))
 		tmp = ft_strdup(find_env("HOME"));
 	if (stat(tmp, &stats) == 0 && S_ISDIR(stats.st_mode))
 	{
 		ft_setenv("OLDPWD", find_env("PWD"));
-		ft_setenv("PWD", tmp);
 		chdir(tmp);
+		buf = malloc(255);
+		getcwd(buf, 255);
+		ft_setenv("PWD", buf);
+		free(buf);
+		buf = NULL;
 	}
 	else
 	{
