@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/07 20:32:57 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/08 02:39:52 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ static int		handle_up_down(int code)
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
 		reprint_buffer(g_term.curr_buff, 0);
-		move_cursor(len, 0);
+		move_cursor(len, 0, g_term.curr_buff);
 	}
 	return (1);
 }
 
-static int		handle_arrows(int code)
+static int		handle_arrows(int code, t_tbuff *buff)
 {
 	int	pos;
 
@@ -49,12 +49,12 @@ static int		handle_arrows(int code)
 		return (handle_up_down(code));
 	if ((code == LEFT && pos - 1 >= 0)
 	 || 
-		(code == RIGHT && pos + 1 <= g_term.curr_buff->len))
+		(code == RIGHT && pos + 1 <= buff->len))
 	{
 		if ((code == RIGHT && g_term.conf.cursor[0] + 1 < g_term.conf.termsize[0]) ||
 		(code == LEFT && g_term.conf.cursor[0] - 1 >= 0))
 			tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
-		move_cursor(code == LEFT ? -1 : 1, 1);
+		move_cursor(code == LEFT ? -1 : 1, 1, buff);
 	}
 	return (0);
 }
@@ -70,9 +70,9 @@ int		zero_cursor(void)
 	return (1);
 }
 
-static int		handle_enter(void)
+static int		handle_enter(t_tbuff *buff)
 {
-	if (g_term.curr_buff && g_term.curr_buff->buff_str)
+	if (buff && buff->buff_str)
 		while (g_term.conf.curlines > 1)
 			g_term.conf.curlines--;
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
@@ -81,7 +81,7 @@ static int		handle_enter(void)
 	return (1);
 }
 
-int				handle_controls(unsigned long code)
+int				handle_controls(unsigned long code, t_tbuff *buff)
 {
 	int ret;
 	int	cursor_pos;
@@ -92,18 +92,18 @@ int				handle_controls(unsigned long code)
 	{
 		if (cursor_pos > 0)
 		{
-			t_buff_line_rm(g_term.curr_buff, --cursor_pos, 1);
-			reprint_buffer(g_term.curr_buff, cursor_pos);
-			move_cursor(-1, 1);
-			termcap_reset_cursor(cursor_pos,
-					ft_strlen(g_term.curr_buff->buff_str));
+			t_buff_line_rm(buff, --cursor_pos, 1);
+			reprint_buffer(buff, cursor_pos);
+			move_cursor(-1, 1, buff);
+			//termcap_reset_cursor(cursor_pos,
+			//		ft_strlen(buff->buff_str));
 		}
 	}
 	else if (code == ENTER)
-		handle_enter();
+		handle_enter(buff);
 	else if (code == UP || code == DOWN ||
 		code == LEFT || code == RIGHT)
-		handle_arrows(code);
+		handle_arrows(code, buff);
 	else
 		ret -= 1;
 	ret += 1;

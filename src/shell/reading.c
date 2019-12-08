@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/06 23:12:17 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/08 02:19:30 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 	int cursor_pos;
 
 	ft_memcpy(thing->arr_form, buf, 4);
-	if ((handle_controls(thing->long_form)) < 1)
+	if ((handle_controls(thing->long_form, tbuff)) < 1)
 	{
-		cursor_pos = calc_pos();//(g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size;
+		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
 		reprint_buffer(tbuff, cursor_pos);
-		move_cursor(ft_strlen(buf), 1);
+		move_cursor(ft_strlen(buf), 1, tbuff);
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
 		//termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
@@ -69,7 +69,6 @@ int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 
 	print_prompt(hd);
 	zero_cursor();
-	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	thing.long_form = 0;
 	ret = 0;
 	while (!g_term.sigs.sigint)

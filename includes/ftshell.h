@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 21:01:44 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/08 02:08:25 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ int							zero_cursor(void);
 */
 void						set_sighandle_child(void);
 void						set_sighandle(void);
-int							handle_controls(unsigned long code);
+int							handle_controls(unsigned long code, t_tbuff *buff);
 void						sig_int(int nb);
 void						sig_stop(int nb);
 void						sig_resize(int nb);
@@ -258,7 +258,7 @@ void						t_buff_line_rm(t_tbuff *buff, int pos, int size);
 void						tbuff_free(t_tbuff **buff);
 void						tbuff_move_cursor(t_tbuff *buff,
 								unsigned long code, char *str);
-int							move_cursor(int amt, int affect_tc);
+int							move_cursor(int amt, int affect_tc, t_tbuff *buff);
 void						tbuff_line_setsize(t_tbuff *buff, int amt);
 /*
 ** ENVIRONMENT

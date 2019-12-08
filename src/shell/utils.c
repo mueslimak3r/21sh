@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 10:24:04 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 19:21:09 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/08 02:20:08 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void		init_term(void)
 
 void		reset_term(void)
 {
-	//ft_putchar_fd('\n', STDERR_FILENO);
 	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.old_term);
 }
 

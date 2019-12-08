@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/07 20:26:07 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/08 02:40:09 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int				reprint_buffer(t_tbuff *buff, int pos)
 	if (buff && buff->buff_str)
 	{
 		index = pos;
+		//ft_printf_fd(STDERR_FILENO, "\nx %d y %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
 		ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str + (index -
 		g_term.conf.cursor[0] + (g_term.conf.cursor[1] == 0 ? g_term.conf.prompt_size : 0)));
 	}
@@ -83,13 +84,13 @@ static int		handle_tc(int amt)
 	return (1);
 }
 
-int				move_cursor(int amt, int affect_tc)
+int				move_cursor(int amt, int affect_tc, t_tbuff *buff)
 {
 	int size;
 
-	size = g_term.curr_buff->len;
+	size = buff->len;
 	//ft_printf_fd(STDERR_FILENO, "s: %d", size);
-	if (amt == 0 || !g_term.curr_buff->buff_str ||
+	if (amt == 0 || !buff->buff_str ||
 			(g_term.conf.cursor[1] == 0 && size - amt < 0))
 	{
 		return (0);
@@ -118,7 +119,7 @@ int				move_cursor(int amt, int affect_tc)
 		}
 		handle_cursor(amt, 1);
 	}
-	else if (g_term.curr_buff->buff_str && ((amt > 0 && g_term.conf.cursor[0] + amt < g_term.conf.termsize[0]) || (amt < 0 && size + amt >= 0)))
+	else if (buff->buff_str && ((amt > 0 && g_term.conf.cursor[0] + amt < g_term.conf.termsize[0]) || (amt < 0 && size + amt >= 0)))
 		g_term.conf.cursor[0] += amt;
 	return (1);
 }
