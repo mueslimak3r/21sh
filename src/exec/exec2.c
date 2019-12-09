@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/05 20:18:43 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/09 11:39:46 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 	//ft_printf_fd(STDERR_FILENO, "name: %s in0: %d in1: %d out0: %d out1: %d\n", args[0], in[0], in[1], out[0], out[1]);
 	in[1] > 2 ? close(in[1]) : 0;
 	if ((pid = fork()) == 0)
-		subshell(in, out, args, list);
+		if (subshell(in, out, args, list) > 0)
+			exit(0);
 	set_sighandle();
 	in[0] > 2 ? close(in[0]) : 0;
 	g_term.pid = pid;

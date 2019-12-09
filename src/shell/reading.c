@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/08 02:19:30 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/09 11:36:46 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 {
 	int cursor_pos;
 
+	ft_memset(thing->arr_form, 0, 4);
 	ft_memcpy(thing->arr_form, buf, 4);
 	if ((handle_controls(thing->long_form, tbuff)) < 1)
 	{
