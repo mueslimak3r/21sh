@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/08 02:39:52 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/08 20:46:46 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ int		zero_cursor(void)
 	size = g_term.conf.prompt_size;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
 	g_term.conf.termsize[1] = g_window_size.ws_row;
-	g_term.conf.cursor[1] = size / g_term.conf.termsize[0];
-	g_term.conf.cursor[0] = size % g_term.conf.termsize[0];
+	g_term.conf.cursor[1] = size ? (size / g_term.conf.termsize[0]) : 0;
+	g_term.conf.cursor[0] = size ? (size % g_term.conf.termsize[0]) : 0;
 	g_term.conf.curlines = g_term.conf.cursor[1] + 1;
 	return (1);
 }
