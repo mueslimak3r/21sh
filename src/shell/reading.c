@@ -42,7 +42,7 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
 		reprint_buffer(tbuff, cursor_pos);
-		move_cursor(ft_strlen(buf), 0, tbuff);
+		move_cursor(ft_strlen(buf), 1, tbuff);
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
 		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
