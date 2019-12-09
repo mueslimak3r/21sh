@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/09 11:39:49 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 15:19:47 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@
 # define TAB 0x09
 # define ESCAPE 0x1B
 
-# define LEFT 4476699
-# define RIGHT 4411163
-# define UP 4280091
-# define DOWN 4345627
+# define LEFT 0x445B1B
+# define RIGHT 0x435B1B
+# define UP 0x415B1B
+# define DOWN 0x425B1B
 
 # define HOME 4738843
 # define END 4607771
