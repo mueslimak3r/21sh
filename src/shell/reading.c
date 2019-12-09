@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 11:36:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 14:25:01 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 	}
 	else if (thing->long_form == ENTER && !hd)
 		return (1);
+	else if (thing->long_form == ENTER)
+	{
+		return (1);
+		//compare tbuff to terminating string, if match, terminate heredocs 
+	}
 	return (0);
 }
 
@@ -58,6 +63,10 @@ void		print_prompt(int hd)
 
 	pwd = find_env("PWD");
 	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
+	if (hd)
+	{
+		ft_memset(pwd, ' ', ft_strlen(find_env("PWD")));
+	}
 	//ft_printf_fd(STDERR_FILENO, "PS: |%d| hd: |%d|", g_term.conf.prompt_size, hd);
 	ft_printf_fd(STDERR_FILENO, "%s>", pwd);
 }

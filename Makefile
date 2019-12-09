@@ -6,7 +6,7 @@ all: $(NAME)
 MODULES := src/ast src/env src/exec src/shell src/termcaps includes
 LIBDIRS := libft
 LIBS := -lncurses -Llibft -lft
-CFLAGS +=  -g -Ilibft/includes -Iincludes -Wall -Werror -Wextra
+CFLAGS +=  -g -Ilibft/includes -Iincludes -Wall -Werror -Wextra -fsanitize=address
 MODNAME := module.mk
 SRC :=
 
