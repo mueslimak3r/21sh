@@ -42,7 +42,7 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
 		reprint_buffer(tbuff, cursor_pos);
-		move_cursor(ft_strlen(buf), 1, tbuff);
+		move_cursor(ft_strlen(buf), 0, tbuff);
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
 		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
@@ -66,13 +66,14 @@ void		handle_resize(t_tbuff *buff)
 	int		pos;
 	int		i;
 
-	i = 0;
+	//i = 1;
 	pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0]; 
 	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
 		g_term.conf.termsize[1] != g_window_size.ws_row)
 	{
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		while (i < pos / g_window_size.ws_col)
+		tputs(tgetstr("cd", NULL), 0, ft_charput);
+		while (i <= pos / g_window_size.ws_col)
 		{
 			tputs(tgetstr("up", NULL), 0, ft_charput);
 			tputs(tgetstr("cd", NULL), 0, ft_charput);
@@ -88,7 +89,8 @@ void		handle_resize(t_tbuff *buff)
 	}
 }
 
-int			ft_readstdin_line(t_tbuff *tbuff, int hd)
+
+int			readfromfd(t_tbuff *tbuff, int hd)
 {
 	char	buf[BUFF_SIZE + 1];
 	int		ret;
@@ -117,6 +119,16 @@ int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 		if (interpret_input(hd, &thing, buf, tbuff))
 			return (1);
 	}
+	return (ret);
+}
+
+int			ft_readstdin_line(t_tbuff *tbuff, int hd)
+{
+	int ret;
+
+	tputs(tgetstr("am", NULL), 0, ft_charput);
+	ret = readfromfd(tbuff, hd);
+	tputs(tgetstr("me", NULL), 0, ft_charput);
 	return (ret);
 }
 

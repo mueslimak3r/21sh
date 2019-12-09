@@ -71,8 +71,10 @@ static int		handle_tc(int amt, int dir, int use_tc)
 		{
 			if (use_tc)
 			{
-				//tputs(tgetstr("cr", NULL), 0, ft_charput);
+				tputs(tgetstr("cr", NULL), 0, ft_charput);
 				tputs(tgetstr("up", NULL), 0, ft_charput);
+				for (int j = 0; j < g_term.conf.termsize[0]; j++)
+					tputs(tgetstr("nd", NULL), 0, ft_charput);
 			}
 			g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
 			g_term.conf.cursor[1]--;
@@ -89,12 +91,9 @@ static int		handle_tc(int amt, int dir, int use_tc)
 	{
 		if (g_term.conf.cursor[0] == g_term.conf.termsize[0] - 1)
 		{
-			if (use_tc)
-			{
-				tputs(tgetstr("cr", NULL), 0, ft_charput);
-				tputs(tgetstr("sf", NULL), 0, ft_charput);
-				tputs(tgetstr("nw", NULL), 0, ft_charput);
-			}
+			tputs(tgetstr("cr", NULL), 0, ft_charput);
+			tputs(tgetstr("sf", NULL), 0, ft_charput);
+			tputs(tgetstr("nw", NULL), 0, ft_charput);
 			g_term.conf.cursor[0] = 0;
 			g_term.conf.cursor[1]++;
 		}
