@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 14:25:01 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 15:24:48 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,8 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
 		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
-	else if (thing->long_form == ENTER && !hd)
+	else if (thing->long_form == ENTER && (hd || !hd))
 		return (1);
-	else if (thing->long_form == ENTER)
-	{
-		return (1);
-		//compare tbuff to terminating string, if match, terminate heredocs 
-	}
 	return (0);
 }
 

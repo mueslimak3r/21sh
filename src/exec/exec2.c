@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 11:39:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 15:27:51 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,6 @@ int		empty_buffer(int fd[2])
 		if (fd[0] > 2)
 			close(fd[0]);
 	}
-	ft_printf_fd(STDERR_FILENO, "\n");
+	//ft_printf_fd(STDERR_FILENO, "\n");
 	return (1);
 }
