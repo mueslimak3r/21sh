@@ -38,8 +38,6 @@ void		sig_resize(int nb)
 	if (nb)
 	{
 		GET_SCREENSIZE;
-		g_term.conf.termsize[0] = g_window_size.ws_col;
-		g_term.conf.termsize[1] = g_window_size.ws_row;
 	}
 }
 

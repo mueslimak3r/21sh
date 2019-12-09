@@ -23,6 +23,8 @@ void		shell_loop(void)
 	res = 0;
 	tree = NULL;
 	//read_rcfile();
+		//tputs(tgetstr("am", NULL), 0, ft_charput);
+
 	while (!quit)
 	{
 		shell_reset_stuff(&stats);

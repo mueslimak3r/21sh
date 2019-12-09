@@ -51,9 +51,9 @@ static int		handle_arrows(int code, t_tbuff *buff)
 	 || 
 		(code == RIGHT && pos + 1 <= buff->len))
 	{
-		if ((code == RIGHT && g_term.conf.cursor[0] + 1 < g_term.conf.termsize[0]) ||
-		(code == LEFT && g_term.conf.cursor[0] - 1 >= 0))
-			tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
+		//if ((code == RIGHT && g_term.conf.cursor[0] + 1 < g_term.conf.termsize[0]) ||
+		//(code == LEFT && g_term.conf.cursor[0] - 1 >= 0))
+		//	tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
 		move_cursor(code == LEFT ? -1 : 1, 1, buff);
 	}
 	return (0);
@@ -64,6 +64,8 @@ int		zero_cursor(void)
 	int	size;
 
 	size = g_term.conf.prompt_size;
+	g_term.conf.termsize[0] = g_window_size.ws_col;
+	g_term.conf.termsize[1] = g_window_size.ws_row;
 	g_term.conf.cursor[1] = size / g_term.conf.termsize[0];
 	g_term.conf.cursor[0] = size % g_term.conf.termsize[0];
 	g_term.conf.curlines = g_term.conf.cursor[1] + 1;

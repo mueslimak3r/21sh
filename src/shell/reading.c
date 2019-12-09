@@ -42,9 +42,9 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
 		reprint_buffer(tbuff, cursor_pos);
-		move_cursor(ft_strlen(buf), 1, tbuff);
+		move_cursor(ft_strlen(buf), 0, tbuff);
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
-		//termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
+		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
 	}
 	else if (thing->long_form == ENTER && !hd)
 		return (1);
@@ -61,6 +61,32 @@ void		print_prompt(int hd)
 	ft_printf_fd(STDERR_FILENO, "%s>", pwd);
 }
 
+void		handle_resize(t_tbuff *buff)
+{
+	int		pos;
+	int		i;
+
+	i = 0;
+	pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0]; 
+	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
+		g_term.conf.termsize[1] != g_window_size.ws_row)
+	{
+		tputs(tgetstr("cr", NULL), 0, ft_charput);
+		while (i++ <= pos / g_window_size.ws_col)
+		{
+			tputs(tgetstr("up", NULL), 0, ft_charput);
+			tputs(tgetstr("cd", NULL), 0, ft_charput);
+		}
+		g_term.conf.termsize[0] = g_window_size.ws_col;
+		g_term.conf.termsize[1] = g_window_size.ws_row;
+		g_term.conf.cursor[1] = pos / g_term.conf.termsize[0];
+		g_term.conf.cursor[0] = pos % g_term.conf.termsize[0];
+		ft_printf_fd(STDERR_FILENO, "\np: %d\n", pos);
+		print_prompt(g_term.conf.prompt_size > 2 ? 0 : 1);
+		ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str);
+	}
+}
+
 int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 {
 	char	buf[BUFF_SIZE + 1];
@@ -74,6 +100,7 @@ int			ft_readstdin_line(t_tbuff *tbuff, int hd)
 	while (!g_term.sigs.sigint)
 	{
 		ft_memset(buf, 0, BUFF_SIZE + 1);
+		handle_resize(tbuff);
 		if (!(check_fd(0) && ((ret = read(0, &buf, 4)) > 0)))
 			continue ;
 		if (buf[0] == 4)
@@ -101,6 +128,7 @@ int			get_input(void)
 	if (!g_term.buff || (g_term.buff && g_term.buff->buff_str &&
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
+	tputs(tgetstr("bw", NULL), 0, ft_charput);
 	g_term.curr_buff = g_term.buff;
 	if ((res = ft_readstdin_line(g_term.curr_buff, 0)) == 1)
 		ret = 1;

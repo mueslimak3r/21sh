@@ -29,7 +29,7 @@ int				reprint_buffer(t_tbuff *buff, int pos)
 	}
 	return (0);
 }
-
+/*
 static int		handle_cursor(int amt, int dir)
 {
 	int		cursor[2];
@@ -52,40 +52,61 @@ static int		handle_cursor(int amt, int dir)
 	g_term.conf.curlines = g_term.conf.cursor[1] + 1;
 	return (1);
 }
+*/
 
 int				calc_pos(void)
 {
 	return ((g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size);
 }
 
-static int		handle_tc(int amt)
+static int		handle_tc(int amt, int dir, int use_tc)
 {
 	int	i;
 
-	i = 0;
-	if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
+	i = amt;
+	while (!dir && i > 0)
 	{
-		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		while (i++ < (g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0])
-			tputs(tgetstr("sf", NULL), 0, ft_charput);
-		i = 0;
-		while (++i < amt % g_term.conf.termsize[0])
-			tputs(tgetstr("nd", NULL), 0, ft_charput);
+		if (g_term.conf.cursor[0] == 0)
+		{
+			g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
+		}
+		else
+			g_term.conf.cursor[0]--;
+		tputs(tgetstr("le", NULL), 0, ft_charput);
+		i--;
 	}
+	while (dir && i > 0)
+	{
+		if (g_term.conf.cursor[0] == g_term.conf.termsize[0] - 1)
+		{
+			tputs(tgetstr("nd", NULL), 0, ft_charput);
+			g_term.conf.cursor[0] = 0;
+		}
+		else
+		{
+			if (use_tc)
+				tputs(tgetstr("nd", NULL), 0, ft_charput);
+			g_term.conf.cursor[0]++;
+		}
+		i--;
+	}
+	/*
 	else
 	{
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
 		while (i++ <= -(g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0])
-			tputs(tgetstr("sr", NULL), 0, ft_charput);
+			tputs(tgetstr("", NULL), 0, ft_charput);
 		i = 0;
 		while (++i <= g_term.conf.termsize[0] - (-(g_term.conf.cursor[0] + amt) % g_term.conf.termsize[0]))
 			tputs(tgetstr("nd", NULL), 0, ft_charput);
 	}
+	*/
 	return (1);
 }
 
 int				move_cursor(int amt, int affect_tc, t_tbuff *buff)
 {
+	int pos = calc_pos();
 	int size;
 
 	size = buff->len;
@@ -95,31 +116,47 @@ int				move_cursor(int amt, int affect_tc, t_tbuff *buff)
 	{
 		return (0);
 	}
+	if (affect_tc)
+	{
+		;
+	}
+	if (pos + amt >= 0 && pos + amt <= size)
+		handle_tc(amt < 0 ? -amt: amt, amt < 0 ? 0: 1, affect_tc);
+	/*
 	else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
 	{
 		//int tmpp[2] = { g_term.conf.cursor[0], g_term.conf.cursor[1] };
 		if (affect_tc)
 		{
-			handle_tc(amt);
+			handle_tc(amt, 1);
 		}
 		handle_cursor(amt, 0);
-		/*
+		
 		ft_printf_fd(STDERR_FILENO, "x|%d|y|%d||x|%d|y|%d", tmpp[0], tmpp[1], g_term.conf.cursor[0], g_term.conf.cursor[1]);
 		while (1)
 		{
 			;
 		}
-		*/
+		
 	}
 	else if (g_term.conf.cursor[0] + amt < 0)
 	{
 		if (affect_tc)
 		{
-			handle_tc(amt);
+			handle_tc(amt, 0);
 		}
-		handle_cursor(amt, 1);
+		else
+			handle_cursor(amt, 1);
 	}
 	else if (buff->buff_str && ((amt > 0 && g_term.conf.cursor[0] + amt < g_term.conf.termsize[0]) || (amt < 0 && size + amt >= 0)))
-		g_term.conf.cursor[0] += amt;
+	{
+		if (affect_tc)
+		{
+			handle_tc(amt);
+		}
+		else
+			g_term.conf.cursor[0] += amt;
+	}
+	*/
 	return (1);
 }
