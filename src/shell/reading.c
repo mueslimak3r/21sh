@@ -72,16 +72,17 @@ void		handle_resize(t_tbuff *buff)
 		g_term.conf.termsize[1] != g_window_size.ws_row)
 	{
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		while (i++ <= pos / g_window_size.ws_col)
+		while (i < pos / g_window_size.ws_col)
 		{
 			tputs(tgetstr("up", NULL), 0, ft_charput);
 			tputs(tgetstr("cd", NULL), 0, ft_charput);
+			i++;
 		}
 		g_term.conf.termsize[0] = g_window_size.ws_col;
 		g_term.conf.termsize[1] = g_window_size.ws_row;
 		g_term.conf.cursor[1] = pos / g_term.conf.termsize[0];
 		g_term.conf.cursor[0] = pos % g_term.conf.termsize[0];
-		ft_printf_fd(STDERR_FILENO, "\np: %d\n", pos);
+		//ft_printf_fd(STDERR_FILENO, "\np: %d\n", pos);
 		print_prompt(g_term.conf.prompt_size > 2 ? 0 : 1);
 		ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str);
 	}
@@ -128,7 +129,6 @@ int			get_input(void)
 	if (!g_term.buff || (g_term.buff && g_term.buff->buff_str &&
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
-	tputs(tgetstr("bw", NULL), 0, ft_charput);
 	g_term.curr_buff = g_term.buff;
 	if ((res = ft_readstdin_line(g_term.curr_buff, 0)) == 1)
 		ret = 1;

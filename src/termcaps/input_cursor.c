@@ -26,6 +26,7 @@ int				reprint_buffer(t_tbuff *buff, int pos)
 		//ft_printf_fd(STDERR_FILENO, "\nx %d y %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
 		ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str + (index -
 		g_term.conf.cursor[0] + (g_term.conf.cursor[1] == 0 ? g_term.conf.prompt_size : 0)));
+		//ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str + index - (g_term.conf.termsize[0] % (g_term.conf.prompt_size + index)));
 	}
 	return (0);
 }
@@ -68,19 +69,31 @@ static int		handle_tc(int amt, int dir, int use_tc)
 	{
 		if (g_term.conf.cursor[0] == 0)
 		{
+			if (use_tc)
+			{
+				//tputs(tgetstr("cr", NULL), 0, ft_charput);
+				tputs(tgetstr("up", NULL), 0, ft_charput);
+			}
 			g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
+			g_term.conf.cursor[1]--;
 		}
 		else
+		{
+			if (use_tc)
+				tputs(tgetstr("le", NULL), 0, ft_charput);
 			g_term.conf.cursor[0]--;
-		tputs(tgetstr("le", NULL), 0, ft_charput);
+		}
 		i--;
 	}
 	while (dir && i > 0)
 	{
 		if (g_term.conf.cursor[0] == g_term.conf.termsize[0] - 1)
 		{
-			tputs(tgetstr("nd", NULL), 0, ft_charput);
+			tputs(tgetstr("cr", NULL), 0, ft_charput);
+			tputs(tgetstr("sf", NULL), 0, ft_charput);
+			tputs(tgetstr("nw", NULL), 0, ft_charput);
 			g_term.conf.cursor[0] = 0;
+			g_term.conf.cursor[1]++;
 		}
 		else
 		{

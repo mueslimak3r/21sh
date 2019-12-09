@@ -95,8 +95,8 @@ int				handle_controls(unsigned long code, t_tbuff *buff)
 		if (cursor_pos > 0)
 		{
 			t_buff_line_rm(buff, --cursor_pos, 1);
-			reprint_buffer(buff, cursor_pos);
 			move_cursor(-1, 1, buff);
+			reprint_buffer(buff, cursor_pos);
 			//termcap_reset_cursor(cursor_pos,
 			//		ft_strlen(buff->buff_str));
 		}
