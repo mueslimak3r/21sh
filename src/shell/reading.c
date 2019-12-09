@@ -66,7 +66,7 @@ void		handle_resize(t_tbuff *buff)
 	int		pos;
 	int		i;
 
-	//i = 1;
+	i = 1;
 	pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0]; 
 	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
 		g_term.conf.termsize[1] != g_window_size.ws_row)
