@@ -1,0 +1,10 @@
+21sh$
+all.log$
+author$
+banner$
+depend.sh$
+includes$
+libft$
+Makefile$
+README.md$
+src$

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 20:53:32 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/09 19:07:44 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,7 @@ void		shell_loop(void)
 	quit = 0;
 	res = 0;
 	tree = NULL;
-	//read_rcfile();
-		//tputs(tgetstr("am", NULL), 0, ft_charput);
-
+	read_rcfile();
 	while (!quit)
 	{
 		shell_reset_stuff(&stats);
