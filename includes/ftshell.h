@@ -177,6 +177,9 @@ struct						s_tbuff
 	int						len;
 	struct s_tbuff			*next;
 	struct s_tbuff			*prev;
+	struct s_tbuff			*original;
+	bool					heredocs;
+	bool					temp;
 };
 
 struct						s_shellconf
@@ -231,7 +234,7 @@ int							zero_cursor(void);
 */
 void						set_sighandle_child(void);
 void						set_sighandle(void);
-int							handle_controls(unsigned long code, t_tbuff *buff);
+int							handle_controls(unsigned long code, t_tbuff **buff);
 void						sig_int(int nb);
 void						sig_stop(int nb);
 void						sig_resize(int nb);
@@ -246,17 +249,21 @@ int							get_input(void);
 void						shell_reset_stuff(t_stats *stats);
 int							has_hd(char *thing, char *hd);
 void						shell_loop(void);
-int							ft_readstdin_line(t_tbuff *tbuff, int hd);
+int							ft_readstdin_line(t_tbuff **tbuff, int hd);
 int							read_rcfile(void);
 int							subshell(int *in, int *out, char **args, t_redir *list);
 
 /*
 ** INPUT BUFFER
 */
-
+void		tbuff_rm_edits(t_tbuff **buff);
+void						tbuff_free_hd(t_tbuff **buff);
+void						tbuff_replicate(t_tbuff **buff);
+void						tbuff_cleanup(t_tbuff **buff);
+void						tbuff_choose(t_tbuff **buff, int hd);
 void						tbuff_new(t_tbuff **buff);
 int							reprint_buffer(t_tbuff *buff, int pos);
-void						tbuff_line_insert(t_tbuff *buff, char *in, int pos);
+void						tbuff_line_insert(t_tbuff **buff, char *in, int pos);
 void						t_buff_line_rm(t_tbuff *buff, int pos, int size);
 void						tbuff_free(t_tbuff **buff);
 void						tbuff_move_cursor(t_tbuff *buff,

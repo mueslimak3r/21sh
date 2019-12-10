@@ -36,7 +36,6 @@ void		shell_loop(void)
 			waitpid(g_term.pid, 0, 0);
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
-		tbuff_free(&g_term.hd_buff);
 	}
 	tbuff_free(&g_term.buff);
 }

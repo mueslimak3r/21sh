@@ -32,7 +32,7 @@ int			check_fd(int fd)
 	return (0);
 }
 
-int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
+int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff **tbuff)
 {
 	int cursor_pos;
 
@@ -42,10 +42,10 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff *tbuff)
 	{
 		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
-		reprint_buffer(tbuff, cursor_pos);
-		move_cursor(ft_strlen(buf), 0, tbuff);
+		reprint_buffer(*tbuff, cursor_pos);
+		move_cursor(ft_strlen(buf), 0, *tbuff);
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
-		termcap_reset_cursor(cursor_pos, ft_strlen(tbuff->buff_str));
+		termcap_reset_cursor(cursor_pos, ft_strlen((*tbuff)->buff_str));
 	}
 	else if (thing->long_form == ENTER && (hd || !hd))
 		return (1);
@@ -94,8 +94,7 @@ void		handle_resize(t_tbuff *buff)
 	}
 }
 
-
-int			readfromfd(t_tbuff *tbuff, int hd)
+int			readfromfd(t_tbuff **tbuff, int hd)
 {
 	char	buf[BUFF_SIZE + 1];
 	int		ret;
@@ -108,12 +107,12 @@ int			readfromfd(t_tbuff *tbuff, int hd)
 	while (!g_term.sigs.sigint)
 	{
 		ft_memset(buf, 0, BUFF_SIZE + 1);
-		handle_resize(tbuff);
+		handle_resize(*tbuff);
 		if (!(check_fd(0) && ((ret = read(0, &buf, 4)) > 0)))
 			continue ;
 		if (buf[0] == 4)
 		{
-			if (!g_term.sigs.sigint && (!tbuff->buff_str))
+			if (!g_term.sigs.sigint && (!(*tbuff)->buff_str))
 			{
 				close(0);
 				ret = -1;
@@ -127,12 +126,20 @@ int			readfromfd(t_tbuff *tbuff, int hd)
 	return (ret);
 }
 
-int			ft_readstdin_line(t_tbuff *tbuff, int hd)
+int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 {
 	int ret;
 
 	tputs(tgetstr("am", NULL), 0, ft_charput);
 	ret = readfromfd(tbuff, hd);
+	if (ret == 1)
+		tbuff_choose(tbuff, hd);
+	else
+	{
+		while ((*tbuff)->next)
+			*tbuff = (*tbuff)->next;
+	}
+	tbuff_cleanup(tbuff);
 	tputs(tgetstr("me", NULL), 0, ft_charput);
 	return (ret);
 }
@@ -147,13 +154,15 @@ int			get_input(void)
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
 	g_term.curr_buff = g_term.buff;
-	if ((res = ft_readstdin_line(g_term.curr_buff, 0)) == 1)
+	if ((res = ft_readstdin_line(&(g_term.curr_buff), 0)) == 1)
 		ret = 1;
+	g_term.buff = g_term.curr_buff;
 	if (res < 0)
 		ret = -1;
 	else if (g_term.sigs.sigint || !g_term.curr_buff ||
 		!g_term.curr_buff->buff_str || (g_term.curr_buff->buff_str &&
 									!*(g_term.curr_buff->buff_str)))
 		ret = 0;
+	g_term.buff = g_term.curr_buff;
 	return (ret);
 }
