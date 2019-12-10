@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/09 11:37:11 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/10 11:54:15 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,16 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 	else if (code == UP || code == DOWN ||
 		code == LEFT || code == RIGHT)
 		handle_arrows(code, buff);
+	else if (code == HOME || code == END)
+		move_cursor(code == HOME ? -(calc_pos()) : ft_strlen((*buff)->buff_str) - calc_pos(), 1, *buff);
+	else if (code == ALTLEFT || code == ALTRIGHT)
+	{
+		int i;
+	   	
+		i = jump_by_word_amt((*buff)->buff_str, calc_pos(),
+				code == ALTLEFT ? 1 : -1);
+		move_cursor(i - calc_pos(), 1, *buff);
+	}
 	else
 		ret -= 1;
 	ret += 1;

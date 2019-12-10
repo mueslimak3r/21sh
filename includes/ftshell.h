@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/09 15:19:47 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/10 11:51:00 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,11 @@
 # define UP 0x415B1B
 # define DOWN 0x425B1B
 
-# define HOME 4738843
-# define END 4607771
+# define ALTLEFT 0x435B1B1B
+# define ALTRIGHT 0x445B1B1B
+
+# define HOME 0x485B1B
+# define END 0x465B1B
 
 # define DELETE 0x7F
 # define DELETE2 0x7E335B1B
@@ -350,6 +353,7 @@ int							last_slash(const char *in);
 int							calc_pos(void);
 int							resolve_path(char *arg);
 int							check_dir(char *name, char *path);
+int							jump_by_word_amt(char *str, int pos, int dir);
 
 int							termcap_reset_cursor(int pos, int len);
 void						add_redir(int src, int dst, t_redir **list);
