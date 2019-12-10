@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 17:42:19 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/09 17:49:36 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,34 @@ static void		free_arr(char **arr)
 	arr = NULL;
 }
 
+char	*ft_strjoin_free(char *s1, char *s2, int free_which)
+{
+	int		i;
+	int		j;
+	char	*str;
+
+	if (!s1 && !s2)
+		return (NULL);
+	i = 0;
+	j = 0;
+	str = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (str == NULL)
+		return (NULL);
+	while (s1 && s1[i] != '\0')
+	{
+		str[i] = s1[i];
+		i++;
+	}
+	while (s2 && s2[j] != '\0')
+	{
+		str[i + j] = s2[j];
+		j++;
+	}
+	str[i + j] = '\0';
+	free(free_which ? s2 : s1);
+	return (str);
+}
+
 /*
 ** exec_node_parse
 ** Executes a given node with children.
@@ -100,7 +128,7 @@ void			exec_heredoc(t_node *node, int *out)
 		ft_readstdin_line(hdbuff, 1);
 		if (hdbuff && hdbuff->buff_str && ft_strcmp(node->children->lexeme->data, hdbuff->buff_str))
 		{
-			hdbuff->buff_str = ft_strjoin(hdbuff->buff_str, "\n");
+			hdbuff->buff_str = ft_strjoin_free(hdbuff->buff_str, "\n", 0);
 			if (instr)
 			{
 				tmp = ft_strjoin(instr, hdbuff->buff_str);
