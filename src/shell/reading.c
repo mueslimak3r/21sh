@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 15:24:48 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 17:34:06 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,11 @@ void		print_prompt(int hd)
 	pwd = find_env("PWD");
 	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
 	if (hd)
-	{
-		ft_memset(pwd, ' ', ft_strlen(find_env("PWD")));
-	}
+		ft_printf_fd(STDERR_FILENO, " >");
+	else
+		ft_printf_fd(STDERR_FILENO, "%s>", pwd);
 	//ft_printf_fd(STDERR_FILENO, "PS: |%d| hd: |%d|", g_term.conf.prompt_size, hd);
-	ft_printf_fd(STDERR_FILENO, "%s>", pwd);
+	
 }
 
 void		handle_resize(t_tbuff *buff)

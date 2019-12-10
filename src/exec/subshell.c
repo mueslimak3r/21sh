@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   subshell.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/09 11:39:47 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 17:18:18 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,5 @@ int		subshell(int *in, int *out, char **args, t_redir *list)
     init_term();
 	set_sighandle();
 	name ? free(name) : 0;
-	exit(0);
 	return (0);
 }

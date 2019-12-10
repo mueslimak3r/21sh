@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 14:21:41 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 17:42:19 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,18 +83,50 @@ static void		free_arr(char **arr)
 ** Executes a given node with children.
 */
 
+void			exec_heredoc(t_node *node, int *out)
+{
+	t_tbuff	*hdbuff;
+	t_tbuff *curr;
+	char	*instr;
+	char	*tmp;
+
+	hdbuff = NULL;
+	instr = NULL;
+	tmp = NULL;
+	curr = g_term.buff;
+	while (!hdbuff || ft_strcmp(node->children->lexeme->data, hdbuff->buff_str))
+	{
+		tbuff_new(&hdbuff);
+		ft_readstdin_line(hdbuff, 1);
+		if (hdbuff && hdbuff->buff_str && ft_strcmp(node->children->lexeme->data, hdbuff->buff_str))
+		{
+			hdbuff->buff_str = ft_strjoin(hdbuff->buff_str, "\n");
+			if (instr)
+			{
+				tmp = ft_strjoin(instr, hdbuff->buff_str);
+				free(instr);
+			}
+			else
+				tmp = ft_strdup(hdbuff->buff_str);
+			instr = ft_strdup(tmp);
+			free(tmp);
+			tmp = NULL;
+		}
+	}
+	write(out[1], instr, ft_strlen(instr));
+	if (instr)
+		free(instr);
+	instr = NULL;
+	//ft_readstdin_line(g_term.hd_buff, 1, node->children->lexeme->data);
+	// print to out[1]
+}
+
 void			exec_node_parse(t_node *node, int *in, int *out)
 {
 	char	**disp;
 	t_redir	*redirects;
-	t_tbuff	*hdbuff;
-	char	*instr;
-	char	*tmp;
 
 	redirects = NULL;
-	hdbuff = NULL;
-	instr = NULL;
-	tmp = NULL;
 	if (!node || node->evaluated)
 		return ;
 	if (node->children->set >= FD_R && node->children->set <= FD_A)
@@ -109,27 +141,7 @@ void			exec_node_parse(t_node *node, int *in, int *out)
 				O_WRONLY | O_CREAT | O_APPEND, 0644), 1);
 		else
 		{
-			while (!hdbuff || ft_strcmp(node->children->lexeme->data, hdbuff->buff_str))
-			{
-				tbuff_new(&hdbuff);
-				ft_readstdin_line(hdbuff, 1);
-				if (instr)
-				{
-					tmp = ft_strjoin(instr, hdbuff->buff_str);
-					free(instr);
-				}
-				else
-					tmp = ft_strdup(hdbuff->buff_str);
-				instr = ft_strdup(tmp);
-				free(tmp);
-				tmp = NULL;
-			}
-			write(in[0], instr, ft_strlen(instr));
-			if (instr)
-				free(instr);
-			instr = NULL;
-			//ft_readstdin_line(g_term.hd_buff, 1, node->children->lexeme->data);
-			// print to out[1]
+			exec_heredoc(node, out);
 		}
 		return ;
 	}
