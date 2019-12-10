@@ -6,7 +6,7 @@
 /*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:11:19 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/22 21:36:51 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/09 18:26:59 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 		new->data = env ? ft_strdup(env) : NULL;
 		free(data);
 	}
-	if (data[0] == '~')
+	else if (data[0] == '~')
 	{
 		env = find_env("HOME");
 		tmp = ft_strjoin(env, data + 1);
