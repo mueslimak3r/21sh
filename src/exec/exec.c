@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 21:43:48 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/11 04:01:57 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,11 @@ int		readfd(int fd1, int fd2, int c2)
 	if (fd2 == -1)
 		ft_printf_fd(STDERR_FILENO, "%s\n", strerror(errno));
 	while ((bytes = read(fd1, &buf, 42)) > 0)
+	{
 		write(fd2, &buf, bytes);
+		if (bytes < 42)
+			break ;
+	}
 	close(c2 ? fd2 : fd1);
 	return (1);
 }
