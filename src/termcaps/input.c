@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 03:09:40 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 03:42:27 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,8 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 				tbuff_replicate(buff);
 			t_buff_line_rm(*buff, --cursor_pos, 1);
 			move_cursor(-1, 1, *buff);
-			reprint_buffer(*buff, cursor_pos, -1);
+			reprint_buffer(*buff, calc_pos(), -1);
+			move_cursor(1, 1, *buff);
 		}
 	}
 	else if (code == ENTER)
