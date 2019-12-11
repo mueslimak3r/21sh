@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:27:26 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/22 22:04:03 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/11 03:58:40 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,30 @@ void		tbuff_replicate(t_tbuff **buff)
 	}
 }
 
-void		tbuff_choose(t_tbuff **buff, int hd)
+int			check_empty(t_tbuff *buff)
+{
+	int	i;
+
+	i = 0;
+	if (!buff || !buff->buff_str)
+		return (1);
+	while (buff->buff_str[i] && ft_isspace(buff->buff_str[i]))
+		i++;
+	if (buff->buff_str[i])
+		return (0);
+	return (1);
+}
+
+int			tbuff_choose(t_tbuff **buff, int hd)
 {
 	t_tbuff *new;
 
 	new = NULL;
-	if (!buff || !*buff || !(*buff)->buff_str || !*((*buff)->buff_str))
+	if (!buff || !*buff || !(*buff)->buff_str || !*((*buff)->buff_str) || check_empty(*buff))
 	{
 		while ((*buff)->next)
 			*buff = (*buff)->next;
-		return ;
+		return (0);
 	}
 	tbuff_new(&new);
 	if (new)
@@ -88,7 +102,9 @@ void		tbuff_choose(t_tbuff **buff, int hd)
 		if (*buff)
 			(*buff)->next = new;
 		*buff = new;
+		return (1);
 	}
+	return (0);
 }
 
 void		tbuff_rm_node(t_tbuff *node)

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/10 11:51:00 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/11 03:55:35 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,11 +259,11 @@ int							subshell(int *in, int *out, char **args, t_redir *list);
 /*
 ** INPUT BUFFER
 */
-void		tbuff_rm_edits(t_tbuff **buff);
+void						tbuff_rm_edits(t_tbuff **buff);
 void						tbuff_free_hd(t_tbuff **buff);
 void						tbuff_replicate(t_tbuff **buff);
 void						tbuff_cleanup(t_tbuff **buff);
-void						tbuff_choose(t_tbuff **buff, int hd);
+int							tbuff_choose(t_tbuff **buff, int hd);
 void						tbuff_new(t_tbuff **buff);
 int							reprint_buffer(t_tbuff *buff, int pos, int move_amt);
 void						tbuff_line_insert(t_tbuff **buff, char *in, int pos);

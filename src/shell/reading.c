@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 17:34:06 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 03:55:15 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,10 @@ int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	ret = readfromfd(tbuff, hd);
 	if (ret == 1)
-		tbuff_choose(tbuff, hd);
+	{
+		if (!(tbuff_choose(tbuff, hd)))
+			ret = 0;
+	}
 	else
 	{
 		while ((*tbuff)->next)
@@ -146,19 +149,14 @@ int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 int			get_input(void)
 {
 	int	ret;
-	int res;
 
 	ret = 0;
 	if (!g_term.buff || (g_term.buff && g_term.buff->buff_str &&
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
 	g_term.curr_buff = g_term.buff;
-	if ((res = ft_readstdin_line(&(g_term.curr_buff), 0)) == 1)
-		ret = 1;
-	g_term.buff = g_term.curr_buff;
-	if (res < 0)
-		ret = -1;
-	else if (g_term.sigs.sigint || !g_term.curr_buff ||
+	ret = ft_readstdin_line(&(g_term.curr_buff), 0);
+	if (g_term.sigs.sigint || !g_term.curr_buff ||
 		!g_term.curr_buff->buff_str || (g_term.curr_buff->buff_str &&
 									!*(g_term.curr_buff->buff_str)))
 		ret = 0;
