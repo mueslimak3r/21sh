@@ -6,7 +6,7 @@
 /*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 11:14:31 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/10 11:44:37 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/11 12:29:57 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,16 @@ int	jump_by_word_amt(char *str, int pos, int dir)
 	{
 		i = pos + 1;
 		len = (int)ft_strlen(str);
+		while (i < len && str[i] == ' ')
+			i++;
 		while (i < len && str[i] != ' ')
 			i++;
 	}
 	else
 	{
 		i = pos - 1;
+		while (i && str[i] == ' ')
+			i--;
 		while (i && str[i] != ' ')
 			i--;
 	}
