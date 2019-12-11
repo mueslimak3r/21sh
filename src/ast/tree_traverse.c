@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/11 14:48:19 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:51:31 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,11 @@ void			exec_node_parse(t_node *node, int *in, int *out)
 		else
 		{
 			exec_heredoc(node, out);
+			in[0] > 2 ? close(in[0]) : 0;
+			out[0] > 2 ? close(out[0]) : 0;
+			out[1] > 2 ? close(out[1]) : 0;
+			out[0] = 0;
+			out[1] = 1;
 		}
 		return ;
 	}
