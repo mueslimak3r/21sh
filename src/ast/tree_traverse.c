@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/11 14:10:25 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:48:19 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,6 @@ void			exec_heredoc(t_node *node, int *out)
 	{
 		hdbuff = g_term.buff;
 		tbuff_new(&hdbuff);
-		g_term.buff = hdbuff;
 		if (ft_readstdin_line(&hdbuff, 1) != 1)
 			break ;
 		if (hdbuff && hdbuff->buff_str && ft_strcmp(node->children->lexeme->data, hdbuff->buff_str))
@@ -192,6 +191,7 @@ void			exec_heredoc(t_node *node, int *out)
 		else if (!ft_strcmp(node->children->lexeme->data, hdbuff->buff_str))
 			found_end = true;
 		tbuff_rm_edits(&hdbuff);
+		g_term.buff = hdbuff;
 	}
 	if (instr)
 	{

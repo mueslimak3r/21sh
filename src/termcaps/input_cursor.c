@@ -128,19 +128,21 @@ int				calc_pos(void)
 static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 {
 	int	i;
+	int pos;
 
 	i = amt;
 	if (buff)
 	{
 		;
 	}
-	while (!dir && i > 0)
+	pos = calc_pos();
+	while (!dir && i > 0 && pos >= 0)
 	{
 		if (g_term.conf.cursor[0] <= 0)
 		{
 			if (use_tc)
 			{
-				tputs(tgetstr("cr", NULL), 0, ft_charput);
+				//tputs(tgetstr("cr", NULL), 0, ft_charput);
 				tputs(tgetstr("up", NULL), 0, ft_charput);
 				for (int j = 0; j < g_term.conf.termsize[0]; j++)
 					tputs(tgetstr("nd", NULL), 0, ft_charput);
@@ -154,9 +156,10 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 				tputs(tgetstr("le", NULL), 0, ft_charput);
 			g_term.conf.cursor[0]--;
 			i--;
+			pos--;
 		}
 	}
-	while (dir && i > 0)
+	while (dir && i > 0 && pos <= buff->len)
 	{
 		if (g_term.conf.cursor[0] >= g_term.conf.termsize[0])
 		{
@@ -165,7 +168,7 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 				
 				//if (buff->len + g_term.conf.prompt_size + 1 % g_term.conf.termsize[0] == 0)
 				
-				tputs(tgetstr("cr", NULL), 0, ft_charput);
+				//tputs(tgetstr("cr", NULL), 0, ft_charput);
 				tputs(tgetstr("do", NULL), 0, ft_charput);
 				
 			}
@@ -178,6 +181,7 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 			if (use_tc)
 				tputs(tgetstr("nd", NULL), 0, ft_charput);
 			g_term.conf.cursor[0]++;
+			pos++;
 			i--;
 		}
 	}
