@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/10 11:54:15 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/11 03:09:40 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int		handle_up_down(int code, t_tbuff **buff)
 	int		i;
 	int		len;
 
-	i = g_term.conf.curlines;
+	i = (g_term.conf.prompt_size + (*buff)->len) / g_term.conf.termsize[0];
 	if (code == DOWN && (!*buff || !(*buff)->next))
 		return (0);
 	if (*buff && (
@@ -25,7 +25,7 @@ static int		handle_up_down(int code, t_tbuff **buff)
 				|| ((*buff)->prev && code == UP)))
 	{
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		while (i-- > 1)
+		while (i-- > 0)
 			tputs(tgetstr("sr", NULL), 0, ft_charput);
 		tputs(tgetstr("cd", NULL), 0, ft_charput);
 		(*buff) = code == UP
@@ -35,7 +35,7 @@ static int		handle_up_down(int code, t_tbuff **buff)
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
 		reprint_buffer(*buff, 0, 0);
-		move_cursor(len, 0, *buff);
+		//move_cursor(len, 0, *buff);
 	}
 	return (1);
 }
