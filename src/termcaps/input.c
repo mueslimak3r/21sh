@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 03:42:27 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:28:01 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 				code == ALTLEFT ? 1 : -1);
 		move_cursor(i - calc_pos(), 1, *buff);
 	}
+	else if (code == ALTUP || code == ALTDOWN)
+		jump_by_row(*buff, code);
 	else
 		ret -= 1;
 	ret += 1;

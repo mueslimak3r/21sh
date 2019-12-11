@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 14:09:17 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:27:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,12 @@
 # define UP 0x415B1B
 # define DOWN 0x425B1B
 
-# define ALTLEFT 0x435B1B1B
-# define ALTRIGHT 0x445B1B1B
-
-# define HOME 0x485B1B
-# define END 0x465B1B
+# define ALTLEFT	0x435B1B1B
+# define ALTRIGHT	0x445B1B1B
+# define ALTUP		0x415B1B1B
+# define ALTDOWN	0x425B1BB
+# define HOME		0x485B1B
+# define END		0x465B1B
 
 # define DELETE 0x7F
 # define DELETE2 0x7E335B1B
@@ -225,6 +226,8 @@ struct						s_stats
 /*
 ** TERMCAPS
 */
+
+void						jump_by_row(t_tbuff *buff, int code);
 int							ft_charput(int c);
 void						reset_term(void);
 void						init_term(void);

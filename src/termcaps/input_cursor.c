@@ -136,7 +136,7 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 	}
 	while (!dir && i > 0)
 	{
-		if (g_term.conf.cursor[0] == 0)
+		if (g_term.conf.cursor[0] <= 0)
 		{
 			if (use_tc)
 			{
@@ -153,12 +153,12 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 			if (use_tc)
 				tputs(tgetstr("le", NULL), 0, ft_charput);
 			g_term.conf.cursor[0]--;
+			i--;
 		}
-		i--;
 	}
 	while (dir && i > 0)
 	{
-		if (g_term.conf.cursor[0] >= g_term.conf.termsize[0] - 1)
+		if (g_term.conf.cursor[0] >= g_term.conf.termsize[0])
 		{
 			if (use_tc)
 			{
@@ -178,8 +178,8 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 			if (use_tc)
 				tputs(tgetstr("nd", NULL), 0, ft_charput);
 			g_term.conf.cursor[0]++;
+			i--;
 		}
-		i--;
 	}
 	/*
 	else

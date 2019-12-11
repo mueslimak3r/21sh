@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   line_jump.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alkozma <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 11:14:31 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 12:29:57 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/11 14:26:03 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,22 @@ int	jump_by_word_amt(char *str, int pos, int dir)
 			i--;
 	}
 	return (i);
+}
+
+void	jump_by_row(t_tbuff *buff, int code)
+{
+	int pos;
+
+	pos = calc_pos();
+	if (code == ALTUP)
+	{
+		if (g_term.conf.cursor[1] > 0)
+		{
+			move_cursor(-(g_term.conf.termsize[0]), 1, buff);
+		}
+	}
+	else if (code == ALTDOWN)
+	{
+		move_cursor(g_term.conf.termsize[0], 1, buff);
+	}
 }
