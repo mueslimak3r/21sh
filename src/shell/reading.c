@@ -42,10 +42,10 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff **tbuff)
 	{
 		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
-		reprint_buffer(*tbuff, cursor_pos);
-		move_cursor(ft_strlen(buf), 0, *tbuff);
+		reprint_buffer(*tbuff, cursor_pos, ft_strlen(buf));
+		//move_cursor(ft_strlen(buf), 0, *tbuff);
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
-		termcap_reset_cursor(cursor_pos, ft_strlen((*tbuff)->buff_str));
+		//termcap_reset_cursor(cursor_pos, ft_strlen((*tbuff)->buff_str));
 	}
 	else if (thing->long_form == ENTER && (hd || !hd))
 		return (1);
@@ -89,8 +89,7 @@ void		handle_resize(t_tbuff *buff)
 		g_term.conf.cursor[1] = pos / g_term.conf.termsize[0];
 		g_term.conf.cursor[0] = pos % g_term.conf.termsize[0];
 		//ft_printf_fd(STDERR_FILENO, "\np: %d\n", pos);
-		print_prompt(g_term.conf.prompt_size > 2 ? 0 : 1);
-		ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str);
+		reprint_buffer(buff, pos, 0);
 	}
 }
 
@@ -130,7 +129,7 @@ int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 {
 	int ret;
 
-	tputs(tgetstr("am", NULL), 0, ft_charput);
+	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	ret = readfromfd(tbuff, hd);
 	if (ret == 1)
 		tbuff_choose(tbuff, hd);

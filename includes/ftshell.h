@@ -265,7 +265,7 @@ void						tbuff_replicate(t_tbuff **buff);
 void						tbuff_cleanup(t_tbuff **buff);
 void						tbuff_choose(t_tbuff **buff, int hd);
 void						tbuff_new(t_tbuff **buff);
-int							reprint_buffer(t_tbuff *buff, int pos);
+int							reprint_buffer(t_tbuff *buff, int pos, int move_amt);
 void						tbuff_line_insert(t_tbuff **buff, char *in, int pos);
 void						t_buff_line_rm(t_tbuff *buff, int pos, int size);
 void						tbuff_free(t_tbuff **buff);

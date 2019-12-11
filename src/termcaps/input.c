@@ -34,7 +34,7 @@ static int		handle_up_down(int code, t_tbuff **buff)
 		g_term.conf.cursor[0] = g_term.conf.prompt_size;
 		g_term.conf.cursor[1] = 0;
 		g_term.conf.curlines = 1;
-		reprint_buffer(*buff, 0);
+		reprint_buffer(*buff, 0, 0);
 		move_cursor(len, 0, *buff);
 	}
 	return (1);
@@ -78,7 +78,7 @@ static int		handle_enter(t_tbuff *buff)
 		while (g_term.conf.curlines > 1)
 			g_term.conf.curlines--;
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
-	tputs(tgetstr("sf", NULL), 0, ft_charput);
+	tputs(tgetstr("do", NULL), 0, ft_charput);
 	zero_cursor();
 	return (1);
 }
@@ -98,7 +98,7 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 				tbuff_replicate(buff);
 			t_buff_line_rm(*buff, --cursor_pos, 1);
 			move_cursor(-1, 1, *buff);
-			reprint_buffer(*buff, cursor_pos);
+			reprint_buffer(*buff, cursor_pos, -1);
 		}
 	}
 	else if (code == ENTER)
@@ -107,7 +107,7 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 		code == LEFT || code == RIGHT)
 		handle_arrows(code, buff);
 	else if (code == HOME || code == END)
-		move_cursor(code == HOME ? -(calc_pos()) : ft_strlen((*buff)->buff_str) - calc_pos(), 1, *buff);
+		move_cursor(code == HOME ? -(calc_pos()) : (int)ft_strlen((*buff)->buff_str) - calc_pos(), 1, *buff);
 	else if (code == ALTLEFT || code == ALTRIGHT)
 	{
 		int i;
