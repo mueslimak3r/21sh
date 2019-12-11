@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 19:05:01 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 10:35:15 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,15 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 {
 	pid_t	pid;
 
-	//ft_printf_fd(STDERR_FILENO, "name: %s in0: %d in1: %d out0: %d out1: %d\n", args[0], in[0], in[1], out[0], out[1]);
-	in[1] > 2 ? close(in[1]) : 0;
+	//in[1] > 2 ? close(in[1]) : 0;
 	if ((pid = fork()) == 0)
 	{
+		//in[1] > 2 ? close(in[1]) : 0;
 		subshell(in, out, args, list);
 		exit(0);
 	}
-	//out[1] > 2 ? close(out[1]) : 0;
+	//in[1] > 2 ? close(in[1]) : 0;
+	out[1] > 2 ? close(out[1]) : 0;
 	in[0] > 2 ? close(in[0]) : 0;
 	set_sighandle();
 	g_term.pid = pid;
@@ -84,7 +85,7 @@ int		empty_buffer(int fd[2])
 	//ft_printf_fd(STDERR_FILENO, "printing buff\n");
 	if (fd[0] != 0)
 	{
-		while ((read_bytes = read(fd[0], &buf, 41)) > 0)
+		while ((read_bytes = read(fd[0], buf, 41)) > 0)
 		{
 			buf[read_bytes] = 0;
 			ft_printf_fd(STDERR_FILENO, "%s", buf);

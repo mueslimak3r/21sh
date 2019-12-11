@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/06 16:38:28 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 10:28:09 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ t_node		*lexer(char *input)
 		i = 0;
 		while (*input && ft_isspace(*input))
 			input++;
+		if (!*input)
+			break ;
 		i = lexer_helper(input, i, &op);
 		i ? new_lex(ft_strndup(input, i), 1, &ref) : 0;
 		input += i;

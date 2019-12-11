@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/09 19:04:45 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 10:04:18 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,14 @@ int		subshell(int *in, int *out, char **args, t_redir *list)
 	{
 		dup2(in[0], 0);
 		dup2(out[1], 1);
+		in[0] > 2 ? close(in[0]) : 0;
+		out[1] > 2 ? close(out[1]) : 0;
 		if (!handle_redirs(list))
 			return (0);
 		execve(name, args, g_term.env.envp);
 		exit(0);
 	}
+	out[1] > 2 ? close(out[1]) : 0;
 	waitpid(pid, 0, 0);
 	init_term();
 	name ? free(name) : 0;
