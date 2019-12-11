@@ -22,8 +22,8 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 
 	//col = tgetnum("co");
 	//ft_printf_fd(STDERR_FILENO, "col: %d\n", col);
-	if (move_amt != 0)
-		tputs(tgetstr("sc", NULL), 0, ft_charput);
+	//if (move_amt != 0)
+	//	tputs(tgetstr("sc", NULL), 0, ft_charput);
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
 	if (g_term.conf.cursor[1] == 0)
@@ -63,8 +63,8 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 			*/
 			if (g_term.conf.cursor[0] >= g_term.conf.termsize[0])
 			{
-				//tputs(tgetstr("cr", NULL), 0, ft_charput);
-				tputs(tgetstr("do", NULL), 0, ft_charput);
+				tputs(tgetstr("cr", NULL), 0, ft_charput);
+				tputs(tgetstr("sf", NULL), 0, ft_charput);
 				g_term.conf.cursor[0] = 0;
 				g_term.conf.cursor[1]++;
 			}
@@ -75,17 +75,21 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 				index++;
 				if (g_term.conf.cursor[0] >= g_term.conf.termsize[0])
 				{
-					//tputs(tgetstr("cr", NULL), 0, ft_charput);
-					tputs(tgetstr("do", NULL), 0, ft_charput);
+					tputs(tgetstr("cr", NULL), 0, ft_charput);
+					tputs(tgetstr("sf", NULL), 0, ft_charput);
+					g_term.conf.cursor[0] = 0;
+					g_term.conf.cursor[1]++;
 				}
 			}
 		}
 		if (move_amt != 0)
 		{
-			tputs(tgetstr("rc", NULL), 0, ft_charput);
-			g_term.conf.cursor[0] = old_pos[0];
-			g_term.conf.cursor[1] = old_pos[1];
-			move_cursor(move_amt, 1, buff);
+			;
+			//tputs(tgetstr("rc", NULL), 0, ft_charput);
+			//g_term.conf.cursor[0] = old_pos[0];
+			//g_term.conf.cursor[1] = old_pos[1];
+			move_cursor(pos - buff->len + move_amt, 1, buff);
+			//ft_printf_fd(STDERR_FILENO, "[\b");
 		}
 		//ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str + index - (g_term.conf.termsize[0] % (g_term.conf.prompt_size + index)));
 	}
@@ -154,13 +158,16 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 	}
 	while (dir && i > 0)
 	{
-		if (g_term.conf.cursor[0] >= g_term.conf.termsize[0])
+		if (g_term.conf.cursor[0] >= g_term.conf.termsize[0] - 1)
 		{
 			if (use_tc)
 			{
-				//tputs(tgetstr("cr", NULL), 0, ft_charput);
+				
 				//if (buff->len + g_term.conf.prompt_size + 1 % g_term.conf.termsize[0] == 0)
+				
+				tputs(tgetstr("cr", NULL), 0, ft_charput);
 				tputs(tgetstr("do", NULL), 0, ft_charput);
+				
 			}
 			//tputs(tgetstr("nw", NULL), 0, ft_charput);
 			g_term.conf.cursor[0] = 0;
