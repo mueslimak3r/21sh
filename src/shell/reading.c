@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/11 03:55:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:07:14 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 			{
 				close(0);
 				ret = -1;
-				break ;
+				return (-1);
 			}
 			buf[0] = 0;
 		}
@@ -138,7 +138,7 @@ int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 	}
 	else
 	{
-		while ((*tbuff)->next)
+		while (tbuff && *tbuff && (*tbuff)->next)
 			*tbuff = (*tbuff)->next;
 	}
 	tbuff_cleanup(tbuff);
@@ -154,12 +154,12 @@ int			get_input(void)
 	if (!g_term.buff || (g_term.buff && g_term.buff->buff_str &&
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
-	g_term.curr_buff = g_term.buff;
-	ret = ft_readstdin_line(&(g_term.curr_buff), 0);
-	if (g_term.sigs.sigint || !g_term.curr_buff ||
-		!g_term.curr_buff->buff_str || (g_term.curr_buff->buff_str &&
-									!*(g_term.curr_buff->buff_str)))
+	ret = ft_readstdin_line(&(g_term.buff), 0);
+	if (ret == -1)
+		return (-1);
+	if (g_term.sigs.sigint || !g_term.buff ||
+		!g_term.buff->buff_str || (g_term.buff->buff_str &&
+									!*(g_term.buff->buff_str)))
 		ret = 0;
-	g_term.buff = g_term.curr_buff;
 	return (ret);
 }

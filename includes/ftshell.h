@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 03:55:35 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:09:17 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ struct						s_term
 	struct s_env			env;
 	char					**symbls;
 	t_tbuff					*buff;
-	t_tbuff					*curr_buff;
+	//t_tbuff					*curr_buff;
 	t_tbuff					*hd_buff;
 	t_shellconf				conf;
 	t_term_sigs				sigs;

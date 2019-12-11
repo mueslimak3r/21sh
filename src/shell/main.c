@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/09 19:07:44 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:07:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void		shell_loop(void)
 			break ;
 		if (res == 0)
 			continue ;
-		tree = lexer(g_term.curr_buff->buff_str);
+		tree = lexer(g_term.buff->buff_str);
 		recurse(tree, &stats);
 		if (g_term.pid > -1)
 			waitpid(g_term.pid, 0, 0);
@@ -75,7 +75,6 @@ int			main(void)
 	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
 	print_banner(STDERR_FILENO);
 	g_term.buff = NULL;
-	g_term.curr_buff = NULL;
 	shell_loop();
 	reset_term();
 	return (0);
