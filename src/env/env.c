@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 11:34:54 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/11 14:24:50 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,8 @@ int				ft_export(char *str)
 	if (!split[0] || !split[1])
 	{
 		if (split[0])
-		{
 			free(split[0]);
-			split[0] = NULL;
-			free(split);
-		}
+		free(split);
 		return (0);
 	}
 	ft_setenv(split[0], split[1]);

@@ -6,13 +6,21 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 10:04:18 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:36:02 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-int		subshell(int *in, int *out, char **args, t_redir *list)
+static void	fd_helper(int *in, int *out)
+{
+	dup2(in[0], 0);
+	dup2(out[1], 1);
+	in[0] > 2 ? close(in[0]) : 0;
+	out[1] > 2 ? close(out[1]) : 0;
+}
+
+int			subshell(int *in, int *out, char **args, t_redir *list)
 {
 	char	*name;
 	pid_t	pid;
@@ -22,16 +30,11 @@ int		subshell(int *in, int *out, char **args, t_redir *list)
 	out[0] > 2 ? close(out[0]) : 0;
 	set_sighandle_child();
 	if (!check_path(&name, args, g_term.env.envp))
-	{
 		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
-	}
 	reset_term();
-    if ((pid = fork()) == 0)
+	if ((pid = fork()) == 0)
 	{
-		dup2(in[0], 0);
-		dup2(out[1], 1);
-		in[0] > 2 ? close(in[0]) : 0;
-		out[1] > 2 ? close(out[1]) : 0;
+		fd_helper(in, out);
 		if (!handle_redirs(list))
 			return (0);
 		execve(name, args, g_term.env.envp);

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/11 10:35:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:37:59 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	reg_close(int fd, t_redir *list)
 	if (!list)
 		return ;
 	n = fd;
-	//ft_printf_fd(STDERR_FILENO, "reg close %d\n", fd);
 	close(n);
 }
 
@@ -63,14 +62,11 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 {
 	pid_t	pid;
 
-	//in[1] > 2 ? close(in[1]) : 0;
 	if ((pid = fork()) == 0)
 	{
-		//in[1] > 2 ? close(in[1]) : 0;
 		subshell(in, out, args, list);
 		exit(0);
 	}
-	//in[1] > 2 ? close(in[1]) : 0;
 	out[1] > 2 ? close(out[1]) : 0;
 	in[0] > 2 ? close(in[0]) : 0;
 	set_sighandle();
@@ -82,7 +78,7 @@ int		empty_buffer(int fd[2])
 {
 	char	buf[42];
 	int		read_bytes;
-	//ft_printf_fd(STDERR_FILENO, "printing buff\n");
+
 	if (fd[0] != 0)
 	{
 		while ((read_bytes = read(fd[0], buf, 41)) > 0)
@@ -93,6 +89,5 @@ int		empty_buffer(int fd[2])
 		if (fd[0] > 2)
 			close(fd[0]);
 	}
-	//ft_printf_fd(STDERR_FILENO, "\n");
 	return (1);
 }

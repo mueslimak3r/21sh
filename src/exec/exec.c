@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 10:46:59 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:36:56 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,6 @@ int		readfd(int fd1, int fd2, int c2)
 		buf[bytes] = 0;
 		write(fd2, buf, bytes);
 		ft_memset(buf, 0, 42);
-		//if (bytes < 41)
-		//	break ;
 	}
 	c2 && fd2 > 2 ? close(fd2) : 0;
 	!c2 && fd1 > 2 ? close(fd1) : 0;
