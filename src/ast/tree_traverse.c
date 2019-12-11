@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/09 18:43:55 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/11 09:20:58 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,47 @@ static void		recurse_empty(t_stats *stats)
 	empty_buffer(stats->f_d);
 }
 
+int             find_pipe_r(t_node *head)
+{
+    t_node *tmp;
+    int     ret;
+    
+    ret = 0;
+    if (!head)
+        return (0);
+    tmp = head;
+    while (tmp)
+    {
+        if (tmp->children && (ret = find_pipe_r(tmp->children)) != 0)
+            return (ret);
+        if (tmp->lexeme && (tmp->lexeme->set == SEMI ||
+                            tmp->lexeme->set == AND))
+            return (-1);
+        if (tmp->lexeme && (tmp->lexeme->set == LESS ||
+        tmp->lexeme->set == GREAT || tmp->lexeme->set == RDLESS ||
+        tmp->lexeme->set == RDGREAT || tmp->lexeme->set == PIPE))
+            return (1);
+        tmp = tmp->next;
+    }
+    return (0);
+}
+int             find_pipe(t_node *head)
+{
+    t_node      *tmp;
+    int         ret;
+    if (!head)
+        return (0);
+    if ((ret = find_pipe_r(head)) != 0)
+        return (ret);
+    if (head->parent)
+    {
+        tmp = head->parent->next;
+        if (tmp &&  (ret = find_pipe(tmp)) != 0)
+            return (ret);
+    }
+    return (0);
+}
+
 /*
 ** recurse
 ** Main function for tree evaluation.
@@ -43,23 +84,21 @@ void			recurse(t_node *head, t_stats *stats)
 	t_node		*tmp;
 	t_node		*h2;
 	int			main_pipe[2];
-	static int	pipes;
 
 	h2 = head;
 	while (h2)
 	{
 		main_pipe[0] = 0;
 		main_pipe[1] = 1;
-		pipes += (count_pipes(h2->children));
 		(tmp = h2->children) ? recurse(tmp, stats) : 0;
 		if (h2->lexeme && (h2->lexeme->set == SEMI || h2->lexeme->set == AND))
 			recurse_empty(stats);
 		if (exec_node_possible(tmp))
 		{
-			pipes ? pipe(main_pipe) : 0;
+			if (find_pipe(tmp->parent))
+				pipe(main_pipe);
 			exec_node_parse(tmp->parent, stats->f_d, main_pipe);
 			//pipes ? close(main_pipe[1]) : 0;
-			pipes -= pipes ? 1 : 0;
 			stats->f_d[0] = main_pipe[0];
 			stats->f_d[1]= main_pipe[1];
 		}
