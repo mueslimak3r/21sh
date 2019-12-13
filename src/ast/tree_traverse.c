@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 06:17:00 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 06:25:59 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ void			exec_node_parse(t_node *node, int *in, int *out)
 	redirects = NULL;
 	if (!node || node->evaluated)
 		return ;
-	ft_printf_fd(STDERR_FILENO, "in0: %d in1: %d out0: %d out1: %d\n", in[0], in[1], out[0], out[1]);
+	//ft_printf_fd(STDERR_FILENO, "in0: %d in1: %d out0: %d out1: %d\n", in[0], in[1], out[0], out[1]);
 	if (node->children->set >= FD_R && node->children->set <= FD_A)
 	{
 		if (node->children->set == FD_R)

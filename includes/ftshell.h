@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 03:46:32 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 06:25:35 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,6 @@ typedef struct s_lexeme		t_lexeme;
 typedef struct s_node		t_node;
 
 typedef struct s_ht			t_ht;
-
-typedef struct s_st_node	t_st_node;
-typedef struct s_st_leaf	t_st_leaf;
-typedef struct s_rope_node	t_rope_node;
 
 typedef struct s_redir		t_redir;
 
@@ -117,13 +113,6 @@ struct						s_ht
 	struct s_ht				*next;
 };
 
-struct						s_st_node
-{
-	char					*str;
-	struct s_st_node		*children[256];
-	struct s_st_node		*parent;
-};
-
 struct						s_lexeme
 {
 	enum e_tokentype		set;
@@ -148,16 +137,6 @@ typedef struct				s_env
 	char					*envp[HT_OVERHEAD];
 	int						size;
 }							t_env;
-
-struct						s_rope_node
-{
-	int						length;
-	int						removed_length;
-	t_rope_node				*parent;
-	t_rope_node				*left;
-	t_rope_node				*right;
-	char					str[LEAF_SIZE + 1];
-};
 
 struct						s_tbuff
 {
@@ -189,8 +168,6 @@ struct						s_term
 	struct s_env			env;
 	char					**symbls;
 	t_tbuff					*buff;
-	//t_tbuff					*curr_buff;
-	t_tbuff					*hd_buff;
 	t_shellconf				conf;
 	t_term_sigs				sigs;
 	struct termios			old_term;
