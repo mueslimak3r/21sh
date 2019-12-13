@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 04:10:16 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/11 14:08:14 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 05:34:14 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void		sig_stop(int nb)
 
 void		sig_int(int nb)
 {
-	ft_printf_fd(STDERR_FILENO, "\n");
 	if (nb)
 		g_term.sigs.sigint = true;
 }

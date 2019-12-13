@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 04:43:59 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 05:24:28 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,14 @@ int		zero_cursor(void)
 
 static int		handle_enter(t_tbuff *buff)
 {
-	if (buff && buff->buff_str)
-		while (g_term.conf.curlines > 1)
-			g_term.conf.curlines--;
-	tputs(tgetstr("cr", NULL), 0, ft_charput);
-	tputs(tgetstr("sf", NULL), 0, ft_charput);
+	if (buff)
+	{
+		;
+	} //&& buff->buff_str)
+	//	while (g_term.conf.curlines > 1)
+	//		g_term.conf.curlines--;
+	//tputs(tgetstr("cr", NULL), 0, ft_charput);
+	//tputs(tgetstr("sf", NULL), 0, ft_charput);
 	return (1);
 }
 
