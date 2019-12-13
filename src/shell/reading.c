@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 08:10:31 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 10:00:35 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ void		handle_resize(t_tbuff *buff)
 	int		i;
 
 	i = 1;
-	pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0]; 
+	//pos = (g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0]; 
+	pos = calc_pos();
 	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
 		g_term.conf.termsize[1] != g_window_size.ws_row)
 	{
@@ -85,6 +86,7 @@ void		handle_resize(t_tbuff *buff)
 			
 		}
 		zero_cursor();
+		move_cursor(pos, 0, buff, -1);
 		/*
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
 		while (i <= pos / g_window_size.ws_col)

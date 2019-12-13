@@ -21,14 +21,7 @@ int				ft_abs(int amt)
 int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 {
 	int		index;
-	//int		old_pos[2];
-	//int		leftover;
-	//int		col;
 
-	//col = tgetnum("co");
-	//ft_printf_fd(STDERR_FILENO, "col: %d\n", col);
-	//if (move_amt != 0)
-	//	tputs(tgetstr("sc", NULL), 0, ft_charput);
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
 	if (g_term.conf.cursor[1] == 0)
@@ -37,66 +30,21 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 	{
 		index = (pos -
 		g_term.conf.cursor[0] + (g_term.conf.cursor[1] == 0 ? g_term.conf.prompt_size : 0));
-		//ft_printf_fd(STDERR_FILENO, "\nx %d y %d\n", g_term.conf.cursor[0], g_term.conf.cursor[1]);
-		//leftover =	buff->len - index;
-		//old_pos[0] = g_term.conf.cursor[0];
-		//old_pos[1] = g_term.conf.cursor[1];
 		g_term.conf.cursor[0] = g_term.conf.cursor[1] ? 0 : g_term.conf.prompt_size;
-		//if (move_amt != 0)
 		while (index < buff->len)
 		{
-			/*
-			if (g_term.conf.cursor[0] >= col)
-			{
-				tputs(tgetstr("cr", NULL), 0, ft_charput);
-				tputs(tgetstr("sf", NULL), 0, ft_charput);
-				g_term.conf.cursor[0] = 0;
-				g_term.conf.cursor[1]++;
-			}
-			else
-			{
-				ft_charput(buff->buff_str[index]);
-				g_term.conf.cursor[0]++;
-			}
-			if (g_term.conf.cursor[0] >= col)
-			{
-				tputs(tgetstr("cr", NULL), 0, ft_charput);
-				tputs(tgetstr("sf", NULL), 0, ft_charput);
-				g_term.conf.cursor[0] = 0;
-				g_term.conf.cursor[1]++;
-			}
-			*/
+			ft_charput(buff->buff_str[index]);
+			index++;
+			g_term.conf.cursor[0]++;
 			if (g_term.conf.cursor[0] >= g_term.conf.termsize[0])
 			{
-				tputs(tgetstr("cr", NULL), 0, ft_charput);
-				tputs(tgetstr("sf", NULL), 0, ft_charput);
+				ft_putstr(" \b");
 				g_term.conf.cursor[0] = 0;
 				g_term.conf.cursor[1]++;
-			}
-			else
-			{
-				ft_charput(buff->buff_str[index]);
-				g_term.conf.cursor[0]++;
-				index++;
-				if (g_term.conf.cursor[0] >= g_term.conf.termsize[0])
-				{
-					tputs(tgetstr("cr", NULL), 0, ft_charput);
-					tputs(tgetstr("sf", NULL), 0, ft_charput);
-					g_term.conf.cursor[0] = 0;
-					g_term.conf.cursor[1]++;
-				}
 			}
 		}
 		if (move_amt != 0)
-		{
-			//ft_printf_fd(STDERR_FILENO, "move amt: %d pos: %d\n", move_amt, pos);
-			//tputs(tgetstr("rc", NULL), 0, ft_charput);
-			//g_term.conf.cursor[0] = old_pos[0];
-			//g_term.conf.cursor[1] = old_pos[1];
 			move_cursor(-(buff->len - pos) + move_amt, 1, buff, -1);
-			//ft_printf_fd(STDERR_FILENO, "[\b");
-		}
-		//ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str + index - (g_term.conf.termsize[0] % (g_term.conf.prompt_size + index)));
 	}
 	return (0);
 }
