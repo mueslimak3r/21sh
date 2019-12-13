@@ -1,6 +1,6 @@
 #ifndef KEYCODE_LINUX_H
 # define KEYCODE_LINUX_H
-
+# define FT_EOT         4
 # define KEY_ALT_LEFT	1130044187
 # define KEY_ALT_RIGHT	1146821403
 # define KEY_ALT_UP		1096489755

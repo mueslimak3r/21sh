@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 01:33:42 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 02:17:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 		handle_resize(*tbuff);
 		if (!(check_fd(0) && ((ret = read(0, &buf, 4)) > 0)))
 			continue ;
-		if (buf[0] == 4)
+		if (buf[0] == FT_EOT)
 		{
 			if (!g_term.sigs.sigint && (!(*tbuff)->buff_str))
 			{
