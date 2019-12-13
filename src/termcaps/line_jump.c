@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 11:14:31 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 14:40:47 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 00:34:15 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ void	jump_by_row(t_tbuff *buff, unsigned long code)
 	{
 		;
 	}
-	ft_printf_fd(STDERR_FILENO, "\nbefore pos %d, size %d\n", pos, g_term.conf.termsize[0]);
-	if (code == ALTUP)
+	//ft_printf_fd(STDERR_FILENO, "\nbefore pos %d, size %d\n", pos, g_term.conf.termsize[0]);
+	if (code == KEY_ALT_UP)
 	{
 		if (pos - g_term.conf.termsize[0] >= 0)
 		{
@@ -59,7 +59,7 @@ void	jump_by_row(t_tbuff *buff, unsigned long code)
 		else
 			move_cursor(pos > 0 ? -(pos) : 0, 1, buff);
 	}
-	else if (code == ALTDOWN)
+	else if (code == KEY_ALT_DOWN)
 	{
 		if (pos + g_term.conf.termsize[0] <= buff->len)
 		{
@@ -68,6 +68,6 @@ void	jump_by_row(t_tbuff *buff, unsigned long code)
 		else
 			move_cursor(buff->len, 1, buff);
 	}
-	pos = calc_pos();
-	ft_printf_fd(STDERR_FILENO, "after pos %d, size %d\n", pos, g_term.conf.termsize[0]);
+	//pos = calc_pos();
+	//ft_printf_fd(STDERR_FILENO, "after pos %d, size %d\n", pos, g_term.conf.termsize[0]);
 }

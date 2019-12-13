@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 14:28:01 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 00:33:04 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,6 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 	else
 		ret -= 1;
 	ret += 1;
-	ft_printf("%lx\n", code);
+	//ft_printf("%lx\n", code);
 	return (ret);
 }
