@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 04:10:16 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 11:47:53 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 11:53:00 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,8 @@ void		sig_stop(int nb)
 void		sig_int(int nb)
 {
 	if (nb)
+	{
 		g_term.sigs.sigint = true;
+		g_term.sigs.restart = true;
+	}
 }

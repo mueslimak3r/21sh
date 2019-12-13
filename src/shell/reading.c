@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 11:40:11 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 11:51:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,9 +162,7 @@ int			get_input(void)
 	int	ret;
 
 	ret = 0;
-	if (!g_term.buff || (g_term.buff && g_term.buff->buff_str &&
-										*(g_term.buff->buff_str)))
-		tbuff_new(&g_term.buff);
+	tbuff_new(&g_term.buff);
 	ret = ft_readstdin_line(&(g_term.buff), 0);
 	if (ret == -1 || g_term.sigs.sigstop)
 		return (-1);
