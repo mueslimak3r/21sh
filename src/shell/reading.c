@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 06:16:20 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 06:37:31 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,19 +81,17 @@ void		handle_resize(t_tbuff *buff)
 		g_term.conf.termsize[1] != g_window_size.ws_row)
 	{
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		tputs(tgetstr("cd", NULL), 0, ft_charput);
 		while (i <= pos / g_window_size.ws_col)
 		{
-			tputs(tgetstr("up", NULL), 0, ft_charput);
-			tputs(tgetstr("cd", NULL), 0, ft_charput);
+			tputs(tgetstr("sr", NULL), 0, ft_charput);
+			//tputs(tgetstr("cd", NULL), 0, ft_charput);
 			i++;
 		}
-		g_term.conf.termsize[0] = g_window_size.ws_col;
-		g_term.conf.termsize[1] = g_window_size.ws_row;
-		g_term.conf.cursor[1] = pos / g_term.conf.termsize[0];
-		g_term.conf.cursor[0] = pos % g_term.conf.termsize[0];
+		tputs(tgetstr("cd", NULL), 0, ft_charput);
+		//g_term.conf.cursor[1] = //pos / g_term.conf.termsize[0];
+		//g_term.conf.cursor[0] = //pos % g_term.conf.termsize[0];
 		//ft_printf_fd(STDERR_FILENO, "\np: %d\n", pos);
-		reprint_buffer(buff, pos, 0);
+		reprint_buffer(buff, 0, 0);
 	}
 }
 
