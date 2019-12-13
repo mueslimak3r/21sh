@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 03:14:58 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 04:00:39 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,16 +53,19 @@ int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 	return (0);
 }
 
-void		print_prompt(int hd)
+void		redo_prompt(int hd, int print)
 {
 	char	*pwd;
 
 	pwd = find_env("PWD");
 	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
-	if (hd)
-		ft_printf_fd(STDERR_FILENO, " >");
-	else
-		ft_printf_fd(STDERR_FILENO, "%s>", pwd);
+	if (print)
+	{
+		if (hd)
+			ft_printf_fd(STDERR_FILENO, " >");
+		else
+			ft_printf_fd(STDERR_FILENO, "%s>", pwd);
+	}
 	//ft_printf_fd(STDERR_FILENO, "PS: |%d| hd: |%d|", g_term.conf.prompt_size, hd);
 	
 }
@@ -100,7 +103,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 	int		ret;
 	
 
-	print_prompt(hd);
+	redo_prompt(hd, 1);
 	zero_cursor();
 	ret = 0;
 	while (!g_term.sigs.sigint)
@@ -130,6 +133,9 @@ int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 	int ret;
 
 	ret = readfromfd(tbuff, hd);
+	if (*tbuff && (*tbuff)->buff_str)
+		move_cursor((*tbuff)->len - calc_pos(), 1, *tbuff, -1);
+	zero_cursor();
 	if (ret == 1)
 	{
 		if (!(tbuff_choose(tbuff, hd)))
@@ -154,11 +160,6 @@ int			get_input(void)
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
 	ret = ft_readstdin_line(&(g_term.buff), 0);
-	while (g_term.buff && g_term.conf.cursor[1] <= (g_term.buff->len / g_term.conf.termsize[0]))
-	{
-		tputs(tgetstr("sf", NULL), 0, ft_charput);
-		g_term.conf.cursor[1]++;
-	}
 	if (ret == -1)
 		return (-1);
 	if (g_term.sigs.sigint || !g_term.buff ||

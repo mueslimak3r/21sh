@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 03:13:20 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 04:23:23 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 static int		handle_up_down(unsigned long code, t_tbuff **buff)
 {
-	int		i;
 
 	if (code == KEY_DOWN && (!*buff || !(*buff)->next))
 		return (0);
@@ -22,11 +21,15 @@ static int		handle_up_down(unsigned long code, t_tbuff **buff)
 				((*buff)->next && code == KEY_DOWN)
 				|| ((*buff)->prev && code == KEY_UP)))
 	{
+		/*
 		i = (calc_pos() + g_term.conf.prompt_size) / g_term.conf.termsize[0];
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
 		while (i-- > 0)
 			tputs(tgetstr("up", NULL), 0, ft_charput);
 		tputs(tgetstr("cd", NULL), 0, ft_charput);
+		*/
+		if (*buff && (*buff)->buff_str)
+			move_cursor((*buff)->len - calc_pos(), 1, *buff, -1);
 		(*buff) = code == KEY_UP
 			? (*buff)->prev : (*buff)->next;
 		g_term.conf.cursor[0] = g_term.conf.prompt_size;
@@ -45,14 +48,16 @@ static int		handle_arrows(unsigned long code, t_tbuff **buff)
 	pos = calc_pos();
 	if (code == KEY_UP || code == KEY_DOWN)
 		return (handle_up_down(code, buff));
+	//ft_printf_fd(STDERR_FILENO, "pos %d\n", pos);
 	if ((code == KEY_LEFT && pos - 1 >= 0)
 	 || 
 		(code == KEY_RIGHT && pos + 1 <= (*buff)->len))
 	{
+		//ft_printf_fd(STDERR_FILENO, "arrow\n");
 		//if ((code == RIGHT && g_term.conf.cursor[0] + 1 < g_term.conf.termsize[0]) ||
 		//(code == LEFT && g_term.conf.cursor[0] - 1 >= 0))
 		//	tputs(tgetstr(code == LEFT ? "le" : "nd", NULL), 0, ft_charput);
-		move_cursor(code == KEY_LEFT ? -1 : 1, 1, *buff);
+		move_cursor((code == KEY_LEFT ? -1 : 1), 1, *buff, -1);
 	}
 	return (0);
 }
@@ -96,9 +101,11 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 			if (buff && *buff && !(*buff)->temp)
 				tbuff_replicate(buff);
 			t_buff_line_rm(*buff, --cursor_pos, 1);
-			move_cursor(-1, 1, *buff);
-			reprint_buffer(*buff, calc_pos(), -1);
-			move_cursor(1, 1, *buff);
+			move_cursor(-1, 1, *buff, cursor_pos);
+			int amt = ((*buff)->len - cursor_pos) == 0 ? 0 : -((*buff)->len - cursor_pos);
+			cursor_pos = calc_pos();
+			reprint_buffer(*buff, cursor_pos, 0);
+			move_cursor(amt, 1, *buff, -1);
 		}
 	}
 	else if (code == KEY_ENTER)
@@ -109,14 +116,14 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 		code == KEY_LEFT || code == KEY_RIGHT)
 		handle_arrows(code, buff);
 	else if (code == KEY_HOME || code == KEY_END)
-		move_cursor(code == KEY_HOME ? -(calc_pos()) : (int)ft_strlen((*buff)->buff_str) - calc_pos(), 1, *buff);
+		move_cursor(code == KEY_HOME ? -(calc_pos()) : (int)ft_strlen((*buff)->buff_str) - calc_pos(), 1, *buff, -1);
 	else if (code == KEY_ALT_LEFT || code == KEY_ALT_RIGHT)
 	{
 		int i;
 	   	
 		i = jump_by_word_amt((*buff)->buff_str, calc_pos(),
 				code == KEY_ALT_LEFT ? 1 : -1);
-		move_cursor(i - calc_pos(), 1, *buff);
+		move_cursor(i - calc_pos(), 1, *buff, -1);
 	}
 	else
 		ret -= 1;

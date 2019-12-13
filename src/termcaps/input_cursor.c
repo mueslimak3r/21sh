@@ -13,6 +13,11 @@
 
 #include "ftshell.h"
 
+int				ft_abs(int amt)
+{
+	return (amt < 0 ? amt * -1 : amt);
+}
+
 int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 {
 	int		index;
@@ -27,7 +32,7 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
 	if (g_term.conf.cursor[1] == 0)
-		print_prompt(g_term.conf.prompt_size > 2 ? 0 : 1);
+		redo_prompt(g_term.conf.prompt_size > 2 ? 0 : 1, 1);
 	if (buff && buff->buff_str)
 	{
 		index = (pos -
@@ -88,7 +93,7 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 			//tputs(tgetstr("rc", NULL), 0, ft_charput);
 			//g_term.conf.cursor[0] = old_pos[0];
 			//g_term.conf.cursor[1] = old_pos[1];
-			move_cursor(-(buff->len - pos) + move_amt, 1, buff);
+			move_cursor(-(buff->len - pos) + move_amt, 1, buff, -1);
 			//ft_printf_fd(STDERR_FILENO, "[\b");
 		}
 		//ft_printf_fd(STDERR_FILENO, "%s", buff->buff_str + index - (g_term.conf.termsize[0] % (g_term.conf.prompt_size + index)));
@@ -125,17 +130,18 @@ int				calc_pos(void)
 	return ((g_term.conf.cursor[1] * g_term.conf.termsize[0]) + g_term.conf.cursor[0] - g_term.conf.prompt_size);
 }
 
-static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
+static int		handle_tc(int amt, int pos, int use_tc, t_tbuff *buff)
 {
 	int	i;
-	int pos;
+	int dir;
 
-	i = amt;
 	if (buff)
 	{
 		;
 	}
-	pos = calc_pos();
+	dir = (amt < 0) ? 0 : 1;
+	amt = ft_abs(amt);
+	i = amt;
 	while (!dir && i > 0 && pos >= 0)
 	{
 		if (g_term.conf.cursor[0] <= 0)
@@ -199,20 +205,16 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 	*/
 	return (1);
 }
-int				ft_abs(int amt)
-{
-	return (amt < 0 ? amt * -1 : amt);
-}
 
-int				move_cursor(int amt, int affect_tc, t_tbuff *buff)
+int				move_cursor(int amt, int affect_tc, t_tbuff *buff, int pos)
 {
-	int pos = calc_pos();
 	int size;
 
+	pos = (pos != -1) ? pos : calc_pos();
 	size = buff->len;
 	//ft_printf_fd(STDERR_FILENO, "s: %d", size);
 	if (amt == 0 || !buff->buff_str ||
-			(g_term.conf.cursor[1] == 0 && size - amt < 0))
+			(g_term.conf.cursor[1] == 0 && size + amt < 0))
 	{
 		return (0);
 	}
@@ -221,7 +223,7 @@ int				move_cursor(int amt, int affect_tc, t_tbuff *buff)
 		;
 	}
 	if (pos + amt >= 0 && pos + amt <= size)
-		handle_tc(ft_abs(amt), (amt < 0 ? 0: 1), affect_tc, buff);
+		handle_tc(amt, pos, affect_tc, buff);
 	/*
 	else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
 	{

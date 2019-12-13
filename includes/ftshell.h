@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 01:44:37 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 03:46:32 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,7 @@ void						t_buff_line_rm(t_tbuff *buff, int pos, int size);
 void						tbuff_free(t_tbuff **buff);
 void						tbuff_move_cursor(t_tbuff *buff,
 								unsigned long code, char *str);
-int							move_cursor(int amt, int affect_tc, t_tbuff *buff);
+int							move_cursor(int amt, int affect_tc, t_tbuff *buff, int pos);
 void						tbuff_line_setsize(t_tbuff *buff, int amt);
 /*
 ** ENVIRONMENT
@@ -344,5 +344,6 @@ int							jump_by_word_amt(char *str, int pos, int dir);
 
 int							termcap_reset_cursor(int pos, int len);
 void						add_redir(int src, int dst, t_redir **list);
-void						print_prompt(int hd);
+void						redo_prompt(int hd, int print);
+
 #endif
