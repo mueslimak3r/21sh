@@ -25,25 +25,16 @@
 # include <fcntl.h>
 # include <sys/select.h>
 
-# define SPACE 0x20
-# define ENTER 0xA
-# define TAB 0x09
-# define ESCAPE 0x1B
 
-# define LEFT 0x445B1B
-# define RIGHT 0x435B1B
-# define UP 0x415B1B
-# define DOWN 0x425B1B
 
-# define ALTLEFT	0x435B1B1B
-# define ALTRIGHT	0x445B1B1B
-# define ALTUP		0x415B1B1B
-# define ALTDOWN	0x425B1BB
-# define HOME		0x485B1B
-# define END		0x465B1B
 
-# define DELETE 0x7F
-# define DELETE2 0x7E335B1B
+
+# ifdef __linux__
+# include "keycode_linux.h"
+# else
+# include "keycode_mac.h"
+# endif
+
 # define CLEAR_SCREEN ft_putstr_fd(tgetstr("cl", NULL), STDERR_FILENO);
 # define GET_SCREENSIZE ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 
@@ -227,7 +218,7 @@ struct						s_stats
 ** TERMCAPS
 */
 
-void						jump_by_row(t_tbuff *buff, int code);
+void						jump_by_row(t_tbuff *buff, unsigned long code);
 int							ft_charput(int c);
 void						reset_term(void);
 void						init_term(void);

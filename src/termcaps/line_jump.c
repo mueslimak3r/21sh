@@ -40,20 +40,34 @@ int	jump_by_word_amt(char *str, int pos, int dir)
 	return (i);
 }
 
-void	jump_by_row(t_tbuff *buff, int code)
+void	jump_by_row(t_tbuff *buff, unsigned long code)
 {
 	int pos;
 
 	pos = calc_pos();
+	if (code && buff)
+	{
+		;
+	}
+	ft_printf_fd(STDERR_FILENO, "\nbefore pos %d, size %d\n", pos, g_term.conf.termsize[0]);
 	if (code == ALTUP)
 	{
-		if (g_term.conf.cursor[1] > 0)
+		if (pos - g_term.conf.termsize[0] >= 0)
 		{
 			move_cursor(-(g_term.conf.termsize[0]), 1, buff);
 		}
+		else
+			move_cursor(pos > 0 ? -(pos) : 0, 1, buff);
 	}
 	else if (code == ALTDOWN)
 	{
-		move_cursor(g_term.conf.termsize[0], 1, buff);
+		if (pos + g_term.conf.termsize[0] <= buff->len)
+		{
+			move_cursor(g_term.conf.termsize[0], 1, buff);
+		}
+		else
+			move_cursor(buff->len, 1, buff);
 	}
+	pos = calc_pos();
+	ft_printf_fd(STDERR_FILENO, "after pos %d, size %d\n", pos, g_term.conf.termsize[0]);
 }
