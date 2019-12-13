@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 11:14:31 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 03:53:08 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 05:24:49 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,30 @@ int	jump_by_word_amt(char *str, int pos, int dir)
 	{
 		i = pos + 1;
 		len = (int)ft_strlen(str);
-		while (i < len && str[i] == ' ')
-			i++;
-		while (i < len && str[i] != ' ')
-			i++;
+		if (str[i] && ft_isspace(str[i]))
+		{
+			while (i < len && ft_isspace(str[i]))
+				i++;
+		}
+		else
+			while (i < len && !ft_isspace(str[i]))
+				i++;
 	}
 	else
 	{
 		i = pos - 1;
-		while (i && str[i] == ' ')
-			i--;
-		while (i && str[i] != ' ')
-			i--;
+		if (ft_isspace(str[i]) && i - 1 && ft_isspace(str[i - 1]))
+		{
+			while(i && ft_isspace(str[i]))
+				i--;
+		}
+		else
+		{
+			ft_isspace(str[i]) ? i-- : 0;
+			while (i && !ft_isspace(str[i]))
+				i--;
+		}
+		i ? i++ : 0;
 	}
 	return (i);
 }
