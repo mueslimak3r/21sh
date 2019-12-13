@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 10:24:04 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/08 02:20:08 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 03:05:02 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ void		init_term(void)
 		exit(0);
 	}
 	GET_SCREENSIZE;
+	g_term.conf.termsize[0] = g_window_size.ws_col;
+	g_term.conf.termsize[1] = g_window_size.ws_row;
 	g_term.rows = 1;
 }
 

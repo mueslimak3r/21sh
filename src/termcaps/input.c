@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 01:45:52 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 03:13:20 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@ static int		handle_up_down(unsigned long code, t_tbuff **buff)
 {
 	int		i;
 
-	i = (g_term.conf.prompt_size + (*buff)->len) / g_term.conf.termsize[0];
 	if (code == KEY_DOWN && (!*buff || !(*buff)->next))
 		return (0);
 	if (*buff && (
 				((*buff)->next && code == KEY_DOWN)
 				|| ((*buff)->prev && code == KEY_UP)))
 	{
+		i = (calc_pos() + g_term.conf.prompt_size) / g_term.conf.termsize[0];
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
 		while (i-- > 0)
 			tputs(tgetstr("up", NULL), 0, ft_charput);
