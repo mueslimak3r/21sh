@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 10:46:41 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 10:51:30 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 void		redo_prompt(int hd, int print)
 {
 	char	*pwd;
+	int		len;
 	int		start;
 	int		end;
 
@@ -63,9 +64,10 @@ void		redo_prompt(int hd, int print)
 	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
 	if (print || print == -1)
 	{
-		print = print == -1 ? ft_strlen(pwd) + 1 : print;
+		len = hd ? 2 : ft_strlen(pwd) + 1;
+		print = print == -1 ? len : print;
 		pwd = hd ? " >" : pwd;
-		start = ft_strlen(pwd) + (hd ? 0 : 1) - print;
+		start = len - print;
 		end = start + print;
 		while (start < end)
 		{
