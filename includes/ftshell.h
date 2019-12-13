@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 14:27:41 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 01:05:53 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ struct						s_redir
 typedef union				u_input
 {
 	unsigned long			long_form;
-	char					arr_form[4];
+	char					arr_form[sizeof(unsigned long)];
 }							t_input;
 
 struct						s_ht

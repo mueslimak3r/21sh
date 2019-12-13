@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keycode_mac.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/15 17:44:28 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 00:35:14 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 00:53:05 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@
 # define KEY_MINUS (unsigned long)(27)
 # define KEY_EQUAL (unsigned long)(24)
 # define KEY_BACKSPACE (unsigned long)(51)
-# define KEY_TAB (unsigned long)(48)
+# define KEY_TAB (unsigned long)(0x09)
 # define KEY_Q (unsigned long)(12)
 # define KEY_W (unsigned long)(13)
 # define KEY_E (unsigned long)(14)
@@ -78,7 +78,7 @@
 # define KEY_SEMI_COLON (unsigned long)(41)
 # define KEY_SIMPLE_QUOTE (unsigned long)(39)
 # define KEY_DOUBLE_QUOTES (unsigned long)(39)
-# define KEY_ENTER (unsigned long)(36)
+# define KEY_ENTER (unsigned long)(0xA)
 # define KEY_SHIFT_LEFT (unsigned long)(257)
 # define KEY_Z (unsigned long)(6)
 # define KEY_X (unsigned long)(7)
@@ -98,7 +98,7 @@
 # define KEY_COMMAND_LEFT (unsigned long)(259)
 # define KEY_OPTION_LEFT (unsigned long)(261)
 # define KEY_ALT (unsigned long)(261)
-# define KEY_SPACE (unsigned long)(49)
+# define KEY_SPACE (unsigned long)(0x20)
 # define KEY_COMMAND_RIGHT (unsigned long)(260)
 # define KEY_ALT_GR (unsigned long)(262)
 # define KEY_FN (unsigned long)(279)

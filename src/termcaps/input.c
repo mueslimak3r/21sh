@@ -6,13 +6,13 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 00:33:04 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 01:11:09 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
 
-static int		handle_up_down(int code, t_tbuff **buff)
+static int		handle_up_down(unsigned long code, t_tbuff **buff)
 {
 	int		i;
 
@@ -38,7 +38,7 @@ static int		handle_up_down(int code, t_tbuff **buff)
 	return (1);
 }
 
-static int		handle_arrows(int code, t_tbuff **buff)
+static int		handle_arrows(unsigned long code, t_tbuff **buff)
 {
 	int	pos;
 
@@ -120,6 +120,5 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 	else
 		ret -= 1;
 	ret += 1;
-	//ft_printf("%lx\n", code);
 	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/11 14:07:14 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 01:10:20 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,14 @@ int			check_fd(int fd)
 	return (0);
 }
 
-int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff **tbuff)
+int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 {
 	int cursor_pos;
+	t_input thing;
 
-	ft_memset(thing->arr_form, 0, 4);
-	ft_memcpy(thing->arr_form, buf, 4);
-	if ((handle_controls(thing->long_form, tbuff)) < 1)
+	ft_memset(thing.arr_form, 0, sizeof(unsigned long));
+	ft_memcpy(thing.arr_form, buf, sizeof(unsigned long));
+	if ((handle_controls(thing.long_form, tbuff)) < 1)
 	{
 		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
@@ -47,7 +48,7 @@ int			interpret_input(int hd, t_input *thing, char *buf, t_tbuff **tbuff)
 		//ft_printf_fd(STDERR_FILENO, "x %d y %d p: %d ps: %d", g_term.conf.cursor[0], g_term.conf.cursor[1], cursor_pos, g_term.conf.prompt_size);
 		//termcap_reset_cursor(cursor_pos, ft_strlen((*tbuff)->buff_str));
 	}
-	else if (thing->long_form == KEY_ENTER && (hd || !hd))
+	else if (thing.long_form == KEY_ENTER && (hd || !hd))
 		return (1);
 	return (0);
 }
@@ -97,11 +98,10 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 {
 	char	buf[BUFF_SIZE + 1];
 	int		ret;
-	t_input	thing;
+	
 
 	print_prompt(hd);
 	zero_cursor();
-	thing.long_form = 0;
 	ret = 0;
 	while (!g_term.sigs.sigint)
 	{
@@ -119,7 +119,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 			}
 			buf[0] = 0;
 		}
-		if (interpret_input(hd, &thing, buf, tbuff))
+		if (interpret_input(hd, buf, tbuff))
 			return (1);
 	}
 	return (ret);

@@ -157,7 +157,6 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 				tputs(tgetstr("le", NULL), 0, ft_charput);
 			g_term.conf.cursor[0]--;
 			i--;
-			pos--;
 		}
 		pos--;
 	}
@@ -177,7 +176,6 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 			//tputs(tgetstr("nw", NULL), 0, ft_charput);
 			g_term.conf.cursor[0] = 0;
 			g_term.conf.cursor[1]++;
-			pos++;
 		}
 		else
 		{
@@ -186,6 +184,7 @@ static int		handle_tc(int amt, int dir, int use_tc, t_tbuff *buff)
 			g_term.conf.cursor[0]++;
 			i--;
 		}
+		pos++;
 	}
 	/*
 	else
