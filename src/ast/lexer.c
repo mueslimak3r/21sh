@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 14:21:38 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 12:55:00 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,13 @@ t_node		*lexer(char *input)
 	t_lexeme	*ref;
 	int			i;
 	int			op;
+	t_node		*ret;
+	t_lexeme	*tmp;
 
 	ref = NULL;
 	op = 0;
+	ret = NULL;
+	tmp = NULL;
 	while (*input)
 	{
 		i = 0;
@@ -75,5 +79,17 @@ t_node		*lexer(char *input)
 		if (op > 1)
 			input = add_lex_op(&ref, input, op);
 	}
-	return (parser(ref));
+	if (!(ret = parser(ref)))
+	{
+		while ((tmp = ref))
+		{
+			ref = ref->next;
+			if (tmp->data)
+				free(tmp->data);
+			free(tmp);
+			if (!ref)
+				break ;
+		}
+	}
+	return (ret);
 }
