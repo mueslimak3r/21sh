@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 10:13:12 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 11:31:31 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,8 @@ struct						s_shellconf
 
 struct						s_term_sigs
 {
+	bool					restart;
+	bool					sigstop;
 	bool					sigint;
 };
 

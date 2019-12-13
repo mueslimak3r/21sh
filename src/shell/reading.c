@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 10:51:30 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 11:40:11 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 	zero_cursor(hd);
 	redo_prompt(hd, -1);
 	ret = 0;
-	while (!g_term.sigs.sigint)
+	while (!g_term.sigs.restart)
 	{
 		ft_memset(buf, 0, BUFF_SIZE + 1);
 		if (!(check_fd(0) && ((ret = read(0, &buf, 4)) > 0)))
@@ -118,7 +118,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 		handle_resize(*tbuff);
 		if (buf[0] == FT_EOT)
 		{
-			if (!g_term.sigs.sigint && (!(*tbuff)->buff_str))
+			if (!g_term.sigs.restart && (!(*tbuff)->buff_str))
 			{
 				close(0);
 				ret = -1;
@@ -129,7 +129,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 		if (interpret_input(hd, buf, tbuff))
 			return (1);
 	}
-	ret = g_term.sigs.sigint ? -2 : ret;
+	ret = g_term.sigs.restart ? -2 : ret;
 	return (ret);
 }
 
@@ -166,12 +166,13 @@ int			get_input(void)
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
 	ret = ft_readstdin_line(&(g_term.buff), 0);
-	if (ret == -1)
+	if (ret == -1 || g_term.sigs.sigstop)
 		return (-1);
-	if (g_term.sigs.sigint || !g_term.buff ||
+	if (g_term.sigs.restart || !g_term.buff ||
 		!g_term.buff->buff_str || (g_term.buff->buff_str &&
 									!*(g_term.buff->buff_str)))
 		ret = 0;
+	g_term.sigs.restart = false;
 	g_term.sigs.sigint = false;
 	return (ret);
 }
