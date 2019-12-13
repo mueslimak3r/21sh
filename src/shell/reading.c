@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 05:54:55 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 06:16:20 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 		if (interpret_input(hd, buf, tbuff))
 			return (1);
 	}
-	ret = g_term.sigs.sigint ? -1 : ret;
+	ret = g_term.sigs.sigint ? -2 : ret;
 	return (ret);
 }
 
