@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 10:00:35 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 10:46:41 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,25 @@ int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 void		redo_prompt(int hd, int print)
 {
 	char	*pwd;
+	int		start;
+	int		end;
 
 	pwd = find_env("PWD");
 	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
-	if (print)
+	if (print || print == -1)
 	{
-		if (hd)
-			ft_printf_fd(STDERR_FILENO, " >");
-		else
-			ft_printf_fd(STDERR_FILENO, "%s>", pwd);
+		print = print == -1 ? ft_strlen(pwd) + 1 : print;
+		pwd = hd ? " >" : pwd;
+		start = ft_strlen(pwd) + (hd ? 0 : 1) - print;
+		end = start + print;
+		while (start < end)
+		{
+			if (start == end - 1 && !hd)
+				ft_putchar('>');
+			else
+				ft_putchar(pwd[start]);
+			start++;
+		}
 	}
 	//ft_printf_fd(STDERR_FILENO, "PS: |%d| hd: |%d|", g_term.conf.prompt_size, hd);
 	
@@ -85,22 +95,8 @@ void		handle_resize(t_tbuff *buff)
 		{
 			
 		}
-		zero_cursor();
+		zero_cursor(g_term.conf.prompt_size > 2 ? 0 : 1);
 		move_cursor(pos, 0, buff, -1);
-		/*
-		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		while (i <= pos / g_window_size.ws_col)
-		{
-			tputs(tgetstr("sr", NULL), 0, ft_charput);
-			//tputs(tgetstr("cd", NULL), 0, ft_charput);
-			i++;
-		}
-		tputs(tgetstr("cd", NULL), 0, ft_charput);
-		//g_term.conf.cursor[1] = //pos / g_term.conf.termsize[0];
-		//g_term.conf.cursor[0] = //pos % g_term.conf.termsize[0];
-		//ft_printf_fd(STDERR_FILENO, "\np: %d\n", pos);
-		reprint_buffer(buff, 0, 0);
-		*/
 	}
 }
 
@@ -108,10 +104,9 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 {
 	char	buf[BUFF_SIZE + 1];
 	int		ret;
-	
 
-	redo_prompt(hd, 1);
-	zero_cursor();
+	zero_cursor(hd);
+	redo_prompt(hd, -1);
 	ret = 0;
 	while (!g_term.sigs.sigint)
 	{

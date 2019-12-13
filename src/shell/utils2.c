@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:20:52 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 08:05:40 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 10:15:11 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void			shell_reset_stuff(t_stats *stats)
 	stats->f_d[0] = 0;
 	stats->f_d[1] = 1;
 	g_term.pid = -1;
-	zero_cursor();
+	zero_cursor(0);
 }
 
 int				ft_charput(int c)

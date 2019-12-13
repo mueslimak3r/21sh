@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 06:25:35 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 10:13:12 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ void						reset_term(void);
 void						init_term(void);
 int							term_write(char *str, int fd, int len);
 bool						validate_term(void);
-int							zero_cursor(void);
+int							zero_cursor(int hd);
 
 /*
 ** SIGNALS

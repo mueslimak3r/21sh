@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 07:11:50 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 10:42:36 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int		handle_up_down(unsigned long code, t_tbuff **buff)
 		tputs(tgetstr("cd", NULL), 0, ft_charput);
 		(*buff) = code == KEY_UP
 			? (*buff)->prev : (*buff)->next;
-		zero_cursor();
+		zero_cursor(g_term.conf.prompt_size > 2 ? 0 : 1);
 		reprint_buffer(*buff, 0, 0);
 		//move_cursor(len, 0, *buff);
 	}
@@ -65,11 +65,11 @@ static int		handle_arrows(unsigned long code, t_tbuff **buff)
 	return (0);
 }
 
-int		zero_cursor(void)
+int		zero_cursor(int hd)
 {
 	int	size;
 
-	redo_prompt(0, 0);
+	redo_prompt(hd, 0);
 	size = g_term.conf.prompt_size;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
 	g_term.conf.termsize[1] = g_window_size.ws_row;

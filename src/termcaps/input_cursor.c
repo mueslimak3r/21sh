@@ -24,13 +24,16 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
 	tputs(tgetstr("cd", NULL), 0, ft_charput);
-	if (g_term.conf.cursor[1] == 0)
-		redo_prompt(g_term.conf.prompt_size > 2 ? 0 : 1, 1);
+	if (g_term.conf.cursor[1] == (g_term.conf.prompt_size / g_term.conf.termsize[0]))
+	{
+		redo_prompt(g_term.conf.prompt_size > 2 ? 0 : 1, g_term.conf.prompt_size % g_term.conf.termsize[0]);
+	}
 	if (buff && buff->buff_str)
 	{
 		index = (pos -
-		g_term.conf.cursor[0] + (g_term.conf.cursor[1] == 0 ? g_term.conf.prompt_size : 0));
-		g_term.conf.cursor[0] = g_term.conf.cursor[1] ? 0 : g_term.conf.prompt_size;
+		g_term.conf.cursor[0] + ((g_term.conf.cursor[1] == (g_term.conf.prompt_size / g_term.conf.termsize[0])) ? g_term.conf.prompt_size % g_term.conf.termsize[0] : 0));
+		g_term.conf.cursor[0] = ((g_term.conf.cursor[1] == (g_term.conf.prompt_size / g_term.conf.termsize[0])) ? g_term.conf.prompt_size % g_term.conf.termsize[0] : 0);
+
 		while (index < buff->len)
 		{
 			ft_charput(buff->buff_str[index]);
@@ -48,30 +51,6 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 	}
 	return (0);
 }
-/*
-static int		handle_cursor(int amt, int dir)
-{
-	int		cursor[2];
-	int		termsize[2];
-
-	cursor[0] = g_term.conf.cursor[0];
-	cursor[1] = g_term.conf.cursor[1];
-	termsize[0] = g_term.conf.termsize[0];
-	termsize[1] = g_term.conf.termsize[1];
-	if (dir == 0)
-	{
-		g_term.conf.cursor[1] += (cursor[0] + amt) / termsize[0];
-		g_term.conf.cursor[0] = (cursor[0] + amt) % termsize[0];
-	}
-	else
-	{
-		g_term.conf.cursor[1] -= 1 + (-amt / termsize[0]);
-		g_term.conf.cursor[0] = amt == -1 ? termsize[0] - 1 : -amt % termsize[0];
-	}
-	g_term.conf.curlines = g_term.conf.cursor[1] + 1;
-	return (1);
-}
-*/
 
 int				calc_pos(void)
 {
@@ -140,17 +119,6 @@ static int		handle_tc(int amt, int pos, int use_tc, t_tbuff *buff)
 		}
 		pos++;
 	}
-	/*
-	else
-	{
-		tputs(tgetstr("cr", NULL), 0, ft_charput);
-		while (i++ <= -(g_term.conf.cursor[0] + amt) / g_term.conf.termsize[0])
-			tputs(tgetstr("", NULL), 0, ft_charput);
-		i = 0;
-		while (++i <= g_term.conf.termsize[0] - (-(g_term.conf.cursor[0] + amt) % g_term.conf.termsize[0]))
-			tputs(tgetstr("nd", NULL), 0, ft_charput);
-	}
-	*/
 	return (1);
 }
 
@@ -172,41 +140,5 @@ int				move_cursor(int amt, int affect_tc, t_tbuff *buff, int pos)
 	}
 	if (pos + amt >= 0 && pos + amt <= size)
 		handle_tc(amt, pos, affect_tc, buff);
-	/*
-	else if (g_term.conf.cursor[0] + amt >= g_term.conf.termsize[0])
-	{
-		//int tmpp[2] = { g_term.conf.cursor[0], g_term.conf.cursor[1] };
-		if (affect_tc)
-		{
-			handle_tc(amt, 1);
-		}
-		handle_cursor(amt, 0);
-		
-		ft_printf_fd(STDERR_FILENO, "x|%d|y|%d||x|%d|y|%d", tmpp[0], tmpp[1], g_term.conf.cursor[0], g_term.conf.cursor[1]);
-		while (1)
-		{
-			;
-		}
-		
-	}
-	else if (g_term.conf.cursor[0] + amt < 0)
-	{
-		if (affect_tc)
-		{
-			handle_tc(amt, 0);
-		}
-		else
-			handle_cursor(amt, 1);
-	}
-	else if (buff->buff_str && ((amt > 0 && g_term.conf.cursor[0] + amt < g_term.conf.termsize[0]) || (amt < 0 && size + amt >= 0)))
-	{
-		if (affect_tc)
-		{
-			handle_tc(amt);
-		}
-		else
-			g_term.conf.cursor[0] += amt;
-	}
-	*/
 	return (1);
 }
