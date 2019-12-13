@@ -6,14 +6,14 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/15 17:44:28 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 00:53:05 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 01:42:50 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef KEYCODE_MAC_H
 # define KEYCODE_MAC_H
 
-# define KEY_ESCAPE (unsigned long)(53)
+# define KEY_ESCAPE (unsigned long)(27)
 # define KEY_F1  (unsigned long)(122)
 # define KEY_F2 (unsigned long)(120)
 # define KEY_F3 (unsigned long)(99)

@@ -1,13 +1,19 @@
 #ifndef KEYCODE_LINUX_H
 # define KEYCODE_LINUX_H
 
-# define KEY_BACKSPACE  (unsigned long)(65288)
-# define KEY_ESCAPE			(unsigned long)(65307)
-# define KEY_UP			(unsigned long)(65362)
-# define KEY_DOWN			(unsigned long)(65364)
-# define KEY_LEFT			(unsigned long)(65361)
-# define KEY_RIGHT			(unsigned long)(65363)
-# define KEY_TAB			(unsigned long)(65289)
+# define KEY_ALT_LEFT	1130044187
+# define KEY_ALT_RIGHT	1146821403
+# define KEY_ALT_UP		1096489755
+# define KEY_ALT_DOWN	1113266971
+# define KEY_HOME	    4741915
+# define KEY_END        4610843
+# define KEY_BACKSPACE  (unsigned long)(127)
+# define KEY_ESCAPE			(unsigned long)(27)
+# define KEY_UP			(unsigned long)(4283163)
+# define KEY_DOWN			(unsigned long)(4348699)
+# define KEY_LEFT			(unsigned long)(4479771)
+# define KEY_RIGHT			(unsigned long)(4414235)
+# define KEY_TAB			(unsigned long)(9)
 # define KEY_Q			(unsigned long)(113)
 # define KEY_W			(unsigned long)(119)
 # define KEY_E			(unsigned long)(101)
@@ -33,8 +39,7 @@
 # define KEY_L			(unsigned long)(108)
 # define KEY_SEMI_COLON			(unsigned long)(59)
 # define KEY_APOSTROPHE			(unsigned long)(39)
-# define KEY_ENTER			(unsigned long)(65293)
-# define KEY_SHIFT_LEFT			(unsigned long)(65505)
+# define KEY_ENTER			(unsigned long)(10)
 # define KEY_Z			(unsigned long)(122)
 # define KEY_X			(unsigned long)(120)
 # define KEY_C			(unsigned long)(99)
@@ -45,10 +50,7 @@
 # define KEY_COMMA			(unsigned long)(44)
 # define KEY_PERIOD			(unsigned long)(46)
 # define KEY_SLASH			(unsigned long)(47)
-# define KEY_SHIFT_RIGHT			(unsigned long)(65506)
 # define KEY_CTRL_LEFT			(unsigned long)(65507)
-# define KEY_ALT_LEFT			(unsigned long)(65513)
 # define KEY_SPACE			(unsigned long)(32)
-# define KEY_ALT_RIGHT			(unsigned long)(65514)
 # define KEY_CTRL_RIGHT			(unsigned long)(65508)
 #endif

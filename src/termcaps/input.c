@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 01:11:09 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 01:45:52 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int				handle_controls(unsigned long code, t_tbuff **buff)
 
 	ret = 0;
 	cursor_pos = calc_pos();
+	//printf("\n%lu\n\n", code);
 	if (code == KEY_BACKSPACE)
 	{
 		if (cursor_pos > 0)
