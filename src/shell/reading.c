@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 04:00:39 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 04:30:25 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,6 @@ int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 	ret = readfromfd(tbuff, hd);
 	if (*tbuff && (*tbuff)->buff_str)
 		move_cursor((*tbuff)->len - calc_pos(), 1, *tbuff, -1);
-	zero_cursor();
 	if (ret == 1)
 	{
 		if (!(tbuff_choose(tbuff, hd)))

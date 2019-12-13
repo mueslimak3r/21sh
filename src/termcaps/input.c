@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 04:23:23 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 04:43:59 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,15 @@ static int		handle_up_down(unsigned long code, t_tbuff **buff)
 		tputs(tgetstr("cd", NULL), 0, ft_charput);
 		*/
 		if (*buff && (*buff)->buff_str)
-			move_cursor((*buff)->len - calc_pos(), 1, *buff, -1);
+		{
+			//ft_printf_fd(STDERR_FILENO, "yo\n");
+			move_cursor(-(calc_pos()), 1, *buff, -1);
+		}
+		tputs(tgetstr("cr", NULL), 0, ft_charput);
+		tputs(tgetstr("cd", NULL), 0, ft_charput);
 		(*buff) = code == KEY_UP
 			? (*buff)->prev : (*buff)->next;
-		g_term.conf.cursor[0] = g_term.conf.prompt_size;
-		g_term.conf.cursor[1] = 0;
-		g_term.conf.curlines = 1;
+		zero_cursor();
 		reprint_buffer(*buff, 0, 0);
 		//move_cursor(len, 0, *buff);
 	}
@@ -81,8 +84,7 @@ static int		handle_enter(t_tbuff *buff)
 		while (g_term.conf.curlines > 1)
 			g_term.conf.curlines--;
 	tputs(tgetstr("cr", NULL), 0, ft_charput);
-	tputs(tgetstr("do", NULL), 0, ft_charput);
-	zero_cursor();
+	tputs(tgetstr("sf", NULL), 0, ft_charput);
 	return (1);
 }
 
