@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 11:31:31 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:05:28 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,7 @@ int							is_nb_before_redir(char *op);
 int							is_redirect(char *op);
 int							handle_redirect(char *op, t_lexeme **head);
 int							handle_quote(char *input);
-char						*add_lex_op(t_lexeme **head, char *line, int op);
+char						*add_lex_op(t_lexeme **head, char *line, int op, int *i);
 
 /*
 ** PARSER
