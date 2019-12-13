@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 02:17:41 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 03:14:58 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ int			ft_readstdin_line(t_tbuff **tbuff, int hd)
 {
 	int ret;
 
-	//tputs(tgetstr("am", NULL), 0, ft_charput);
 	ret = readfromfd(tbuff, hd);
 	if (ret == 1)
 	{
@@ -155,6 +154,11 @@ int			get_input(void)
 										*(g_term.buff->buff_str)))
 		tbuff_new(&g_term.buff);
 	ret = ft_readstdin_line(&(g_term.buff), 0);
+	while (g_term.buff && g_term.conf.cursor[1] <= (g_term.buff->len / g_term.conf.termsize[0]))
+	{
+		tputs(tgetstr("sf", NULL), 0, ft_charput);
+		g_term.conf.cursor[1]++;
+	}
 	if (ret == -1)
 		return (-1);
 	if (g_term.sigs.sigint || !g_term.buff ||
