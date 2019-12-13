@@ -6,7 +6,7 @@
 /*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:17:44 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 22:19:48 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 13:14:10 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ static int		reset_return(unsigned long hash)
 {
 	if (g_env[hash % HT_OVERHEAD])
 	{
+		free(g_env[hash % HT_OVERHEAD]->content);
+		free(g_env[hash % HT_OVERHEAD]->content_name);
 		free(g_env[hash % HT_OVERHEAD]);
 		g_env[hash % HT_OVERHEAD] = NULL;
 		load_envp();
@@ -54,10 +56,11 @@ int				ft_unsetenv(char *name)
 	if (tmp)
 	{
 		free(tmp->content);
+		free(tmp->content_name);
+		if (prev)
+			prev->next = tmp->next ? tmp->next : NULL;
 		free(tmp);
 		tmp = NULL;
-		if (prev)
-			prev->next = NULL;
 	}
 	load_envp();
 	return (1);
