@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 05:24:28 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 07:11:50 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int		zero_cursor(void)
 {
 	int	size;
 
+	redo_prompt(0, 0);
 	size = g_term.conf.prompt_size;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
 	g_term.conf.termsize[1] = g_window_size.ws_row;

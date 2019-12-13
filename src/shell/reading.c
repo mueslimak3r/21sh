@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 06:37:31 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 08:10:31 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,12 @@ void		handle_resize(t_tbuff *buff)
 	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
 		g_term.conf.termsize[1] != g_window_size.ws_row)
 	{
+		if (buff)
+		{
+			
+		}
+		zero_cursor();
+		/*
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
 		while (i <= pos / g_window_size.ws_col)
 		{
@@ -92,6 +98,7 @@ void		handle_resize(t_tbuff *buff)
 		//g_term.conf.cursor[0] = //pos % g_term.conf.termsize[0];
 		//ft_printf_fd(STDERR_FILENO, "\np: %d\n", pos);
 		reprint_buffer(buff, 0, 0);
+		*/
 	}
 }
 
@@ -107,9 +114,9 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 	while (!g_term.sigs.sigint)
 	{
 		ft_memset(buf, 0, BUFF_SIZE + 1);
-		handle_resize(*tbuff);
 		if (!(check_fd(0) && ((ret = read(0, &buf, 4)) > 0)))
 			continue ;
+		handle_resize(*tbuff);
 		if (buf[0] == FT_EOT)
 		{
 			if (!g_term.sigs.sigint && (!(*tbuff)->buff_str))
