@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 11:14:31 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 05:44:24 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 06:21:11 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,6 @@ void	jump_by_row(t_tbuff *buff, unsigned long code)
 		{
 			move_cursor(-(g_term.conf.termsize[0]), 1, buff, -1);
 		}
-		else
-			move_cursor(pos > 0 ? -(pos) : 0, 1, buff, -1);
 	}
 	else if (code == KEY_ALT_DOWN)
 	{
