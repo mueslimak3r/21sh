@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 05:01:29 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/22 21:36:52 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 17:06:34 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,28 +40,25 @@ int		ft_cd(char *path)
 {
 	struct stat	stats;
 	char		*tmp;
-	char		*buf;
+	char		buf[255 + 1];
+	int			ret;
 
-	buf = NULL;
+	ret = -1;
 	if (!(tmp = path_expansions(path)))
 		tmp = ft_strdup(find_env("HOME"));
 	if (stat(tmp, &stats) == 0 && S_ISDIR(stats.st_mode))
 	{
 		ft_setenv("OLDPWD", find_env("PWD"));
 		chdir(tmp);
-		buf = malloc(255);
+		ft_memset(buf, 0, 256);
 		getcwd(buf, 255);
 		ft_setenv("PWD", buf);
-		free(buf);
-		buf = NULL;
+		ret = 1;
 	}
 	else
-	{
-		ft_printf_fd(STDERR_FILENO, "-wtsh: cd: %s: No such file or directory\n", tmp);
-		free(tmp);
-		return (-1);
-	}
+		ft_printf_fd(STDERR_FILENO,
+		"-wtsh: cd: %s: No such file or directory\n", tmp);
 	load_envp();
 	free(tmp);
-	return (1);
+	return (ret);
 }
