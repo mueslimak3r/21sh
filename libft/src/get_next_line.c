@@ -3,89 +3,120 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/30 19:38:09 by calamber          #+#    #+#             */
-/*   Updated: 2019/03/24 10:20:15 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 19:52:21 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-#define RET_IF(cond, ret) if (cond) return (ret)
-
-static void			gnl_loop(int fd, char **line, char buf[BUFF_SIZE], int nl)
+static t_gnl_file	*new_gnl_file(int fd)
 {
-	ssize_t			rret;
-	char			*tmp1;
-	char			*tmp2;
-	size_t			len;
+	t_gnl_file	*file;
 
-	rret = 1;
-	while (!(nl) && rret > 0)
-	{
-		rret = read(fd, buf, BUFF_SIZE);
-		len = 0;
-		while (len < BUFF_SIZE && buf[len] != '\n')
-			len++;
-		if (buf[len] == '\n')
-			nl = 1;
-		tmp2 = ft_strndup(buf, len);
-		tmp1 = ft_strjoin(*line, tmp2);
-		free(*line);
-		*line = tmp1;
-		free(tmp2);
-		ft_bzero(buf, len + nl);
-	}
+	file = (t_gnl_file *)ft_memalloc(sizeof(t_gnl_file));
+	if (!file)
+		return (0);
+	file->fd = fd;
+	file->buf = 0;
+	return (file);
 }
 
-static size_t		gnl_find_i(char buf[BUFF_SIZE], size_t *i)
+static t_list		*get_fd(t_list *head, int fd)
 {
-	*i = 0;
-	while (*i < BUFF_SIZE && buf[*i] == 0)
-		*i = *i + 1;
-	if (*i == BUFF_SIZE)
+	t_gnl_file	*file;
+
+	if (!head)
 	{
-		*i = 0;
-		return (1);
+		file = new_gnl_file(fd);
+		head = ft_lstnew(file, sizeof(t_gnl_file));
+		if (head && head->content)
+			((t_gnl_file *)head->content)->buf = ft_strnew(BUFF_SIZE);
+		ft_memdel((void **)&file);
+	}
+	while (head && head->content)
+	{
+		if (((t_gnl_file *)head->content)->fd == fd)
+			return (head);
+		if (!head->next)
+		{
+			file = new_gnl_file(fd);
+			head->next = ft_lstnew(file, sizeof(t_gnl_file));
+			if (head->next && head->next->content)
+				((t_gnl_file *)head->next->content)->buf = ft_strnew(BUFF_SIZE);
+			ft_memdel((void **)&file);
+		}
+		head = head->next;
 	}
 	return (0);
 }
 
-static size_t		gnl_find_len(char buf[BUFF_SIZE], size_t i)
+static char			*stresize(char **buf, int start, size_t size)
 {
-	size_t len;
+	char	*new;
+	int		baselen;
 
-	len = 0;
-	while (i + len < BUFF_SIZE && buf[i + len] != '\n')
-		len++;
-	return (len);
+	baselen = ft_strlen(*buf + start);
+	new = ft_strnew(baselen + size);
+	if (!new)
+		return (0);
+	new = ft_strncpy(new, *buf + start, baselen);
+	ft_strdel(buf);
+	return (new);
+}
+
+static int			process_line(t_gnl_file *file, int ret, char **line)
+{
+	char	*newline_cur;
+	int		new_strlen;
+
+	newline_cur = ft_strchr(file->buf, '\n');
+	new_strlen = newline_cur - file->buf;
+	if (!newline_cur && !ret)
+	{
+		*line = stresize(&file->buf, 0, 0);
+		if (!*line)
+			return (-1);
+		if (!**line)
+			return (0);
+		return (1);
+	}
+	else
+		*line = ft_strnew(new_strlen);
+	if (!*line)
+		return (-1);
+	*line = ft_strncpy(*line, file->buf, new_strlen);
+	file->buf = stresize(&file->buf, new_strlen + 1, 0);
+	if (!*line || !file->buf)
+		return (-1);
+	return (1);
 }
 
 int					get_next_line(const int fd, char **line)
 {
-	static char		buf[255][BUFF_SIZE];
-	size_t			i;
-	size_t			len;
-	ssize_t			rret;
-	int				nl;
+	static t_list	*head;
+	t_gnl_file		*file;
+	int				ret;
 
-	RET_IF(fd < 0 || fd >= 255 || !(line) || BUFF_SIZE < 1, -1);
-	rret = BUFF_SIZE;
-	nl = 0;
-	if (gnl_find_i(buf[fd], &i))
+	if (read(fd, 0, 0) == -1 || !line)
+		return (-1);
+	if (!head && !(head = get_fd(0, fd)))
+		return (-1);
+	if (!(file = get_fd(head, fd)->content))
+		return (-1);
+	if (!file->buf)
+		return (0);
+	ret = 1;
+	while (!ft_strchr(file->buf, '\n') && ret > 0)
 	{
-		RET_IF((rret = read(fd, buf[fd], BUFF_SIZE)) == -1, -1);
-		RET_IF(rret == 0, 0);
+		file->buf = stresize(&file->buf, 0, BUFF_SIZE);
+		if (!file->buf)
+			return (-1);
+		ret = read(fd, (file->buf + ft_strlen(file->buf)), BUFF_SIZE);
+		if (ret < 0)
+			return (-1);
 	}
-	len = gnl_find_len(buf[fd], i);
-	*line = ft_strndup(buf[fd] + i, len);
-	if (buf[fd][i + len] == '\n')
-	{
-		len++;
-		nl = 1;
-	}
-	ft_bzero(buf[fd] + i, len);
-	gnl_loop(fd, line, buf[fd], nl);
-	return (1);
+	return (process_line(file, ret, line));
 }

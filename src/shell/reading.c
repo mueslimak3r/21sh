@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 17:10:04 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 19:26:08 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,5 @@ int			get_input(void)
 		!g_term.buff->buff_str || (g_term.buff->buff_str &&
 									!*(g_term.buff->buff_str)))
 		ret = 0;
-	g_term.sigs.restart = false;
-	g_term.sigs.sigint = false;
 	return (ret);
 }

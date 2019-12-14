@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 18:50:08 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 20:01:40 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,11 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <sys/select.h>
-
-
 # include "keycode_linux.h"
 
-# define CLEAR_SCREEN ft_putstr_fd(tgetstr("cl", NULL), STDERR_FILENO);
-# define GET_SCREENSIZE ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
-
 # define LEAF_SIZE 5
-
 # define PROMPT "@>"
 # define HDPROMPT " >"
-# define TYPES
 # define HT_OVERHEAD 5000
 
 typedef struct s_term		t_term;
@@ -214,6 +207,7 @@ void						sig_resume(int nb);
 /*
 ** SHELL
 */
+void						exec_heredoc(t_node *node, int *in, int *out);
 int							handle_redirs(t_redir *list);
 int							get_input(void);
 void						shell_reset_stuff(t_stats *stats);
@@ -221,7 +215,8 @@ int							has_hd(char *thing, char *hd);
 void						shell_loop(void);
 int							ft_readstdin_line(t_tbuff **tbuff, int hd);
 int							read_rcfile(void);
-int							subshell(int *in, int *out, char **args, t_redir *list);
+int							subshell(int *in, int *out, char **args,
+													t_redir *list);
 
 /*
 ** INPUT BUFFER
@@ -233,13 +228,17 @@ void						tbuff_replicate(t_tbuff **buff);
 void						tbuff_cleanup(t_tbuff **buff);
 int							tbuff_choose(t_tbuff **buff, int hd);
 void						tbuff_new(t_tbuff **buff);
-int							reprint_buffer(t_tbuff *buff, int pos, int move_amt);
-void						tbuff_line_insert(t_tbuff **buff, char *in, int pos);
-void						t_buff_line_rm(t_tbuff *buff, int pos, int size);
+int							reprint_buffer(t_tbuff *buff, int pos,
+												int move_amt);
+void						tbuff_line_insert(t_tbuff **buff,
+										char *in, int pos);
+void						t_buff_line_rm(t_tbuff *buff,
+										int pos, int size);
 void						tbuff_free(t_tbuff **buff);
 void						tbuff_move_cursor(t_tbuff *buff,
 								unsigned long code, char *str);
-int							move_cursor(int amt, int affect_tc, t_tbuff *buff, int pos);
+int							move_cursor(int amt, int affect_tc,
+										t_tbuff *buff, int pos);
 void						tbuff_line_setsize(t_tbuff *buff, int amt);
 /*
 ** ENVIRONMENT
@@ -291,6 +290,8 @@ int							count_pipes(t_node *node);
 ** AST
 */
 
+void						exec_handle_redir(t_node *node, int *in, int *out);
+int							find_pipe(t_node *head);
 void						exec_node_parse(t_node *node, int *in, int *out);
 void						recurse(t_node *head, t_stats *stats);
 void						redir_pipes(t_node *node, t_redir **list);
@@ -321,10 +322,9 @@ int							last_slash(const char *in);
 int							calc_pos(void);
 int							resolve_path(char *arg);
 int							check_dir(char *name, char *path);
-int							jump_by_word_amt(t_tbuff *buff, char *str, int pos, int dir);
-
+int							jump_by_word_amt(t_tbuff *buff, char *str,
+													int pos, int dir);
 int							termcap_reset_cursor(int pos, int len);
 void						add_redir(int src, int dst, t_redir **list);
 void						redo_prompt(int hd, int print);
-
 #endif

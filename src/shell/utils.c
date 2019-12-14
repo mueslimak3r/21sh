@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 10:24:04 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 10:14:57 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 20:02:02 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void		init_term(void)
 		ft_putstr_fd("error: host terminal attr invalid\n", STDERR_FILENO);
 		exit(0);
 	}
-	GET_SCREENSIZE;
+	ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 	zero_cursor(0);
 }
 

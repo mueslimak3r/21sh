@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 17:36:49 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 19:32:30 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,26 @@ int			lexer_helper(char *input, int i, int *op)
 	return (i);
 }
 
+int			lex_assist(char **input, int *op, t_lexeme **ref)
+{
+	int	i;
+
+	i = 0;
+	while (**input && ft_isspace(**input))
+		(*input)++;
+	if (!**input)
+		return (0);
+	i = lexer_helper(*input, i, op);
+	i ? new_lex(ft_strndup(*input, i), 1, ref) : 0;
+	*input += i;
+	if (*op > 1)
+		*input = add_lex_op(ref, *input, *op);
+	return (1);
+}
+
 t_node		*lexer(char *input)
 {
 	t_lexeme	*ref;
-	int			i;
 	int			op;
 	t_node		*ret;
 	t_lexeme	*tmp;
@@ -67,18 +83,8 @@ t_node		*lexer(char *input)
 	ret = NULL;
 	tmp = NULL;
 	while (*input)
-	{
-		i = 0;
-		while (*input && ft_isspace(*input))
-			input++;
-		if (!*input)
+		if (!lex_assist(&input, &op, &ref))
 			break ;
-		i = lexer_helper(input, i, &op);
-		i ? new_lex(ft_strndup(input, i), 1, &ref) : 0;
-		input += i;
-		if (op > 1)
-			input = add_lex_op(&ref, input, op);
-	}
 	if (!(ret = parser(ref)))
 	{
 		while ((tmp = ref))
