@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/13 22:37:43 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 03:32:47 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:17:39 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ void		tbuff_insert_helper(t_tbuff **buff, char *in, int pos, int in_size)
 	{
 		ft_memmove(tmp, (*buff)->buff_str, pos);
 		ft_memmove(tmp + pos, in, in_size);
-		ft_memmove(tmp + pos + in_size, (*buff)->buff_str + pos, (*buff)->len - pos);
+		ft_memmove(tmp + pos + in_size, (*buff)->buff_str + pos,
+											(*buff)->len - pos);
 	}
 	ft_strdel(&((*buff)->buff_str));
 	(*buff)->buff_str = tmp;
@@ -66,7 +67,6 @@ void		tbuff_line_insert(t_tbuff **buff, char *in, int pos)
 
 	if (!buff)
 		return ;
-	
 	in_size = ft_strlen(in);
 	if (buff && !(*buff)->temp)
 		tbuff_replicate(buff);

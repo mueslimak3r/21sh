@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 17:38:44 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:50:08 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,7 @@ int							subshell(int *in, int *out, char **args, t_redir *list);
 /*
 ** INPUT BUFFER
 */
+void						tbuff_rm_node(t_tbuff *node);
 void						tbuff_rm_edits(t_tbuff **buff);
 void						tbuff_free_hd(t_tbuff **buff);
 void						tbuff_replicate(t_tbuff **buff);
@@ -320,7 +321,7 @@ int							last_slash(const char *in);
 int							calc_pos(void);
 int							resolve_path(char *arg);
 int							check_dir(char *name, char *path);
-int							jump_by_word_amt(char *str, int pos, int dir);
+int							jump_by_word_amt(t_tbuff *buff, char *str, int pos, int dir);
 
 int							termcap_reset_cursor(int pos, int len);
 void						add_redir(int src, int dst, t_redir **list);
