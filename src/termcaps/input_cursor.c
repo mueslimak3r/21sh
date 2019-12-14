@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 18:18:52 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 18:48:59 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:55:52 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,11 @@ static void		handle_tc_back(int use_tc)
 		j = 0;
 		tputs(tgetstr("cr", NULL), 0, ft_charput);
 		tputs(tgetstr("up", NULL), 0, ft_charput);
-		while (j++ < g_term.conf.termsize[0])
+		while (j < g_term.conf.termsize[0])
+		{
 			tputs(tgetstr("nd", NULL), 0, ft_charput);
+			j++;
+		}
 	}
 	g_term.conf.cursor[0] = g_term.conf.termsize[0] - 1;
 	g_term.conf.cursor[1]--;
@@ -44,7 +47,6 @@ static void		handle_tc_forward(int i, int pos, int use_tc, t_tbuff *buff)
 				tputs(tgetstr("cr", NULL), 0, ft_charput);
 				tputs(tgetstr("do", NULL), 0, ft_charput);
 			}
-			i--;
 			g_term.conf.cursor[0] = 0;
 			g_term.conf.cursor[1]++;
 		}
@@ -53,7 +55,6 @@ static void		handle_tc_forward(int i, int pos, int use_tc, t_tbuff *buff)
 			if (use_tc)
 				tputs(tgetstr("nd", NULL), 0, ft_charput);
 			g_term.conf.cursor[0]++;
-			i--;
 		}
 		i--;
 		pos++;
