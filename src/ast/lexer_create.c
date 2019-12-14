@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_create.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:11:19 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 14:48:46 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 17:37:09 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,22 +60,22 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 	return (new_lex_helper(head, new));
 }
 
-char		*add_lex_op(t_lexeme **head, char *line, int op, int *i)
+char		*add_lex_op(t_lexeme **head, char *line, int op)
 {
 	char *io_name;
 
 	if (op < L_REDIRECT)
 	{
 		new_lex(ft_strndup(line, ft_strlen(g_term.symbls[op])), op, head);
-		*i += ft_strlen(g_term.symbls[op]);
+		line += ft_strlen(g_term.symbls[op]);
 	}
 	else if (op == L_REDIRECT)
-		*i += handle_redirect(line, head);
+		line += handle_redirect(line, head);
 	else if (op == IO_NAME)
 	{
 		io_name = ft_itoa(ft_atoi(line));
 		new_lex(io_name, op, head);
-		*i += ft_strlen(io_name);
+		line += ft_strlen(io_name);
 	}
 	return (line);
 }

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 14:57:19 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 17:36:49 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ void		print_lex(t_lexeme *head)
 
 int			lexer_helper(char *input, int i, int *op)
 {
-	int		tmp;
+	int	tmp;
 
 	while (*(input + i) && !ft_isspace(*(input + i)))
 	{
-		if ((*(input + i) == '\'' || *(input + i) == '\"') && (i - 1 && ft_isspace(*(input + i - 1))))
+		if (*(input + i) == '\'' || *(input + i) == '\"')
 			i += handle_quote(input + i);
 		*op = is_operator(input, i);
 		if (*op > 1)
@@ -61,26 +61,23 @@ t_node		*lexer(char *input)
 	int			op;
 	t_node		*ret;
 	t_lexeme	*tmp;
-	char		*buff;
-	int			x;
 
 	ref = NULL;
 	op = 0;
 	ret = NULL;
 	tmp = NULL;
-	buff = ft_strdup(input);
-	i = 0;
-	while (buff[i])
+	while (*input)
 	{
-		while (buff[i] && ft_isspace(buff[i]))
-			i++;
-		if (!buff[i])
+		i = 0;
+		while (*input && ft_isspace(*input))
+			input++;
+		if (!*input)
 			break ;
-		x = i;
-		i = lexer_helper(buff, i, &op);
-		i != x ? new_lex(ft_strndup(buff + x, i - x), 1, &ref) : 0;
+		i = lexer_helper(input, i, &op);
+		i ? new_lex(ft_strndup(input, i), 1, &ref) : 0;
+		input += i;
 		if (op > 1)
-			buff = add_lex_op(&ref, buff, op, &i);
+			input = add_lex_op(&ref, input, op);
 	}
 	if (!(ret = parser(ref)))
 	{
@@ -94,6 +91,5 @@ t_node		*lexer(char *input)
 				break ;
 		}
 	}
-	buff ? free(buff) : 0;
 	return (ret);
 }

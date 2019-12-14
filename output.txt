@@ -1,10 +1,4 @@
-21sh$
-all.log$
-author$
-banner$
-depend.sh$
-includes$
-libft$
-Makefile$
-README.md$
-src$
+t$
+esssssaaaa$
+reasda$
+       3       3      23

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 15:05:28 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/13 17:38:44 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,6 +201,7 @@ int							zero_cursor(int hd);
 /*
 ** SIGNALS
 */
+int							check_fd(int fd);
 void						set_sighandle_child(void);
 void						set_sighandle(void);
 int							handle_controls(unsigned long code, t_tbuff **buff);
@@ -266,7 +267,7 @@ int							is_nb_before_redir(char *op);
 int							is_redirect(char *op);
 int							handle_redirect(char *op, t_lexeme **head);
 int							handle_quote(char *input);
-char						*add_lex_op(t_lexeme **head, char *line, int op, int *i);
+char						*add_lex_op(t_lexeme **head, char *line, int op);
 
 /*
 ** PARSER
