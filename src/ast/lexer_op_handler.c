@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:12:05 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 14:28:35 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/17 14:15:38 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,23 +58,12 @@ int			handle_quote_helper(char *input, int *i)
 int			handle_quote(char *input)
 {
 	int	i;
-	int match_single;
-	int	match_double;
 
 	i = 0;
-	match_single = -1;
-	match_double = -1;
 	while (input[i])
 	{
-		if ((match_single == 1 && input[i + 1] == '\'') ||
-			(match_double == 1 && input[i + 1] == '\"'))
-			handle_quote_helper(input, &i);
-		match_single = input[i] == '\'' ? -match_single : match_single;
-		match_double = input[i] == '\"' ? -match_double : match_double;
-		if (match_single == 1 && match_double == 1)
-			return (-1);
-		if (match_single == 1 || match_double == 1)
-			input[i] = input[i + 1];
+		if (input[i] == '\"')
+			return (i);
 		i++;
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 19:32:30 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/17 14:10:54 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,17 @@ void		print_lex(t_lexeme *head)
 int			lexer_helper(char *input, int i, int *op)
 {
 	int	tmp;
+	int	q;
 
 	while (*(input + i) && !ft_isspace(*(input + i)))
 	{
+		q = 0;
 		if (*(input + i) == '\'' || *(input + i) == '\"')
+		{
+			q = 1;
 			i += handle_quote(input + i);
-		*op = is_operator(input, i);
+		}
+		*op = is_operator(input + q, i - q);
 		if (*op > 1)
 			break ;
 		if (*(input + i) == '\\')
@@ -57,14 +62,17 @@ int			lexer_helper(char *input, int i, int *op)
 int			lex_assist(char **input, int *op, t_lexeme **ref)
 {
 	int	i;
+	int	q;
 
 	i = 0;
+	q = 0;
 	while (**input && ft_isspace(**input))
 		(*input)++;
 	if (!**input)
 		return (0);
+	q = **input == '"' ? 1 : 0;
 	i = lexer_helper(*input, i, op);
-	i ? new_lex(ft_strndup(*input, i), 1, ref) : 0;
+	i ? new_lex(ft_strndup(*input + q, i - q - (*(*input + i - q) == '"')), 1, ref) : 0;
 	*input += i;
 	if (*op > 1)
 		*input = add_lex_op(ref, *input, *op);
