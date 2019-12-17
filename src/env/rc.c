@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 13:23:57 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/05 15:26:03 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/17 06:58:06 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int		read_rcfile(void)
 		free(line);
 		line = NULL;
 	}
+	free(line);
 	close(fd);
 	return (1);
 }
