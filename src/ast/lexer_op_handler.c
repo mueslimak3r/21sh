@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:12:05 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/17 14:15:38 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/17 14:24:41 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,10 @@ int			handle_quote(char *input)
 {
 	int	i;
 
-	i = 0;
-	while (input[i])
+	i = 1;
+	while (*(input + i))
 	{
-		if (input[i] == '\"')
+		if (*(input + i) == '"')
 			return (i);
 		i++;
 	}

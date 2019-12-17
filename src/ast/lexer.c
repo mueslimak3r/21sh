@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/17 14:10:54 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/17 14:24:38 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ t_node		*lexer(char *input)
 	while (*input)
 		if (!lex_assist(&input, &op, &ref))
 			break ;
+	print_lex(ref);
 	if (!(ret = parser(ref)))
 	{
 		while ((tmp = ref))
