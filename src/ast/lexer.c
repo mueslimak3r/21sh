@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/17 14:24:38 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/17 16:32:28 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int			lex_assist(char **input, int *op, t_lexeme **ref)
 		(*input)++;
 	if (!**input)
 		return (0);
-	q = **input == '"' ? 1 : 0;
+	q = **input == '"' && ft_strchr((*input + 1), '"') ? 1 : 0;
 	i = lexer_helper(*input, i, op);
 	i ? new_lex(ft_strndup(*input + q, i - q - (*(*input + i - q) == '"')), 1, ref) : 0;
 	*input += i;
@@ -93,7 +93,6 @@ t_node		*lexer(char *input)
 	while (*input)
 		if (!lex_assist(&input, &op, &ref))
 			break ;
-	print_lex(ref);
 	if (!(ret = parser(ref)))
 	{
 		while ((tmp = ref))
