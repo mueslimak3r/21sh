@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:12:05 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/17 14:24:41 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/18 09:11:49 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,38 +33,4 @@ int			is_operator(char *op, int pos)
 	if (op && ret == 0)
 		return (1);
 	return (ret);
-}
-
-int			handle_quote_helper(char *input, int *i)
-{
-	int	ret;
-	int	d;
-
-	d = 0;
-	input[*i] = input[*i + 2];
-	ret = *i;
-	while (input[ret + 1])
-	{
-		input[ret + 1] = input[ret + 2];
-		ret++;
-		d++;
-	}
-	input[ret] = 0;
-	*i = ret;
-	ret -= d;
-	return (ft_isspace(input[ret]) ? ret - 1 : ret);
-}
-
-int			handle_quote(char *input)
-{
-	int	i;
-
-	i = 1;
-	while (*(input + i))
-	{
-		if (*(input + i) == '"')
-			return (i);
-		i++;
-	}
-	return (1);
 }

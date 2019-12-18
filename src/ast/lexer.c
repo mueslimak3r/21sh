@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 07:31:04 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/18 09:31:50 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,41 +28,98 @@ void		print_lex(t_lexeme *head)
 	ft_printf_fd(STDERR_FILENO, "\n");
 }
 
-int			lexer_helper(char *input, int i, int *op)
+int			count_quotes(char *input)
 {
-	int	tmp;
+	int	ret;
+	int	i;
 	int	q;
 
-	while (*(input + i) && !ft_isspace(*(input + i)))
+	ret = 0;
+	i = 0;
+	q = 0;
+	while (*(input + i) && is_operator(input, i) <= 1 && (!ft_isspace(*(input + i)) || q))
 	{
-		q = 0;
 		if (*(input + i) == '\'' || *(input + i) == '\"')
 		{
-			q = 1;
-			i += handle_quote(input + i);
-		}
-		*op = is_operator(input + q, i - q);
-		if (*op > 1)
-			break ;
-		if (*(input + i) == '\\')
-		{
-			tmp = i;
-			while (input[i])
-			{
-				input[i] = input[i + 1];
-				i++;
-			}
-			i = tmp;
+			if (q)
+				q--;
+			else
+				q++;
+			ret++;
+			//q++;
 		}
 		i++;
 	}
-	return (i);
+	return (ret);
+}
+
+char		*lexer_data_assist(char *data, int *op)
+{
+	char	*ret;
+	int		i;
+	int		size;
+	int		q;
+	int		cur;
+	int		res;
+	int		res2;
+
+	i = 0;
+	size = (int)ft_strlen(data);
+	if (count_quotes(data) % 2)
+	{
+		ft_printf_fd(STDERR_FILENO, "-wtsh: quote error\n");
+		return (NULL);
+	}
+	ret = ft_memalloc(size + 1);
+	q = 0;
+	cur = 0;
+	res = 0;
+	while (i < size && (q || !ft_isspace(data[i])))
+	{
+		if ((*op = is_operator(data, i)) > 1)
+		{
+			ft_strncat(ret, data + i, ft_strlen(g_term.symbls[*op]));
+			break ;
+		}
+		res = data[i] == '\"' || data[i] == '\'' ? (int)data[i] : 0;
+		if (data[i] == '\\')
+			i++;
+		else if (res)
+		{
+			res2 = (ft_strchr(data + i + 1, data[i]) &&
+					(!ft_strchr(data + i + 1, data[i] == '\"' ? '\'' : '\"') ||
+					 ft_strchr(data + i + 1, data[i]) >
+					 ft_strchr(data + i + 1, data[i] == '\"' ? '\'' : '\"')));
+			if (res2)
+			{
+				q++;
+				i++;
+			}
+			else if (q)
+			{
+				q--;
+				i++;
+			}
+			else if (!q)
+			{
+				free(ret);
+				ret = NULL;
+				ft_printf_fd(STDERR_FILENO, "-wtsh: quote error\n");
+				break ;
+			}
+		}
+		if (data[i])
+			ret[cur++] = data[i];
+		i++;
+	}
+	return (ret);
 }
 
 int			lex_assist(char **input, int *op, t_lexeme **ref)
 {
 	int	i;
 	int	q;
+	char	*new_lex_data;
 
 	i = 0;
 	q = 0;
@@ -70,12 +127,10 @@ int			lex_assist(char **input, int *op, t_lexeme **ref)
 		(*input)++;
 	if (!**input)
 		return (0);
-	q = **input == '"' && ft_strchr((*input + 1), '"') ? 1 : 0;
-	i = lexer_helper(*input, i, op);
-	i ? new_lex(ft_strndup(*input + q, i - q - (*(*input + i - q) == '"')), 1, ref) : 0;
-	*input += i;
-	if (*op > 1)
-		*input = add_lex_op(ref, *input, *op);
+	if (!(new_lex_data = lexer_data_assist(*input, op)))
+		return (-1);
+	new_lex(new_lex_data, *op, ref);
+	*input += new_lex_data ? ft_strlen(new_lex_data) + count_quotes(*input) : 0;
 	return (1);
 }
 
@@ -85,15 +140,17 @@ t_node		*lexer(char *input)
 	int			op;
 	t_node		*ret;
 	t_lexeme	*tmp;
+	int			retu;
 
 	ref = NULL;
 	op = 0;
 	ret = NULL;
 	tmp = NULL;
+	retu = 0;
 	while (*input)
-		if (!lex_assist(&input, &op, &ref))
+		if (!(retu = lex_assist(&input, &op, &ref)) || retu < 0)
 			break ;
-	if (!(ret = parser(ref)))
+	if (retu < 0 || !(ret = parser(ref)))
 	{
 		while ((tmp = ref))
 		{
