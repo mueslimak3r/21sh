@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 00:22:29 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 01:26:48 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 	}
 	g_term.pid = pid;
 	out[1] > 2 ? close(out[1]) : 0;
-	wait(&status);
+	waitpid(pid, &status, 0);
 	init_term();
 	name ? free(name) : 0;
-	if (status)
+	if (WEXITSTATUS(status))
 		ft_printf_fd(STDERR_FILENO, "\n");
-	return (status);
+	return (WEXITSTATUS(status));
 }

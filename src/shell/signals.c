@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 04:10:16 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/18 00:24:49 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 01:24:39 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ void		sig_suspend(int nb)
 {
 	if (nb)
 	{
+		;
+		/*
 		if (g_term.conf.is_child)
 		{
 			reset_term();
@@ -28,6 +30,7 @@ void		sig_suspend(int nb)
 				kill(g_term.pid, SIGCONT);
 			//ioctl(STDERR_FILENO, TIOCSTI, "\x1A");
 		}
+		*/
 	}
 }
 
