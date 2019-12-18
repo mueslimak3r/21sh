@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 09:31:50 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/18 12:21:42 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ char		*lexer_data_assist(char *data, int *op)
 	{
 		if ((*op = is_operator(data, i)) > 1)
 		{
+			ft_printf_fd(STDERR_FILENO, "[%s] %d\n", data + i, *op);
 			ft_strncat(ret, data + i, ft_strlen(g_term.symbls[*op]));
 			break ;
 		}
@@ -129,8 +130,13 @@ int			lex_assist(char **input, int *op, t_lexeme **ref)
 		return (0);
 	if (!(new_lex_data = lexer_data_assist(*input, op)))
 		return (-1);
-	new_lex(new_lex_data, *op, ref);
-	*input += new_lex_data ? ft_strlen(new_lex_data) + count_quotes(*input) : 0;
+	if (*op <= 1)
+	{
+		new_lex(new_lex_data, *op, ref);
+		*input += new_lex_data ? ft_strlen(new_lex_data) + count_quotes(*input) : 0;
+	}
+	else
+		*input = add_lex_op(ref, *input, *op);
 	return (1);
 }
 
@@ -162,5 +168,6 @@ t_node		*lexer(char *input)
 				break ;
 		}
 	}
+	print_lex(ref);
 	return (ret);
 }
