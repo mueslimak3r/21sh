@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 18:38:28 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 18:39:03 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 11:06:37 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 	}
 	if (buff && buff->buff_str)
 	{
+		tputs(tgetstr("vi", NULL), 0, ft_charput);
 		index = (pos - g_term.conf.cursor[0] + ((g_term.conf.cursor[1]
 			== (g_term.conf.prompt_size / g_term.conf.termsize[0])) ?
 			g_term.conf.prompt_size % g_term.conf.termsize[0] : 0));
@@ -57,6 +58,7 @@ int				reprint_buffer(t_tbuff *buff, int pos, int move_amt)
 		reprint_buffer_helper(buff, index);
 		if (move_amt != 0)
 			move_cursor(-(buff->len - pos) + move_amt, 1, buff, -1);
+		tputs(tgetstr("ve", NULL), 0, ft_charput);
 	}
 	return (0);
 }
