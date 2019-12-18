@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 14:07:41 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 08:26:59 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void		define_symbols(void)
 	NULL };
 
 	g_term.symbls = symbols;
+	g_term.buff = NULL;
 }
 
 int			main(void)
@@ -74,8 +75,6 @@ int			main(void)
 	define_symbols();
 	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
 	print_banner(STDERR_FILENO);
-	g_term.conf.is_child = false;
-	g_term.buff = NULL;
 	shell_loop();
 	reset_term();
 	return (0);

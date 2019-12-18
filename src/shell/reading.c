@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 19:26:08 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 08:27:32 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 void		handle_resize(t_tbuff *buff)
 {
 	int		pos;
-	//int		i;
 
-	//i = 1;
 	pos = calc_pos();
 	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
 		g_term.conf.termsize[1] != g_window_size.ws_row)
