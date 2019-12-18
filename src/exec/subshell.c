@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 01:26:48 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 08:29:12 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 	name = NULL;
 	args[0] = find_alias(args[0]);
 	out[0] > 2 ? close(out[0]) : 0;
-	g_term.conf.is_child = true;
 	if (!check_path(&name, args, g_term.env.envp))
 		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
 	reset_term();
@@ -42,12 +41,10 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 		execve(name, args, g_term.env.envp);
 		exit(0);
 	}
-	g_term.pid = pid;
 	out[1] > 2 ? close(out[1]) : 0;
 	waitpid(pid, &status, 0);
 	init_term();
-	name ? free(name) : 0;
-	if (WEXITSTATUS(status))
-		ft_printf_fd(STDERR_FILENO, "\n");
+	free(name);
+	(WIFSIGNALED(status)) ? ft_printf_fd(STDERR_FILENO, "\n") : 0;
 	return (WEXITSTATUS(status));
 }

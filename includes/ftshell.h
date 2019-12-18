@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 20:01:40 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 08:24:48 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,6 @@ struct						s_shellconf
 	int						termsize[2];
 	int						cursor[2];
 	int						curlines;
-	bool					is_child;
 };
 
 struct						s_term_sigs

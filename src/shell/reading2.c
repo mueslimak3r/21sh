@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   reading2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 17:09:48 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 17:09:49 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 08:45:03 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,9 @@ void		redo_prompt(int hd, int print)
 		end = start + print;
 		while (start < end)
 		{
-			if (start == end - 1 && !hd)
-				ft_putchar('>');
-			else
-				ft_putchar(pwd[start]);
+			ft_putstr((start == end - 1 && !hd) ? "\e[94m" : "\e[32m");
+			ft_putchar((start == end - 1 && !hd) ? '>' : pwd[start]);
+			ft_putstr("\e[0m");
 			start++;
 		}
 	}
