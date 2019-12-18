@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 07:38:27 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/18 10:53:57 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ int				init_env(void)
 {
 	extern char	**environ;
 	int			i;
+	char		*tmp;
 
 	i = 0;
 	ft_bzero(g_env, sizeof(t_ht*) * HT_OVERHEAD);
@@ -119,6 +120,15 @@ int				init_env(void)
 		ft_export(environ[i]);
 		i++;
 	}
+	tmp = ft_strjoin_free(
+			"SHLVL=",
+			ft_itoa((find_env("SHLVL")
+					? ft_atoi(find_env("SHLVL"))
+					: 0) + 1),
+			1
+	);
+	ft_export(tmp);
+	free(tmp);
 	return (1);
 }
 
