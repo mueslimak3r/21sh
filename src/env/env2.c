@@ -6,7 +6,7 @@
 /*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:17:44 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 13:14:10 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/17 16:24:40 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,10 @@ int				setenv_helper(unsigned long hash, t_ht *new)
 			new->next = tmp->next;
 			free(tmp->content);
 			free(tmp->content_name);
-			free(tmp);
-			if (last)
-				last->next = new;
-			else
-				g_env[hash % HT_OVERHEAD] = new;
+			tmp->content = new->content;
+			tmp->content_name = new->content_name;
+			free(new);
+			load_envp();
 			return (1);
 		}
 		last = tmp;
