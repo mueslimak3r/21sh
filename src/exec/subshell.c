@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 08:29:12 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 14:00:50 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 		exit(0);
 	}
 	out[1] > 2 ? close(out[1]) : 0;
-	waitpid(pid, &status, 0);
+	wait(&status);//waitpid(pid, &status, 0);
 	init_term();
 	free(name);
 	(WIFSIGNALED(status)) ? ft_printf_fd(STDERR_FILENO, "\n") : 0;

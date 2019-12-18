@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:20:52 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 11:32:47 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 13:50:21 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,12 @@ int				termcap_reset_cursor(int pos, int len)
 
 void			shell_reset_stuff(t_stats *stats)
 {
+	g_term.children = NULL;
 	g_term.sigs.sigint = false;
 	g_term.sigs.sigstop = false;
 	g_term.sigs.restart = false;
 	stats->f_d[0] = 0;
 	stats->f_d[1] = 1;
-	g_term.pid = -1;
 	zero_cursor(0);
 }
 

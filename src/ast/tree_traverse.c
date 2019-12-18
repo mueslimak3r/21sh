@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 19:53:07 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 13:57:37 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ static int		exec_node_possible(t_node *node)
 
 static void		recurse_empty(t_stats *stats)
 {
-	if (g_term.pid > -1)
-		waitpid(g_term.pid, 0, 0);
+	if (g_term.children)
+		child_wait();
 	empty_buffer(stats->f_d);
 	stats->f_d[0] = 0;
 	stats->f_d[1] = 1;

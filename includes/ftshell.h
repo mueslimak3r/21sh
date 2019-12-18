@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 08:24:48 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 13:56:54 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_node		t_node;
 typedef struct s_ht			t_ht;
 
 typedef struct s_redir		t_redir;
+typedef struct s_child		t_child;
 
 struct winsize				g_window_size;
 struct s_term				g_term;
@@ -168,7 +169,7 @@ struct						s_term
 	struct termios			old_term;
 	struct termios			new_term;
 	int						rows;
-	int						pid;
+	t_child					*children;
 };
 
 struct						s_stats
@@ -177,6 +178,12 @@ struct						s_stats
 	int						fd_err[2];
 	int						ret;
 	int						exit;
+};
+
+struct						s_child
+{
+	int						pid;
+	struct s_child			*next;
 };
 
 /*
@@ -207,6 +214,11 @@ void						sig_resume(int nb);
 /*
 ** SHELL
 */
+
+void		child_wait(void);
+int			child_pop(t_child **stack);
+void		child_push(t_child **stack, int pid);
+
 void						exec_heredoc(t_node *node, int *in, int *out);
 int							handle_redirs(t_redir *list);
 int							get_input(void);

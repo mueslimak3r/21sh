@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/18 12:29:34 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 13:58:06 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,10 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 		subshell(in, out, args, list);
 		exit(0);
 	}
+	child_push(&g_term.children, pid);
 	out[1] > 2 ? close(out[1]) : 0;
 	in[0] > 2 ? close(in[0]) : 0;
 	set_sighandle();
-	g_term.pid = pid;
 	return (1);
 }
 

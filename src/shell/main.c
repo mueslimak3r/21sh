@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 22:21:55 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 08:26:59 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 14:00:20 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void		shell_loop(void)
 			continue ;
 		tree = lexer(g_term.buff->buff_str);
 		recurse(tree, &stats);
-		if (g_term.pid > -1)
-			waitpid(g_term.pid, 0, 0);
+		if (g_term.children)
+			child_wait();
 		empty_buffer(stats.f_d);
 		clean_tree(tree);
 	}

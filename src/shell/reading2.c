@@ -6,11 +6,51 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 17:09:48 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/18 10:56:16 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/18 13:56:20 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
+
+void		child_push(t_child **stack, int pid)
+{
+	t_child	*new;
+
+	if (!(new = malloc(sizeof(*new))))
+		return ;
+	new->pid = pid;
+	new->next = *stack;
+	*stack = new;
+}
+
+int			child_pop(t_child **stack)
+{
+	int		pid;
+	t_child	*tmp;
+
+	if (!stack)
+		return (-1);
+	tmp = *stack;
+	*stack = (*stack)->next;
+	pid = tmp->pid;
+	free(tmp);
+	return (pid);
+}
+
+void		child_wait(void)
+{
+	t_child *head;
+	int		pid;
+
+	head = g_term.children;
+	while (head)
+	{
+		pid = child_pop(&head);
+		if (pid != -1)
+			waitpid(pid, 0, 0);
+	}
+	g_term.children = NULL;
+}
 
 int			check_fd(int fd)
 {
