@@ -68,10 +68,10 @@ int				ft_unsetenv(char *name)
 
 int				setenv_helper(unsigned long hash, t_ht *new)
 {
-	t_ht	*last;
+	//t_ht	*last;
 	t_ht	*tmp;
 
-	last = NULL;
+	//last = NULL;
 	tmp = g_env[hash % HT_OVERHEAD];
 	while (tmp)
 	{
@@ -86,7 +86,7 @@ int				setenv_helper(unsigned long hash, t_ht *new)
 			load_envp();
 			return (1);
 		}
-		last = tmp;
+		//last = tmp;
 		tmp = tmp->next;
 	}
 	return (0);

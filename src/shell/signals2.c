@@ -18,7 +18,6 @@ void			set_sighandle_child(void)
 	signal(SIGILL, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
 	signal(SIGTERM, SIG_DFL);
-	signal(SIGCONT, SIG_DFL);
 	signal(SIGTSTP, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
 	signal(SIGABRT, SIG_DFL);
@@ -31,7 +30,6 @@ void			set_sighandle(void)
 	signal(SIGINT, sig_stop);
 	signal(SIGTERM, sig_stop);
 	signal(SIGWINCH, sig_resize);
-	signal(SIGCONT, sig_resume);
 	signal(SIGTSTP, sig_suspend);
 	signal(SIGINT, sig_int);
 	signal(SIGABRT, sig_stop);

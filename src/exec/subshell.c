@@ -29,6 +29,7 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 	name = NULL;
 	args[0] = find_alias(args[0]);
 	out[0] > 2 ? close(out[0]) : 0;
+	g_term.conf.is_child = true;
 	if (!check_path(&name, args, g_term.env.envp))
 		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
 	reset_term();
@@ -41,6 +42,7 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 		execve(name, args, g_term.env.envp);
 		exit(0);
 	}
+	g_term.pid = pid;
 	out[1] > 2 ? close(out[1]) : 0;
 	wait(&status);
 	init_term();

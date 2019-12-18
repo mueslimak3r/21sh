@@ -33,9 +33,9 @@ int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 void		handle_resize(t_tbuff *buff)
 {
 	int		pos;
-	int		i;
+	//int		i;
 
-	i = 1;
+	//i = 1;
 	pos = calc_pos();
 	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
 		g_term.conf.termsize[1] != g_window_size.ws_row)

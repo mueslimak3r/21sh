@@ -12,23 +12,22 @@
 
 #include "ftshell.h"
 
-void		sig_resume(int nb)
-{
-	if (nb)
-	{
-		//init_term();
-		//set_sighandle();
-		//g_term.sigs.restart = true;
-	}
-}
-
 void		sig_suspend(int nb)
 {
 	if (nb)
 	{
-		//reset_term();
-		//signal(SIGTSTP, SIG_DFL);
-		//ioctl(STDERR_FILENO, TIOCSTI, "\x1A");
+		if (g_term.conf.is_child)
+		{
+			reset_term();
+			signal(SIGTSTP, SIG_DFL);
+			kill(g_term.pid, SIGTSTP);
+			raise(SIGTSTP);
+			init_term();
+			set_sighandle();
+			if (g_term.pid != -1)
+				kill(g_term.pid, SIGCONT);
+			//ioctl(STDERR_FILENO, TIOCSTI, "\x1A");
+		}
 	}
 }
 

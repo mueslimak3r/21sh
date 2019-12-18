@@ -149,6 +149,7 @@ struct						s_shellconf
 	int						termsize[2];
 	int						cursor[2];
 	int						curlines;
+	bool					is_child;
 };
 
 struct						s_term_sigs

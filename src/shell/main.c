@@ -74,6 +74,7 @@ int			main(void)
 	define_symbols();
 	ft_bzero(g_alias, sizeof(t_ht*) * HT_OVERHEAD);
 	print_banner(STDERR_FILENO);
+	g_term.conf.is_child = false;
 	g_term.buff = NULL;
 	shell_loop();
 	reset_term();
