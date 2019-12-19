@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 12:21:42 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 10:50:14 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,12 @@ char		*lexer_data_assist(char *data, int *op)
 	{
 		if ((*op = is_operator(data, i)) > 1)
 		{
-			ft_printf_fd(STDERR_FILENO, "[%s] %d\n", data + i, *op);
-			ft_strncat(ret, data + i, ft_strlen(g_term.symbls[*op]));
+			if (i > 0)
+				*op = 1;
+			else
+				ft_memdel((void**)&ret);
+			if (ret)
+				ft_printf_fd(STDERR_FILENO, "[%s] %d\n", data + i, *op);
 			break ;
 		}
 		res = data[i] == '\"' || data[i] == '\'' ? (int)data[i] : 0;
@@ -128,12 +132,12 @@ int			lex_assist(char **input, int *op, t_lexeme **ref)
 		(*input)++;
 	if (!**input)
 		return (0);
-	if (!(new_lex_data = lexer_data_assist(*input, op)))
+	if (!(new_lex_data = lexer_data_assist(*input, op)) && *op <= 1)
 		return (-1);
 	if (*op <= 1)
 	{
-		new_lex(new_lex_data, *op, ref);
 		*input += new_lex_data ? ft_strlen(new_lex_data) + count_quotes(*input) : 0;
+		new_lex(new_lex_data, *op, ref);
 	}
 	else
 		*input = add_lex_op(ref, *input, *op);
