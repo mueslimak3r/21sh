@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/19 10:50:14 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 11:51:35 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,28 +53,19 @@ int			count_quotes(char *input)
 	return (ret);
 }
 
-char		*lexer_data_assist(char *data, int *op)
+char		*lexer_data_assist(char *data, int *op, int *amt)
 {
 	char	*ret;
 	int		i;
 	int		size;
-	int		q;
 	int		cur;
-	int		res;
-	int		res2;
+	char	*res2;
 
 	i = 0;
 	size = (int)ft_strlen(data);
-	if (count_quotes(data) % 2)
-	{
-		ft_printf_fd(STDERR_FILENO, "-wtsh: quote error\n");
-		return (NULL);
-	}
 	ret = ft_memalloc(size + 1);
-	q = 0;
 	cur = 0;
-	res = 0;
-	while (i < size && (q || !ft_isspace(data[i])))
+	while (i < size && !ft_isspace(data[i]))
 	{
 		if ((*op = is_operator(data, i)) > 1)
 		{
@@ -82,41 +73,32 @@ char		*lexer_data_assist(char *data, int *op)
 				*op = 1;
 			else
 				ft_memdel((void**)&ret);
-			if (ret)
-				ft_printf_fd(STDERR_FILENO, "[%s] %d\n", data + i, *op);
 			break ;
 		}
-		res = data[i] == '\"' || data[i] == '\'' ? (int)data[i] : 0;
 		if (data[i] == '\\')
 			i++;
-		else if (res)
+		if (i < size && (data[i] == '\"' || data[i] == '\''))
 		{
-			res2 = (ft_strchr(data + i + 1, data[i]) &&
-					(!ft_strchr(data + i + 1, data[i] == '\"' ? '\'' : '\"') ||
-					 ft_strchr(data + i + 1, data[i]) >
-					 ft_strchr(data + i + 1, data[i] == '\"' ? '\'' : '\"')));
+			res2 = ft_strchr(data + i + 1, data[i]);
 			if (res2)
 			{
-				q++;
 				i++;
+				int sub_size = (long)res2 - (long)(data + i);
+				ft_memcpy(ret + cur, data + i, sub_size);
+				cur += sub_size;
+				i += sub_size + 1;
 			}
-			else if (q)
+			else
 			{
-				q--;
-				i++;
-			}
-			else if (!q)
-			{
-				free(ret);
-				ret = NULL;
+				ft_memdel((void**)&ret);
 				ft_printf_fd(STDERR_FILENO, "-wtsh: quote error\n");
 				break ;
 			}
 		}
-		if (data[i])
-			ret[cur++] = data[i];
-		i++;
+		else if (data[i])
+			ret[cur++] = data[i++];
 	}
+	ret ? *amt = i - cur : 0;
 	return (ret);
 }
 
@@ -124,6 +106,7 @@ int			lex_assist(char **input, int *op, t_lexeme **ref)
 {
 	int	i;
 	int	q;
+	int amt = 0;
 	char	*new_lex_data;
 
 	i = 0;
@@ -132,11 +115,11 @@ int			lex_assist(char **input, int *op, t_lexeme **ref)
 		(*input)++;
 	if (!**input)
 		return (0);
-	if (!(new_lex_data = lexer_data_assist(*input, op)) && *op <= 1)
+	if (!(new_lex_data = lexer_data_assist(*input, op, &amt)) && *op <= 1)
 		return (-1);
 	if (*op <= 1)
 	{
-		*input += new_lex_data ? ft_strlen(new_lex_data) + count_quotes(*input) : 0;
+		*input += ft_strlen(new_lex_data) + amt;
 		new_lex(new_lex_data, *op, ref);
 	}
 	else
@@ -168,10 +151,7 @@ t_node		*lexer(char *input)
 			if (tmp->data)
 				free(tmp->data);
 			free(tmp);
-			if (!ref)
-				break ;
 		}
 	}
-	print_lex(ref);
 	return (ret);
 }

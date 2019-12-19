@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/18 13:58:06 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 11:51:52 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int		dup_close(int fd1, int fd2)
 {
 	int		a;
 
-	ft_printf_fd(STDERR_FILENO, "dup close %d\n", fd1);
 	if ((a = dup2(fd1, fd2)) == -1)
 	{
 		ft_printf_fd(STDERR_FILENO, "-wtsh: Bad file descriptor: %d\n", fd1);

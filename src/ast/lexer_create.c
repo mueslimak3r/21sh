@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:11:19 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/18 09:21:35 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/19 11:51:43 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ char		*add_lex_op(t_lexeme **head, char *line, int op)
 	if (op < L_REDIRECT)
 	{
 		new_lex(ft_strndup(line, ft_strlen(g_term.symbls[op])), op, head);
-		ft_printf_fd(STDERR_FILENO, "checking %s for %d\n", line, op);
 		line += ft_strlen(g_term.symbls[op]);
 	}
 	else if (op == L_REDIRECT)
