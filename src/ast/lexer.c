@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/19 11:51:35 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 12:23:44 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,29 +28,40 @@ void		print_lex(t_lexeme *head)
 	ft_printf_fd(STDERR_FILENO, "\n");
 }
 
-int			count_quotes(char *input)
+char		*find_quote_match(char *data, char ref)
 {
-	int	ret;
-	int	i;
-	int	q;
+	char	*res;
+	char	*data_cpy;
 
-	ret = 0;
-	i = 0;
-	q = 0;
-	while (*(input + i) && is_operator(input, i) <= 1 && (!ft_isspace(*(input + i)) || q))
+	data_cpy = data;
+	while (data_cpy)
 	{
-		if (*(input + i) == '\'' || *(input + i) == '\"')
-		{
-			if (q)
-				q--;
-			else
-				q++;
-			ret++;
-			//q++;
-		}
-		i++;
+		res = ft_strchr(data_cpy + 1, ref);
+		if (res && !(res - data_cpy > 1 && *(res - 1) == '\\'))
+			break ;
+		data_cpy = res;
+		res = NULL;
 	}
-	return (ret);
+	return (res);
+}
+
+int			cpy_quote_substr(char *data, char *ret, int cur, int size)
+{
+	int	i;
+
+	i = 0;
+	while (i < size)
+	{
+		if (data[i] == '\\')
+		{
+			if (i < size - 1 && data[i + 1])
+				ret[cur++] = data[i++ + 1];
+			i++;
+		}
+		else
+			ret[cur++] = data[i++];
+	}
+	return (cur);
 }
 
 char		*lexer_data_assist(char *data, int *op, int *amt)
@@ -76,17 +87,19 @@ char		*lexer_data_assist(char *data, int *op, int *amt)
 			break ;
 		}
 		if (data[i] == '\\')
-			i++;
-		if (i < size && (data[i] == '\"' || data[i] == '\''))
 		{
-			res2 = ft_strchr(data + i + 1, data[i]);
+			if (i < size - 1 && data[i + 1])
+				ret[cur++] = data[i++ + 1];
+			i++;
+		}
+		else if (i < size && (data[i] == '\"' || data[i] == '\''))
+		{
+			res2 = find_quote_match(data + i, data[i]);
 			if (res2)
 			{
 				i++;
-				int sub_size = (long)res2 - (long)(data + i);
-				ft_memcpy(ret + cur, data + i, sub_size);
-				cur += sub_size;
-				i += sub_size + 1;
+				cur = cpy_quote_substr(data + i, ret, cur, (long)res2 - (long)(data + i));
+				i += (long)res2 - (long)(data + i) + 1;
 			}
 			else
 			{
