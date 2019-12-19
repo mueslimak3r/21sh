@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/19 15:25:32 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 15:30:05 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int			is_printable(char *s)
 	return (1);
 }
 
-int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
+int			interpret_input(char *buf, t_tbuff **tbuff)
 {
 	int		cursor_pos;
 	t_input	thing;
@@ -41,7 +41,7 @@ int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 		tbuff_line_insert(tbuff, buf, cursor_pos);
 		reprint_buffer(*tbuff, cursor_pos, ft_strlen(buf));
 	}
-	else if (thing.long_form == KEY_ENTER && (hd || !hd))
+	else if (thing.long_form == KEY_ENTER)
 		return (1);
 	return (0);
 }
@@ -82,7 +82,7 @@ int			readfromfd(t_tbuff **tbuff, int hd)
 				return (-1);
 			}
 		}
-		if (interpret_input(hd, buf, tbuff))
+		if (interpret_input(buf, tbuff))
 			return (1);
 	}
 	return (g_term.sigs.restart ? -2 : ret);
