@@ -6,11 +6,27 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/18 13:59:38 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 15:25:32 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
+
+int			is_printable(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (!ft_isalnum(s[i]) && !(s[i] == ' ' || s[i] == '\n' || s[i] == '\t')
+			&& !(s[i] >= '!' && s[i] <= '/') && !(s[i] >= ':' && s[i] <= '@')
+			&& !(s[i] >= '[' && s[i] <= '`') && !(s[i] >= '{' && s[i] <= '~'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 {
@@ -19,7 +35,7 @@ int			interpret_input(int hd, char *buf, t_tbuff **tbuff)
 
 	ft_memset(thing.arr_form, 0, sizeof(unsigned long));
 	ft_memcpy(thing.arr_form, buf, sizeof(unsigned long));
-	if ((handle_controls(thing.long_form, tbuff)) < 1)
+	if ((handle_controls(thing.long_form, tbuff)) < 1 && is_printable(buf))
 	{
 		cursor_pos = calc_pos();
 		tbuff_line_insert(tbuff, buf, cursor_pos);
