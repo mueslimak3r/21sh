@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 17:09:48 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/18 13:56:20 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 09:52:55 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void		redo_prompt(int hd, int print)
 	int		end;
 
 	pwd = find_env("PWD");
-	g_term.conf.prompt_size = hd ? 2 : ft_strlen(find_env("PWD")) + 1;
+	g_term.conf.prompt_size = hd ? -1 : ft_strlen(find_env("PWD")) + 1;
 	if (print || print == -1)
 	{
 		len = hd ? 2 : ft_strlen(pwd) + 1;
@@ -94,6 +94,7 @@ void		redo_prompt(int hd, int print)
 			ft_putchar((start == end - 1 && !hd) ? '>' : pwd[start]);
 			start++;
 		}
+		//ft_putstr(pwd);
 		ft_putstr("\e[0m");
 	}
 }

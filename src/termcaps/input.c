@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 20:10:40 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/19 15:26:41 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 09:52:52 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int		handle_up_down(unsigned long code, t_tbuff **buff)
 		tputs(tgetstr("cd", NULL), 0, ft_charput);
 		(*buff) = code == KEY_UP
 			? (*buff)->prev : (*buff)->next;
-		zero_cursor(g_term.conf.prompt_size > 2 ? 0 : 1);
+		zero_cursor(g_term.conf.prompt_size == -1 ? 1 : 0);
 		reprint_buffer(*buff, 0, 0);
 	}
 	return (1);
@@ -51,7 +51,7 @@ int				zero_cursor(int hd)
 	int	size;
 
 	redo_prompt(hd, 0);
-	size = g_term.conf.prompt_size;
+	size = g_term.conf.prompt_size == -1 ? 2 : g_term.conf.prompt_size;
 	g_term.conf.termsize[0] = g_window_size.ws_col;
 	g_term.conf.termsize[1] = g_window_size.ws_row;
 	g_term.conf.cursor[1] = size != 0 && g_term.conf.termsize[0] != 0
