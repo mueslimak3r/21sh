@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 17:09:48 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/20 09:52:55 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 10:01:15 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ void		redo_prompt(int hd, int print)
 			ft_putchar((start == end - 1 && !hd) ? '>' : pwd[start]);
 			start++;
 		}
-		//ft_putstr(pwd);
 		ft_putstr("\e[0m");
 	}
 }
