@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env2.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:17:44 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/17 16:24:40 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/19 15:41:38 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,8 @@ int				ft_unsetenv(char *name)
 
 int				setenv_helper(unsigned long hash, t_ht *new)
 {
-	//t_ht	*last;
 	t_ht	*tmp;
 
-	//last = NULL;
 	tmp = g_env[hash % HT_OVERHEAD];
 	while (tmp)
 	{
@@ -86,7 +84,6 @@ int				setenv_helper(unsigned long hash, t_ht *new)
 			load_envp();
 			return (1);
 		}
-		//last = tmp;
 		tmp = tmp->next;
 	}
 	return (0);

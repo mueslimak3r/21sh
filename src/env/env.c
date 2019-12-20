@@ -6,44 +6,11 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 10:53:57 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/19 15:51:04 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
-
-void			rm_quotes(char **str)
-{
-	char	*ret;
-	char	*ptr;
-	char	*tmp;
-
-	ret = NULL;
-	if (!str || !*str)
-		return ;
-	ptr = ft_strchr((*str), '"');
-	tmp = NULL;
-	while (ptr)
-	{
-		if (ft_strchr(ptr + 1, '"'))
-		{
-			tmp = ft_strndup((ptr + 1), (ft_strchr(ptr + 1, '"') - (ptr + 1)));
-			if (ret)
-				ret = ft_strjoin_free(ret, tmp, 0);
-			else
-				ret = ft_strdup(tmp);
-			free(tmp);
-			tmp = NULL;
-		}
-		if (!ft_strchr(ptr + 1, '"'))
-			ret = ft_strjoin_free(ret, ptr + 1, 0);
-		ptr = ft_strchr(ptr + 1, '"');
-	}
-	if (*str && ret)
-		free(*str);
-	if (ret)
-		*str = ret;
-}
 
 int				ft_export(char *str)
 {
@@ -52,6 +19,7 @@ int				ft_export(char *str)
 
 	if (!str)
 		return (0);
+	printf("input: |%s|\n", str);
 	split = ft_strsplit(str, '=');
 	if (!split[0] || !split[1])
 	{
@@ -60,7 +28,6 @@ int				ft_export(char *str)
 		free(split);
 		return (0);
 	}
-	rm_quotes(&split[1]);
 	ft_setenv(split[0], split[1]);
 	i = 0;
 	while (split[i])
@@ -121,12 +88,8 @@ int				init_env(void)
 		i++;
 	}
 	tmp = ft_strjoin_free(
-			"SHLVL=",
-			ft_itoa((find_env("SHLVL")
-					? ft_atoi(find_env("SHLVL"))
-					: 0) + 1),
-			1
-	);
+		"SHLVL=", ft_itoa((find_env("SHLVL")
+		? ft_atoi(find_env("SHLVL")) : 0) + 1), 1);
 	ft_export(tmp);
 	free(tmp);
 	return (1);

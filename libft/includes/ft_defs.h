@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/04 22:53:01 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 19:51:51 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 15:40:33 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@
 # include <locale.h>
 # include "libft.h"
 
-typedef struct	s_gnl_file
+typedef struct				s_gnl_file
 {
-	int			fd;
-	char		*buf;
-}				t_gnl_file;
+	int						fd;
+	char					*buf;
+}							t_gnl_file;
 
 typedef struct				s_buffer
 {

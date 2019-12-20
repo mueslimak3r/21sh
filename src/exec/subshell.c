@@ -6,11 +6,23 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 14:00:50 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 15:39:01 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftshell.h"
+
+void		free_redir(t_redir **list)
+{
+	t_redir *tmp;
+
+	while (*list)
+	{
+		tmp = *list;
+		*list = (*list)->next;
+		free(tmp);
+	}
+}
 
 static void	fd_helper(int *in, int *out)
 {
@@ -42,7 +54,7 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 		exit(0);
 	}
 	out[1] > 2 ? close(out[1]) : 0;
-	wait(&status);//waitpid(pid, &status, 0);
+	wait(&status);
 	init_term();
 	free(name);
 	(WIFSIGNALED(status)) ? ft_printf_fd(STDERR_FILENO, "\n") : 0;

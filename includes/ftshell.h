@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/18 13:56:54 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 16:22:43 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,10 +214,10 @@ void						sig_resume(int nb);
 /*
 ** SHELL
 */
-
-void		child_wait(void);
-int			child_pop(t_child **stack);
-void		child_push(t_child **stack, int pid);
+void						free_redir(t_redir **list);
+void						child_wait(void);
+int							child_pop(t_child **stack);
+void						child_push(t_child **stack, int pid);
 
 void						exec_heredoc(t_node *node, int *in, int *out);
 int							handle_redirs(t_redir *list);
@@ -270,7 +270,8 @@ int							run_dispatch(char **args, t_env *env);
 /*
 ** LEXER
 */
-
+int							quote_parser(char *data, char **ret,
+											int *i, int *cur);
 t_node						*lexer(char *input);
 int							is_operator(char *op, int pos);
 t_lexeme					*new_lex(char *data, enum e_tokentype type,

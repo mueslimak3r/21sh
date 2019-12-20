@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 03:25:37 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/19 12:36:43 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 15:38:34 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,6 @@ int		handle_redirs(t_redir *list)
 			return (0);
 	}
 	return (r);
-}
-
-void	free_redir(t_redir **list)
-{
-	t_redir *tmp;
-
-	while (*list)
-	{
-		tmp = *list;
-		*list = (*list)->next;
-		free(tmp);	
-	}
 }
 
 int		execute_command(int *in, int *out, char **args, t_redir *list)

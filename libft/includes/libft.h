@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/21 16:24:04 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/13 19:50:42 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 15:35:58 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct		s_list
 	struct s_list	*next;
 }					t_list;
 
+int					ft_isprintable(char *s);
 char				*ft_strjoin_free(char *s1, char *s2, int free_which);
 char				*ft_uitoa_base(unsigned long long nbr, int base);
 int					ft_cntdigit(long n, int base);
