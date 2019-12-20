@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_classify.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: calamber <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:15:00 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 22:15:01 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 12:53:00 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ int				is_mod(t_lexeme *lexeme)
 			lexeme->next->designation = lexeme->set == RDGREAT ? FD_A :
 				lexeme->next->designation;
 		}
-		if (!lexeme->next || (lexeme->next && !is_mod(lexeme->next)))
-		{
+		if ((!lexeme->next && lexeme->set == SEMI) ||
+			(lexeme->next && !is_mod(lexeme->next)))
 			return (1);
-		}
-		if (lexeme->set == L_REDIRECT || lexeme->set == R_REDIRECT)
+		if (lexeme->next && (lexeme->set == L_REDIRECT
+						|| lexeme->set == R_REDIRECT))
 			return (1);
 	}
 	return (0);
