@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:11:19 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/19 17:45:24 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 13:29:17 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ t_lexeme	*new_lex(char *data, enum e_tokentype type, t_lexeme **head)
 	new->pos = 0;
 	new->designation = BASE;
 	new->next = NULL;
-	if (data[0] == '$' && data[1] != '(')
+	if (data[0] == '$' && data[1] != '(' && data[1])
 	{
 		env = find_env(data + 1);
 		new->data = env ? ft_strdup(env) : NULL;
