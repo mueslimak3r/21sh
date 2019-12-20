@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 10:52:45 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/19 15:51:04 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 16:46:49 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ int				ft_export(char *str)
 
 	if (!str)
 		return (0);
-	printf("input: |%s|\n", str);
 	split = ft_strsplit(str, '=');
 	if (!split[0] || !split[1])
 	{
