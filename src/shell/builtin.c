@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 05:01:29 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 17:06:34 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 18:00:11 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,19 +45,21 @@ int		ft_cd(char *path)
 
 	ret = -1;
 	if (!(tmp = path_expansions(path)))
-		tmp = ft_strdup(find_env("HOME"));
-	if (stat(tmp, &stats) == 0 && S_ISDIR(stats.st_mode))
+		tmp = find_env("HOME") ? ft_strdup(find_env("HOME")) : NULL;
+	if (tmp && !access(tmp, X_OK) && lstat(tmp, &stats) == 0 &&
+			S_ISDIR(stats.st_mode) && (ret = 1))
 	{
 		ft_setenv("OLDPWD", find_env("PWD"));
 		chdir(tmp);
 		ft_memset(buf, 0, 256);
 		getcwd(buf, 255);
 		ft_setenv("PWD", buf);
-		ret = 1;
 	}
+	else if (!tmp)
+		ft_printf_fd(STDERR_FILENO, "-wtsh: cd: home not set\n");
 	else
-		ft_printf_fd(STDERR_FILENO,
-		"-wtsh: cd: %s: No such file or directory\n", tmp);
+		ft_printf_fd(STDERR_FILENO, "-wtsh: cd: %s: %s\n", tmp ?
+				tmp : path, strerror(errno));
 	load_envp();
 	free(tmp);
 	return (ret);
