@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/13 22:37:43 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/13 18:17:39 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 17:09:06 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,47 @@ void		tbuff_insert_helper(t_tbuff **buff, char *in, int pos, int in_size)
 	(*buff)->len = new_size;
 }
 
+static int	count_char(char *data, char c)
+{
+	int	i;
+	int ret;
+
+	i = 0;
+	ret = 0;
+	while (data && data[i])
+	{
+		if (data[i] == c)
+			ret++;
+		i++;
+	}
+	return (ret);
+}
+
+char		*convert_tabs_spaces(char *data)
+{
+	char	*ret;
+	int		a;
+	int		b;
+	int		c;
+
+	ret = ft_memalloc(ft_strlen(data) + (count_char(data, '\t') * 3) + 1);
+	a = 0;
+	b = 0;
+	while (data[a])
+	{
+		if (data[a] == '\t')
+		{
+			c = 4;
+			while (c--)
+				ret[b++] = ' ';
+			a++;
+		}
+		else
+			ret[b++] = data[a++];
+	}
+	return (ret);
+}
+
 void		tbuff_line_insert(t_tbuff **buff, char *in, int pos)
 {
 	int		in_size;
@@ -74,7 +115,7 @@ void		tbuff_line_insert(t_tbuff **buff, char *in, int pos)
 	{
 		if ((*buff)->buff_str && !*((*buff)->buff_str))
 			ft_strdel(&((*buff)->buff_str));
-		(*buff)->buff_str = ft_strdup(in);
+		(*buff)->buff_str = in;
 		(*buff)->len = in_size;
 		return ;
 	}

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/19 16:47:32 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/19 17:10:04 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,17 @@ int			interpret_input(char *buf, t_tbuff **tbuff)
 {
 	int		cursor_pos;
 	t_input	thing;
+	char	*converted_buff;
 
+	converted_buff = NULL;
 	ft_memset(thing.arr_form, 0, sizeof(unsigned long));
 	ft_memcpy(thing.arr_form, buf, sizeof(unsigned long));
 	if ((handle_controls(thing.long_form, tbuff)) < 1 && ft_isprintable(buf))
 	{
 		cursor_pos = calc_pos();
-		tbuff_line_insert(tbuff, buf, cursor_pos);
-		reprint_buffer(*tbuff, cursor_pos, ft_strlen(buf));
+		converted_buff = convert_tabs_spaces(buf);
+		tbuff_line_insert(tbuff, converted_buff, cursor_pos);
+		reprint_buffer(*tbuff, cursor_pos, ft_strlen(converted_buff));
 	}
 	else if (thing.long_form == KEY_ENTER)
 		return (1);
