@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 19:12:13 by calamber          #+#    #+#             */
-/*   Updated: 2019/11/21 21:20:10 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 10:37:19 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,7 @@ int			is_nb_before_redir(char *op)
 		while (op[i] && ft_isdigit(op[i]))
 			i++;
 		if (op[i] && (op[i] == '>' || !ft_strncmp(op + i, ">>", 2)))
-		{
-			ft_printf_fd(STDERR_FILENO, "found nb before redir\n");
 			return (1);
-		}
 	}
 	return (0);
 }

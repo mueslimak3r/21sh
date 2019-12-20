@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/13 22:37:43 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/19 17:09:06 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 10:25:43 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void		tbuff_line_insert(t_tbuff **buff, char *in, int pos)
 	{
 		if ((*buff)->buff_str && !*((*buff)->buff_str))
 			ft_strdel(&((*buff)->buff_str));
-		(*buff)->buff_str = in;
+		(*buff)->buff_str = ft_strdup(in);
 		(*buff)->len = in_size;
 		return ;
 	}

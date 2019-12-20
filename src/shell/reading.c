@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 19:32:39 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/20 10:01:19 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 10:26:42 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int			interpret_input(char *buf, t_tbuff **tbuff)
 		converted_buff = convert_tabs_spaces(buf);
 		tbuff_line_insert(tbuff, converted_buff, cursor_pos);
 		reprint_buffer(*tbuff, cursor_pos, ft_strlen(converted_buff));
+		free(converted_buff);
 	}
 	else if (thing.long_form == KEY_ENTER)
 		return (1);
