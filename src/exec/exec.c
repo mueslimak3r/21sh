@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 10:49:27 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/11 14:36:56 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 15:10:32 by calamber         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ int		readfd(int fd1, int fd2, int c2)
 {
 	char	buf[42];
 	int		bytes;
-	int		number = 0;
 
 	if (fd2 == -1 || fd1 == -1)
 		ft_printf_fd(STDERR_FILENO, "%s\n", strerror(errno));
@@ -85,7 +84,6 @@ int		readfd(int fd1, int fd2, int c2)
 	while ((bytes = read(fd1, buf, 41)) > 0)
 	{
 		buf[bytes] = 0;
-		number += bytes;
 		write(fd2, buf, bytes);
 		ft_memset(buf, 0, 42);
 	}
