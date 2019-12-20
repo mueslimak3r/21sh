@@ -38,12 +38,15 @@ void		init_term(void)
 	tcgetattr(STDERR_FILENO, &g_term.old_term);
 	tcgetattr(STDERR_FILENO, &g_term.new_term);
 	g_term.new_term.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.new_term);
+	//	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.new_term);
 	if (!(tgetstr("vi", &temp)))
 	{
-		ft_putstr_fd("error: host terminal attr invalid\n", STDERR_FILENO);
+	  ft_putstr_fd("here she blows:\n", STDERR_FILENO);
+	  ft_putstr_fd(temp, STDERR_FILENO);
+		ft_putstr_fd("\nerror: host terminal attr invalid\n", STDERR_FILENO);
 		exit(0);
 	}
+       	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.new_term);
 	ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 	zero_cursor(0);
 }

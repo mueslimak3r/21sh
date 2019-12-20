@@ -77,13 +77,15 @@ int		readfd(int fd1, int fd2, int c2)
 {
 	char	buf[42];
 	int		bytes;
+	int		number = 0;
 
-	if (fd2 == -1)
+	if (fd2 == -1 || fd1 == -1)
 		ft_printf_fd(STDERR_FILENO, "%s\n", strerror(errno));
 	ft_memset(buf, 0, 42);
 	while ((bytes = read(fd1, buf, 41)) > 0)
 	{
 		buf[bytes] = 0;
+		number += bytes;
 		write(fd2, buf, bytes);
 		ft_memset(buf, 0, 42);
 	}

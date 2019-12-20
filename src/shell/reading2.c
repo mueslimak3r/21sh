@@ -80,7 +80,8 @@ void		redo_prompt(int hd, int print)
 	int		end;
 
 	pwd = find_env("PWD");
-	g_term.conf.prompt_size = hd ? -1 : ft_strlen(find_env("PWD")) + 1;
+	g_term.conf.prompt_size = hd ? -1
+		: (int)ft_strlen(find_env("PWD")) + 1;
 	if (print || print == -1)
 	{
 		len = hd ? 2 : ft_strlen(pwd) + 1;

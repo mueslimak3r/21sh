@@ -76,13 +76,9 @@ char		*lexer_data_assist(char *data, int *op, int *amt)
 
 int			lex_assist(char **input, int *op, t_lexeme **ref)
 {
-	int		i;
-	int		q;
 	int		amt;
 	char	*new_lex_data;
 
-	i = 0;
-	q = 0;
 	amt = 0;
 	while (**input && ft_isspace(**input))
 		(*input)++;
