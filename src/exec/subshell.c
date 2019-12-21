@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 11:38:47 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/20 16:37:32 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 17:22:39 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,9 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 	name = NULL;
 	args[0] = find_alias(args[0]);
 	out[0] > 2 ? close(out[0]) : 0;
-	write(STDERR_FILENO, "test\n", 5);
 	if (!check_path(&name, args, g_term.env.envp))
 		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
 	reset_term();
-	write(STDERR_FILENO, "test\n", 5);
 	if ((pid = fork()) == 0)
 	{
 		set_sighandle_child();
@@ -55,7 +53,6 @@ int			subshell(int *in, int *out, char **args, t_redir *list)
 		execve(name, args, g_term.env.envp);
 		exit(0);
 	}
-	write(STDERR_FILENO, "test\n", 5);
 	out[1] > 2 ? close(out[1]) : 0;
 	wait(&status);
 	init_term();
