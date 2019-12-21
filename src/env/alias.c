@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 14:23:18 by alkozma           #+#    #+#             */
-/*   Updated: 2019/10/25 02:46:00 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 15:59:13 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ int		insert_node(t_ht *new, unsigned long hash, char **split)
 			free(tmp->content);
 			tmp->content = ft_strdup(split[1]);
 			tmp->content_name = ft_strdup(split[0]);
+			free(new->content);
+			free(new->content_name);
+			free(new);
 			return (1);
 		}
 		if (!tmp->next)
@@ -89,10 +92,10 @@ int		ft_alias(char *str)
 	new = malloc(sizeof(t_ht));
 	new->content_size = hash;
 	new->next = NULL;
-	new->content = ft_strdup(split[1]);
 	new->content_name = ft_strdup(split[0]);
+	new->content = ft_strdup(split[1]);
 	if (insert_node(new, hash, split))
-		return (1);
+		return (free_arr(split));
 	i = 0;
 	while (split[i])
 	{

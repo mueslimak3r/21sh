@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 22:14:35 by calamber          #+#    #+#             */
-/*   Updated: 2019/12/20 12:53:35 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 15:59:04 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void			recurse(t_node *head, t_stats *stats)
 	}
 }
 
-static void		free_arr(char **arr)
+int				free_arr(char **arr)
 {
 	int	i;
 
@@ -75,6 +75,7 @@ static void		free_arr(char **arr)
 		free(arr[i++]);
 	free(arr);
 	arr = NULL;
+	return (1);
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/21 21:45:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/19 17:08:36 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 15:57:27 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,4 +341,5 @@ int							termcap_reset_cursor(int pos, int len);
 void						add_redir(int src, int dst, t_redir **list);
 void						redo_prompt(int hd, int print);
 char						*convert_tabs_spaces(char *data);
+int							free_arr(char **arr);
 #endif

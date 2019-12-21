@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/04 00:36:13 by alkozma           #+#    #+#             */
-/*   Updated: 2019/11/21 22:09:33 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 15:40:14 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ t_node	*parser(t_lexeme *lexemes)
 		new_node(classification, lexemes, head, inv);
 		if (lexemes->set == SEMI)
 			head = new_node(EXPR, NULL, head, inv);
+		lexemes && lexemes->data ? ft_setenv("_", lexemes->data) : 0;
 		lexemes = lexemes->next;
 	}
 	while (head->parent)

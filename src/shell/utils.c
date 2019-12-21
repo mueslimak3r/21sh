@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/21 10:24:04 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/20 15:12:04 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 15:59:27 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void		init_term(void)
 		ft_putstr_fd(temp, STDERR_FILENO);
 		exit(0);
 	}
-    tcsetattr(STDERR_FILENO, TCSANOW, &g_term.new_term);
+	tcsetattr(STDERR_FILENO, TCSANOW, &g_term.new_term);
 	ioctl(STDERR_FILENO, TIOCGWINSZ, &g_window_size);
 	zero_cursor(0);
 }
