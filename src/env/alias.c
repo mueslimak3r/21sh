@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 14:23:18 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/20 15:59:13 by alkozma          ###   ########.fr       */
+/*   Updated: 2019/12/20 16:07:49 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,5 +104,29 @@ int		ft_alias(char *str)
 	}
 	free(split);
 	g_alias[hash % HT_OVERHEAD] = new;
+	return (1);
+}
+
+int		print_alias(void)
+{
+	int		i;
+	t_ht	*tmp;
+
+	tmp = NULL;
+	i = 0;
+	while (i < HT_OVERHEAD)
+	{
+		if (g_alias[i])
+		{
+			tmp = g_alias[i];
+			while (tmp)
+			{
+				ft_printf_fd(STDERR_FILENO, "alias %s=%s\n",
+						tmp->content_name, tmp->content);
+				tmp = tmp->next;
+			}
+		}
+		i++;
+	}
 	return (1);
 }

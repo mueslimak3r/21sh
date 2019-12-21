@@ -6,7 +6,7 @@
 /*   By: calamber <calamber@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 13:23:57 by alkozma           #+#    #+#             */
-/*   Updated: 2019/12/19 15:51:33 by calamber         ###   ########.fr       */
+/*   Updated: 2019/12/20 16:11:48 by alkozma          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int		read_rcfile(void)
 
 	fd = open(".ftshrc", O_RDONLY);
 	line = NULL;
-	while (get_next_line(fd, &line) > 0)
+	while (fd > 0 && get_next_line(fd, &line) > 0)
 	{
 		if (line[0] != '#')
 		{
@@ -37,6 +37,6 @@ int		read_rcfile(void)
 		ft_memdel((void**)&line);
 	}
 	free(line);
-	close(fd);
+	fd > 0 ? close(fd) : 0;
 	return (1);
 }
