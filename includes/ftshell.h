@@ -146,7 +146,6 @@ struct						s_tbuff
 struct						s_shellconf
 {
 	int						prompt_size;
-	int						g_routes[5000];
 	int						termsize[2];
 	int						cursor[2];
 	int						curlines;
@@ -184,6 +183,13 @@ struct						s_child
 {
 	int						pid;
 	struct s_child			*next;
+};
+
+struct						s_st
+{
+	struct s_st				*children[128];
+	uint64_t				access[2];
+	char					*str;
 };
 
 /*
@@ -343,4 +349,7 @@ void						redo_prompt(int hd, int print);
 char						*convert_tabs_spaces(char *data);
 int							free_arr(char **arr);
 int							print_alias(void);
+void						st_clean(struct s_st *tree);
+char						*st_match(char *sub, struct s_st *tree);
+void						st_insert_str(char *str, struct s_st **tree);
 #endif

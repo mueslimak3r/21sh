@@ -101,6 +101,24 @@ int				ft_env(char **envp)
 	return (0);
 }
 
+void			add_dir_to_st(char *path, struct s_st **tree)
+{
+	DIR		*pdir;
+	struct dirent	*pdirent;
+
+	pdir = opendir(path);
+	if (!pdir)
+		return ;
+	while ((pdirent = readdir(pdir)) != 0)
+	{
+		if (ft_strcmp(path, "/") == 0)
+			st_insert_str(ft_strjoin(path, pdirent->d_name), tree);
+		else
+			st_insert_str(ft_strjoin_free(ft_strjoin(path, "/"), pdirent->d_name, 0), tree);
+	}
+	closedir(pdir);
+}
+
 int				run_builtins(char **args, t_env *env)
 {
 	if (ft_strcmp(args[0], "exit") == 0)
@@ -120,5 +138,15 @@ int				run_builtins(char **args, t_env *env)
 		return (ft_cd(args[1]));
 	else if (ft_strcmp(args[0], "alias") == 0 && args[0] && !args[1])
 		return (print_alias());
+	else if (ft_strcmp(args[0], "match") == 0 && args[1])
+	{
+		struct s_st	*cont;
+
+		cont = NULL;
+		add_dir_to_st(ft_strsub(args[1], 0, last_slash(args[1]) ? last_slash(args[1]) : 1), &cont);
+		ft_printf_fd(STDERR_FILENO, "\n[%s]\n", st_match(args[1], cont));
+		st_clean(cont);
+		return (1);
+	}
 	return (2);
 }
