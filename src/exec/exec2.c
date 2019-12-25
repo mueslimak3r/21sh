@@ -84,19 +84,18 @@ int		execute_command(int *in, int *out, char **args, t_redir *list)
 
 	name = NULL;
 	args[0] = find_alias(args[0]);
-	out[0] > 2 ? close(out[0]) : 0;
+	//out[0] > 2 ? close(out[0]) : 0;
 	if (!check_path(&name, args, g_term.env.envp))
 		return (ft_printf_fd(2, "-wtsh: %s: command not found\n", args[0]));
 	if ((pid = fork()) == 0)
 	{
-		
 		set_sighandle_child();
 		fd_helper(in, out);
 		if (!handle_redirs(list))
 			exit(1);
 		execve(name, args, g_term.env.envp);
 	}
-	child_push(&g_term.children, pid);
+	child_push(&g_term.children, (int)pid);
 	out[1] > 2 ? close(out[1]) : 0;
 	in[0] > 2 ? close(in[0]) : 0;
 	set_sighandle();

@@ -83,6 +83,26 @@ int				free_arr(char **arr)
 ** Executes a given node with children.
 */
 
+void			readfd_subproc(t_node *node, int *in, int *out)
+{
+	pid_t	pid;
+
+	if ((pid = fork()) == 0)
+	{
+		if (node->children->set == FD_R)
+		{
+			readfd(open(node->children->lexeme->data, O_RDONLY), out[1], 0);
+			out[1] > 2 ? close(out[1]) : 0;
+		}
+		else
+			exec_handle_redir(node, in, out);
+		exit(0);
+	}
+	child_push(&g_term.children, (int)pid);
+	out[1] > 2 ? close(out[1]) : 0;
+	in[0] > 2 ? close(in[0]) : 0;
+}
+
 void			exec_node_parse(t_node *node, int *in, int *out)
 {
 	char	**disp;
@@ -93,13 +113,8 @@ void			exec_node_parse(t_node *node, int *in, int *out)
 		return ;
 	if (node->children->set >= FD_R && node->children->set <= FD_A)
 	{
-		if (node->children->set == FD_R)
-		{
-			readfd(open(node->children->lexeme->data, O_RDONLY), out[1], 0);
-			out[1] > 2 ? close(out[1]) : 0;
-		}
-		else
-			exec_handle_redir(node, in, out);
+		ft_printf_fd(STDERR_FILENO, "redir. in0: %d in1: %d\n", in[0], in[1]);
+		readfd_subproc(node, in, out);
 		return ;
 	}
 	disp = concat_node(node, &redirects);
