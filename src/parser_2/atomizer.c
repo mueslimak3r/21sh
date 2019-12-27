@@ -73,6 +73,95 @@ char	*g_op[] =
 	"\"", "\0", "\"", NULL
 };
 
+char	*g_atom_types[] =
+{
+	"TYPE_WORD",
+	"ASSIGNMENT_WORD",
+	"COMMAND_NAME",
+	"NEWLINE_TOK",
+	"IO_NUMBER",
+	"AND_IF",
+	"OR_IF",
+	"DSEMI",
+	"DLESS",
+	"DGREAT",
+	"LESSAND",
+	"GREATAND",
+	"LESSGREAT",
+	"DLESSDASH",
+	"CLOBBER",
+	"WORD_HDOC",
+	"IF",
+	"THEN",
+	"ELSE",
+	"ELIF",
+	"FI",
+	"DO",
+	"DONE",
+	"CASE",
+	"ESAC",
+	"WHILE",
+	"UNTIL",
+	"FOR",
+	"IN_TOK",
+	"LEFT_BRACE",
+	"RIGHT_BRACE",
+	"BANG",
+	"AND_TOK",
+	"DOLLAR",
+	"DOLL_BRACE",
+	"DOLL_BRACK",
+	"DOLL_PAREN",
+	"DOLL_DBL_PAREN",
+	"LEFT_BRACK",
+	"DBL_LEFT_BRACK",
+	"LEFT_PAREN",
+	"DBL_LEFT_PAREN",
+	"RIGHT_BRACK",
+	"DBL_RIGHT_BRACK",
+	"RIGHT_PAREN",
+	"DBL_RIGHT_PAREN",
+	"SEMICOLON",
+	"TILDE",
+	"ADDADD",
+	"SUBSUB",
+	"STAR",
+	"POWER",
+	"EQUAL",
+	"NEQUAL",
+	"LEQUAL",
+	"GEQUAL",
+	"ADD_ASSIGN",
+	"SUB_ASSIGN",
+	"MUL_ASSIGN",
+	"DIV_ASSIGN",
+	"MOD_ASSIGN",
+	"AND_ASSIGN",
+	"OR_ASSIGN",
+	"XOR_ASSIGN",
+	"REDIR_OUT",
+	"REDIR_IN",
+	"CMD_IN",
+	"CMD_OUT",
+	"REDIR_PIPE",
+	"PLUS",
+	"MINUS",
+	"QUEST",
+	"ASSIGN",
+	"PERC",
+	"HASH",
+	"CARET",
+	"AT",
+	"SLASH",
+	"DBL_SLASH",
+	"COLON",
+	"TICK",
+	"QUOTE",
+	"DBL_QUOTE",
+	"EOF",
+	"BACKSLASH"
+};
+
 char	*add_char(char *str, char c, int to_free)
 {
 	char	*new;
@@ -114,7 +203,7 @@ int		is_reserved_word(t_atom *atom)
 		return (atom->type);
 	while (g_atoms[i])
 		if (!ft_strcmp(atom->str, g_atoms[i++]))
-			return (i - 1);
+			return (i);
 	return (atom->type);
 }
 
@@ -170,7 +259,7 @@ void	print_atoms(t_atom *list)
 	tmp = list;
 	while (tmp)
 	{
-		ft_printf_fd(STDERR_FILENO, "|%s|    %d\n", tmp->str ? tmp->str : "NULL", tmp->type);
+		ft_printf_fd(STDERR_FILENO, "|%s| %s\n", tmp->str ? tmp->str : "NULL", g_atom_types[tmp->type]);
 		tmp = tmp->next;
 	}
 	ft_printf_fd(STDERR_FILENO, "\n");
