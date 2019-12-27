@@ -33,7 +33,7 @@ char	*g_atoms[] =
 	"+", "-", "?", "=", "%",
 	"#", "^", ",", "@", "/",
 	"//", ":", "`", "\'",
-	"\"", "\0", "\"", NULL
+	"\"", "\0", "\\", NULL
 };
 
 char	*g_reserved_words[] =
@@ -70,7 +70,7 @@ char	*g_op[] =
 	"+", "-", "?", "=", "%",
 	"#", "^", ",", "@", "/",
 	"//", ":", "`", "\'",
-	"\"", "\0", "\"", NULL
+	"\"", "\0", "\\", NULL
 };
 
 char	*g_atom_types[] =
@@ -151,6 +151,7 @@ char	*g_atom_types[] =
 	"PERC",
 	"HASH",
 	"CARET",
+	"COMMA",
 	"AT",
 	"SLASH",
 	"DBL_SLASH",
@@ -279,15 +280,80 @@ int		can_delimit(char *str, int pos)
 	return (-1);
 }
 
+int		is_quote(char c)
+{
+	return (c == '\'' || c == '\"' || c == '(' || c == ')' ||
+		c == '{' || c == '}' || c == '[' || c == ']' ? 1 : 0);
+}
+
+int		is_matching_quote(char a, char b)
+{
+	if (a == '\'' && b == '\'')
+		return (1);
+	if (a == '\"' && b == '\"')
+		return (1);
+	if (a == '(' && b == ')')
+		return (1);
+	if (a == '{' && b == '}')
+		return (1);
+	if (a == '[' && b == ']')
+		return (1);
+	return (0);
+}
+
+// note: i was going to do this in a stack due to balancing nested quotes,
+//		 but nested quotes aren't actually something that a shell has to
+//		 deal with.
+//					--alkozma
+
+int		quotes_balanced(char *str)
+{
+	t_list	*tmp;
+	t_list	*stack;
+	int		i;
+
+	tmp = NULL;
+	stack = NULL;
+	i = 0;
+	while (str[i])
+	{
+		if (is_quote(str[i]))
+		{
+			if (!stack)
+				stack = ft_lstnew(str + i, 1);
+			else if (stack && is_matching_quote(((char*)stack->content)[0], str[i]))
+			{
+				tmp = stack->next;
+				free(stack->content);
+				free(stack);
+				stack = tmp;
+				if (!stack)
+					ft_printf_fd(STDERR_FILENO, "here\n");
+			}
+		}
+		i++;
+	}
+	stack ? free(stack->content) : 0;
+	stack ? free(stack) : 0;
+	return (stack ? 0 : 1);
+}
+
 t_atom	*atomizer(char *str)
 {
 	t_atom	*tmp;
 	t_atom	*head;
 	int		i;
 	int		del;
+	int		quoting;
 
 	i = 0;
 	del = 0;
+	quoting = 0;
+	if (!quotes_balanced(str))
+	{
+		// FIXME: NEEDS TO SPAWN HEREDOCS
+		ft_printf_fd(STDERR_FILENO, "-wtsh: bad quotes (replace me with heredocs)\n");
+	}
 	if (!str || !*str)
 		return (NULL);
 	tmp = new_atom();
@@ -295,14 +361,20 @@ t_atom	*atomizer(char *str)
 	head = tmp;
 	while (str[i])
 	{
+		
 		del = can_delimit(str, i);
-		if (ft_isspace(str[i]))
+		if ((str[i] == '\'' || str[i] == '\"') && (quoting == 0 || quoting == str[i]))
+		{
+			quoting = quoting ? 0 : str[i];
+			i++;
+		}
+		else if (ft_isspace(str[i]) && !quoting)
 		{
 			tmp = tmp->str ? delimit(tmp) : tmp;
 			while (ft_isspace(str[i]))
 				i++;
 		}	
-		else if (tmp->type == TYPE_WORD && del < 0)
+		else if ((tmp->type == TYPE_WORD && del < 0) || quoting)
 		{
 			classifier(&tmp, str[i], 1);
 			tmp->type = TYPE_WORD;
