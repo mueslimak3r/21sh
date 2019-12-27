@@ -25,6 +25,7 @@
 # include <fcntl.h>
 # include <sys/select.h>
 # include "keycode_linux.h"
+# include "parser.h"
 
 # define LEAF_SIZE 5
 # define PROMPT "@>"
@@ -190,6 +191,13 @@ struct						s_st
 	struct s_st				*children[128];
 	uint64_t				access[2];
 	char					*str;
+};
+
+struct						s_ast_node
+{
+	struct s_ast_node		*children[16];
+	enum e_ast_grammar		type;
+	struct s_ast_node		*parent;
 };
 
 /*

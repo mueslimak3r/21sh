@@ -16,12 +16,12 @@ void		shell_loop(void)
 {
 	int			quit;
 	t_stats		stats;
-	t_node		*tree;
+	//t_node		*tree;
 	int			res;
 
 	quit = 0;
 	res = 0;
-	tree = NULL;
+	//tree = NULL;
 	read_rcfile();
 	while (!quit)
 	{
@@ -30,15 +30,17 @@ void		shell_loop(void)
 			break ;
 		if (res == 0)
 			continue ;
-		if (!(tree = lexer(g_term.buff->buff_str)))
+		/*if (!(tree = lexer(g_term.buff->buff_str)))
+			continue ;*/
+		if (!(atomizer(g_term.buff->buff_str)))
 			continue ;
 		reset_term();
-		recurse(tree, &stats);
+		//recurse(tree, &stats);
 		if (g_term.children)
 			child_wait();
 		init_term();
 		empty_buffer(stats.f_d);
-		clean_tree(tree);
+		//clean_tree(tree);
 	}
 	tbuff_free(&g_term.buff);
 }
