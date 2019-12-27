@@ -36,6 +36,15 @@ char	*g_atoms[] =
 	"\"", "\0", "\"", NULL
 };
 
+char	*g_reserved_words[] =
+{
+	"if", "then", "else",
+	"elif", "fi", "do",
+	"done", "case", "esac",
+	"while", "until", "for",
+	"in", NULL
+};
+
 char	*g_op[] =
 {
 	"\n",
@@ -96,13 +105,36 @@ t_atom	*new_atom(void)
 	return (new);
 }
 
-int		classifier(t_atom *atom, char c)
+int		is_reserved_word(t_atom *atom)
+{
+	int	i;
+
+	i = 0;
+	if (!atom || !atom->str)
+		return (atom->type);
+	while (g_atoms[i])
+		if (!ft_strcmp(atom->str, g_atoms[i++]))
+			return (i - 1);
+	return (atom->type);
+}
+
+t_atom	*delimit(t_atom *atom)
+{
+	if (!atom)
+		return (atom);
+	atom->type = is_reserved_word(atom);
+	return (atom->next = new_atom());
+}
+
+int		classifier(t_atom **ref, char c, int adv)
 {
 	int		i;
 	char	*new;
+	t_atom	*atom;
 
+	atom = *ref;
 	i = 0;
-	new = add_char(atom->str, c, 0);
+	new = adv ? add_char(atom->str, c, 0) : ft_strdup(atom->str);
 	while (g_atoms[i])
 	{
 		if (!ft_strcmp(new, g_atoms[i]))
@@ -110,13 +142,24 @@ int		classifier(t_atom *atom, char c)
 			atom->type = i;
 			atom->str ? free(atom->str) : 0;
 			atom->str = new;
+			*ref = atom;
 			return (i);
 		}
 		i++;
 	}
-	atom->str ? free(atom->str) : 0;
-	atom->str = new;
-	atom->type = 0;
+	if (atom->type > 0 && !g_atoms[i])
+	{
+		*ref = delimit(*ref);
+		(*ref)->str = add_char(NULL, c, 0);
+		(*ref)->type = classifier(ref, 0, 0);
+		return ((*ref)->type);
+	}
+	else
+	{
+		atom->str ? free(atom->str) : 0;
+		atom->str = new;
+		atom->type = 0;
+	}
 	return (TYPE_WORD);
 }
 
@@ -127,7 +170,7 @@ void	print_atoms(t_atom *list)
 	tmp = list;
 	while (tmp)
 	{
-		ft_printf_fd(STDERR_FILENO, "%s    %d\n", tmp->str ? tmp->str : "NULL", tmp->type);
+		ft_printf_fd(STDERR_FILENO, "|%s|    %d\n", tmp->str ? tmp->str : "NULL", tmp->type);
 		tmp = tmp->next;
 	}
 	ft_printf_fd(STDERR_FILENO, "\n");
@@ -164,41 +207,34 @@ t_atom	*atomizer(char *str)
 	while (str[i])
 	{
 		del = can_delimit(str, i);
-		if (tmp->type == TYPE_WORD && del < 0)
+		if (ft_isspace(str[i]))
 		{
-			classifier(tmp, str[i]);
+			tmp = tmp->str ? delimit(tmp) : tmp;
+			while (ft_isspace(str[i]))
+				i++;
+		}	
+		else if (tmp->type == TYPE_WORD && del < 0)
+		{
+			classifier(&tmp, str[i], 1);
 			tmp->type = TYPE_WORD;
 			i++;
 		}
 		else if (del >= 0)
 		{
 			if (tmp->type == TYPE_WORD)
-			{
-				tmp->next = new_atom();
-				tmp = tmp->next;
-			}
-			classifier(tmp, str[i]);
-			ft_printf_fd(STDERR_FILENO, "del %s\n", tmp->str);
+				tmp = tmp->str ? delimit(tmp) : tmp;
+			classifier(&tmp, str[i], 1);
 			i++;
-		}
-		else if (ft_isspace(str[i]))
-		{
-			tmp->next = new_atom();
-			tmp = tmp->next;
-			while (ft_isspace(str[i]))
-				i++;
 		}
 		else if (can_delimit(str, i) < 0 && tmp->type > TYPE_WORD)
 		{
-			tmp->next = new_atom();
-			tmp = tmp->next;
-			classifier(tmp, str[i]);
+			tmp = tmp->str ? delimit(tmp) : tmp;
+			classifier(&tmp, str[i], 1);
 			i++;
 		}
-		else if (classifier(tmp, str[i]) > TYPE_WORD || can_delimit(str, i + 1) >= 0)
+		else if (classifier(&tmp, str[i], 1) > TYPE_WORD || can_delimit(str, i + 1) >= 0)
 		{
-			tmp->next = new_atom();
-			tmp = tmp->next;
+			tmp = tmp->str ? delimit(tmp) : tmp;
 			if (!ft_isspace(str[i]))
 				i++;
 			else
@@ -208,6 +244,7 @@ t_atom	*atomizer(char *str)
 		else
 			i++;
 	}
+	tmp->str ? delimit(tmp) : 0;
 	print_atoms(head);
 	return (head);
 }
