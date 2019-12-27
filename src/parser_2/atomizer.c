@@ -293,24 +293,20 @@ int		is_matching_quote(char a, char b)
 	if (a == '\"' && b == '\"')
 		return (1);
 	if (a == '(' && b == ')')
-		return (1);
+		return (2);
 	if (a == '{' && b == '}')
-		return (1);
+		return (2);
 	if (a == '[' && b == ']')
-		return (1);
+		return (2);
 	return (0);
 }
-
-// note: i was going to do this in a stack due to balancing nested quotes,
-//		 but nested quotes aren't actually something that a shell has to
-//		 deal with.
-//					--alkozma
 
 int		quotes_balanced(char *str)
 {
 	t_list	*tmp;
 	t_list	*stack;
 	int		i;
+	int		res;
 
 	tmp = NULL;
 	stack = NULL;
@@ -319,9 +315,10 @@ int		quotes_balanced(char *str)
 	{
 		if (is_quote(str[i]))
 		{
+			res = 0;
 			if (!stack)
 				stack = ft_lstnew(str + i, 1);
-			else if (stack && is_matching_quote(((char*)stack->content)[0], str[i]))
+			else if (stack && (res = is_matching_quote(((char*)stack->content)[0], str[i])) == 1)
 			{
 				tmp = stack->next;
 				free(stack->content);
@@ -329,6 +326,30 @@ int		quotes_balanced(char *str)
 				stack = tmp;
 				if (!stack)
 					ft_printf_fd(STDERR_FILENO, "here\n");
+			}
+			else if (res == 2)
+			{
+				if (str[i] == '(' || str[i] == '[' || str[i] == '{')
+				{
+					tmp = ft_lstnew(str + i, 1);
+					tmp->next = stack;
+					stack = tmp;
+				}
+				else if (str[i] == ')' || str[i] == ']' || str[i] == '}')
+				{
+					tmp = stack->next;
+					free(stack->content);
+					free(stack);
+					stack = tmp;
+					if (!stack)
+						ft_printf_fd(STDERR_FILENO, "done\n");
+				}
+			}
+			else if (str[i] != '\'' && str[i] != '\"')
+			{
+				tmp = ft_lstnew(str + i, 1);
+				tmp->next = stack;
+				stack = tmp;
 			}
 		}
 		i++;

@@ -16,6 +16,11 @@
 ** #define LEX_DEBUG
 */
 
+/*
+**	print_lex
+**	a debug printout function to show lexemes
+*/
+
 void		print_lex(t_lexeme *head)
 {
 	ft_printf_fd(STDERR_FILENO, "LEXEMES: ");
@@ -27,6 +32,11 @@ void		print_lex(t_lexeme *head)
 	}
 	ft_printf_fd(STDERR_FILENO, "\n");
 }
+
+/*
+** lexer_data_assist2
+** handles backslash escaping and quoting
+*/
 
 int			lexer_data_assist2(char *data, char **ret, int *i, int *cur)
 {
@@ -48,6 +58,11 @@ int			lexer_data_assist2(char *data, char **ret, int *i, int *cur)
 		(*ret)[(*cur)++] = data[(*i)++];
 	return (1);
 }
+
+/*
+** lexer_data_assist
+** handles operator identification, passes to lexer_data_assist2
+*/
 
 char		*lexer_data_assist(char *data, int *op, int *amt)
 {
@@ -74,6 +89,11 @@ char		*lexer_data_assist(char *data, int *op, int *amt)
 	return (ret);
 }
 
+/*
+** lex_assist
+** main string iterator, passes to lexer_data_assist
+*/
+
 int			lex_assist(char **input, int *op, t_lexeme **ref)
 {
 	int		amt;
@@ -95,6 +115,13 @@ int			lex_assist(char **input, int *op, t_lexeme **ref)
 		*input = add_lex_op(ref, *input, *op);
 	return (1);
 }
+
+/*
+** lexer
+** main wrapper function for the lexer
+** takes a char* as input, returns
+** t_node* as a linked list of tokens
+*/
 
 t_node		*lexer(char *input)
 {
