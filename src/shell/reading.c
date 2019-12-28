@@ -42,7 +42,7 @@ void		handle_resize(t_tbuff *buff)
 	if (g_term.conf.termsize[0] != g_window_size.ws_col ||
 		g_term.conf.termsize[1] != g_window_size.ws_row)
 	{
-		zero_cursor(g_term.conf.prompt_size == -1 ? 0 : 1);
+		zero_cursor(g_term.conf.prompt_size == -1 ? 1 : 0);
 		move_cursor(pos, 0, buff, -1);
 	}
 }
