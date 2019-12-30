@@ -431,7 +431,7 @@ struct					s_wordlist
 
 struct					s_in
 {
-	t_atom				*in;
+	t_atom				*word;
 };
 
 struct					s_name

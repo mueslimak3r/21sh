@@ -10,15 +10,169 @@ t_atom				*pop_atom(t_atom **atoms)
 	return (ret);
 }
 
+/*
+** please send help
+**            --alkozma
+*/
+
+t_case_item_ns		*make_case_item_ns(t_atom **atoms)
+{
+	t_case_item_ns	*ret;
+	t_pattern	*pat;
+
+	ret = NULL;
+	if (!atoms || !*atoms || (*atoms)->type != LPAREN ||
+		!(pat = make_pattern(atoms)))
+		return (NULL);
+	ret->lparen = (*atoms)->type == LPAREN ? pop_atom(atoms) : NULL;
+	ret->pattern = pat;
+	ret->rparen = pop_atom(atoms);
+	ret->compound_list = make_compound_list(atoms);
+	ret->linebreak = make_linebreak(atoms);
+	return (ret);
+}
+
+t_case_list		*make_case_list(t_atom **atoms)
+{
+	t_case_list_ns	*ret;
+	t_case_item	*item;
+	t_case_list	*list;
+
+	ret = NULL;
+	if (!atoms || !*atoms || (!(item = make_case_item(atoms)) &&
+		!(list = make_case_list(atoms))))
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->case_list = list;
+	ret->case_item = item;
+	return (ret);
+}
+
+t_case_list_ns		*make_case_list_ns(t_atom **atoms)
+{
+	t_case_list_ns	*ret;
+	t_case_item_ns	*item;
+	t_case_list	*list;
+
+	ret = NULL;
+	if (!atoms || !*atoms || (!(list = make_case_list(atoms)) &&
+		!(item = make_case_item_ns(atoms))))
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->case_list = list;
+	ret->case_item_ns = item;
+	return (ret);
+}
+
+t_case_clause		*make_case_clause(t_atom **atoms)
+{
+	t_case_clause	*ret;
+
+	ret = NULL;
+	if (!atoms || !*atoms || (*atoms)->type != CASE)
+		return (NULL);
+	ret->case_word = pop_atom(atoms);
+	ret->word = pop_atom(atoms);
+	ret->linebreak = make_linebreak(atoms);
+	ret->in = make_in(atoms);
+	ret->linebreak2 = make_linebreak(atoms);
+	if (!(ret->case_list = make_case_list(atoms)))
+		ret->case_list_ns = make_case_list_ns(atoms)
+	else
+		ret->case_list_ns = NULL;
+	ret->esac = pop_atom(atoms);
+	return (ret);
+}
+
+t_wordlist		*make_wordlist(t_atom **atoms)
+{
+	t_wordlist	*ret;
+	t_word		*word;
+
+	ret = NULL;
+	if (!atoms || !*atoms || !(word = make_word(atoms)))
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->word = word;
+	ret->list = make_wordlist(atoms);
+	return (ret);
+}
+
+t_in			*make_in(t_atoms **atoms)
+{
+	t_in	*ret;
+
+	ret = NULL;
+	if (!atoms || !*atoms)
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->word = pop_atom(atoms);
+	return (ret);
+}
+
+t_name			*make_name(t_atoms **atoms)
+{
+	t_name	*ret;
+	int	i;
+
+	ret = NULL;
+	i = 0;
+	if (!atoms || !*atoms || !(*atoms)->str ||
+		!ft_isalpha((*atoms)->str[0]))
+		return (NULL);
+	while ((*atoms)->str[i])
+	{
+		if (!ft_isnumber((*atoms)->str[i]) &&
+			ft_isnumber((*atoms)->str[i]) &&
+			(*atoms)->str[i] != '_')
+			return (NULL);
+		i++;
+	}
+	ret = malloc(sizeof(*ret));
+	ret->word = pop_atom(atoms);
+}
+
+t_for_clause		*make_for_clause(t_atoms **atoms)
+{
+	t_for_clause	*ret;
+
+	ret = NULL;
+	if (!atoms || !*atoms || (*atoms)->type != FOR)
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->for_word = pop_atom(atoms);
+	ret->name = make_name(atoms);
+	ret->linebreak = make_linebreak(atoms);
+	ret->in = make_in(atoms);
+	ret->wordlist = make_wordlist(atoms);
+	ret->sequential_sep = make_sequential_sep(atoms);
+	ret->do_group = make_do_group(atoms);
+	return (ret);
+}
+
+t_term_node		*make_term_node(t_atoms **atoms)
+{
+	t_term_node	*ret;
+	t_and_or	*and_or;
+
+	ret = NULL;
+	if (!atoms || !*atoms || !(and_or = make_and_or(atoms)))
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->and_or = and_or;
+	ret->term_separator = make_term_separator(atoms);
+	return (ret); 
+}
+
 t_compound_list		*make_compound_list(t_atoms **atoms)
 {
-	t_term			*term;
+	t_term_node	*term;
 	t_compound_list	*ret;
 	t_newline_list	*list;
 
 	ret = NULL;
 	if (!atoms || !*atoms || (
-		!(term = make_term(atoms)) && !(list = make_newline_list(atoms))))
+		!(term = make_term_node(atoms)) && !(list = make_newline_list(atoms))))
 		return (NULL);
 	ret = malloc(sizeof(*ret));
 	if (!(ret->term = term ? term : make_term(atoms)))
