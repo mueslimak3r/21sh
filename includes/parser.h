@@ -452,8 +452,9 @@ struct					s_for_clause
 
 struct					s_term_node
 {
+	t_term_node			*term;
+	t_separator			*separator;
 	t_and_or			*and_or;
-	t_term_node			*next;
 };
 
 struct					s_compound_list
@@ -477,8 +478,8 @@ struct					s_compound_command
 	t_for_clause		*for_clause;
 	t_case_clause		*case_clause;
 	t_if_clause			*if_clause;
-	t_while_clause		*t_while_clause;
-	t_until_clause		*t_until_clause;
+	t_while_clause		*while_clause;
+	t_until_clause		*until_clause;
 };
 
 struct					s_command
@@ -527,9 +528,54 @@ struct					s_complete_command
 
 typedef struct			s_molecule
 {
-	int					type;
-	void				*data;
+	t_complete_command	*command;
 }						t_molecule;
 
 t_atom					*atomizer(char *str);
 t_molecule				*moleculizer(t_atom	*atoms);
+
+t_sequential_sep		*make_sequential_sep(t_atom **atoms);
+t_separator				*make_separator(t_atom **atoms);
+t_separator_op			*make_separator_op(t_atom **atoms);
+t_linebreak				*make_linebreak(t_atom **atoms);
+t_newline_list			*make_newline_list(t_atom **atoms);
+t_here_end				*make_here_end(t_atom **atoms);
+t_io_here				*make_io_here(t_atom **atoms);
+t_filename				*name_filename(t_atom **atoms);
+t_io_file				*make_io_file(t_atom **atoms);
+t_io_redirect			*make_io_redirect(t_atom **atoms);
+t_redirect_list			*make_redirect_list(t_atom **atoms);
+t_cmd_suffix			*make_cmd_suffix(t_atom **atoms);
+t_cmd_prefix			*make_cmd_prefix(t_atom **atoms);
+t_cmd_word				*make_cmd_word(t_atom **atoms);
+t_cmd_name				*make_cmd_name(t_atom **atoms);
+t_simple_command		*make_simple_command(t_atom **atoms);
+t_do_group				*make_do_group(t_atom **atoms);
+t_brace_group			*make_brace_group(t_atom **atoms);
+t_fname					*make_fname(t_atom **atoms);
+t_function_body			*make_function_body(t_atom **atoms);
+t_function_definition	*make_function_definition(t_atom **atoms);
+t_until_clause			*make_until_clause(t_atom **atoms);
+t_while_clause			*make_while_clause(t_atom **atoms);
+t_else_part				*make_else_part(t_atom **atoms);
+t_if_clause				*make_if_clause(t_atom **atoms);
+t_pattern				*make_pattern(t_atom **atoms);
+t_case_item				*make_case_item(t_atom **atoms);
+t_case_item_ns			*make_case_item_ns(t_atom **atoms);
+t_case_list				*make_case_list(t_atom **atoms);
+t_case_list_ns			*make_case_list_ns(t_atom **atoms);
+t_case_clause			*make_case_clause(t_atom **atoms);
+t_wordlist				*make_wordlist(t_atom **atoms);
+t_in					*make_in(t_atom **atoms);
+t_name					*make_name(t_atom **atoms);
+t_for_clause			*make_for_clause(t_atom **atoms);
+t_term_node				*make_term_node(t_atom **atoms);
+t_compound_list			*make_compound_list(t_atom **atoms);
+t_subshell				*make_subshell(t_atom **atoms);
+t_compound_command		*make_compound_command(t_atom **atoms);
+t_command				*make_command(t_atom **atoms);
+t_pipe_sequence			*make_pipe_sequence(t_atom **atoms);
+t_pipeline				*make_pipeline(t_atom **atoms);
+t_and_or				*make_and_or(t_atom **atoms);
+t_list_node				*make_list_node(t_atom **atoms);
+t_complete_command		*make_complete_command(t_atom **atoms);

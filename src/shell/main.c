@@ -18,7 +18,11 @@ void		shell_loop(void)
 	t_stats		stats;
 	//t_node		*tree;
 	int			res;
+	t_atom		*atoms;
+	t_molecule	*molecule;
 
+	atoms = NULL;
+	molecule = NULL;
 	quit = 0;
 	res = 0;
 	//tree = NULL;
@@ -32,8 +36,13 @@ void		shell_loop(void)
 			continue ;
 		/*if (!(tree = lexer(g_term.buff->buff_str)))
 			continue ;*/
-		if (!(atomizer(g_term.buff->buff_str)))
+		if (!(atoms = atomizer(g_term.buff->buff_str)))
 			continue ;
+		if (atoms && !(molecule = moleculizer(atoms)))
+		{
+			ft_printf_fd(STDERR_FILENO, "moleculizer fucked up cap'n\n");
+			continue ;
+		}
 		reset_term();
 		//recurse(tree, &stats);
 		if (g_term.children)
