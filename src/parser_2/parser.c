@@ -13,6 +13,81 @@ t_atom				*pop_atom(t_atom **atoms)
 	return (ret);
 }
 
+t_atom				*push_atom(t_atom **atoms, t_atom *atom)
+{
+	atom->next = *atoms;
+	return ((*atoms = atom));
+}
+
+void				pretty_printer(void *node, int type, int depth)
+{
+	char	pad[] = "                                                                         ";
+
+	if (!node)
+		return ;
+	if (type == COMPLETE_COMMAND)
+	{
+		printf("%.*sCOMPLETE_COMMAND\n", depth * 2, pad);
+		pretty_printer((void*)(((t_complete_command*)node)->list), LIST, depth + 1);
+		pretty_printer((void*)(((t_complete_command*)node)->separator), SEPARATOR, depth + 1);
+	}
+	else if (type == LIST)
+	{
+		printf("%.*sLIST\n", depth * 2, pad);
+		pretty_printer((void*)(((t_list_node*)node)->separator_op), SEPARATOR_OP, depth + 1);
+		pretty_printer((void*)(((t_list_node*)node)->and_or), AND_OR, depth + 1);
+		if (((t_list_node*)node)->next)
+			pretty_printer((void*)(((t_list_node*)node)->next), LIST, depth);
+	}
+	else if (type == AND_OR)
+	{
+		printf("%.*sAND_OR\n", depth * 2, pad);
+		pretty_printer((void*)(((t_and_or*)node)->and_if), AND_IF, depth + 1);
+		pretty_printer((void*)(((t_and_or*)node)->and_if), OR_IF, depth + 1);
+		pretty_printer((void*)(((t_and_or*)node)->linebreak), LINEBREAK, depth + 1);
+		pretty_printer((void*)(((t_and_or*)node)->pipeline), PIPELINE, depth + 1);
+		if (((t_and_or*)node)->next)
+			pretty_printer((void*)(((t_and_or*)node)->next), AND_OR, depth);
+	}
+	else if (type == PIPELINE)
+	{
+		printf("%.*sAND_OR\n", depth * 2, pad);
+		((t_pipeline*)node)->bang ? printf("%.*s%s\n", (depth + 1) * 2, pad, "!") : 0;
+		pretty_printer((void*)(((t_pipeline*)node)->pipe_sequence), PIPE_SEQUENCE, depth + 1);
+	}
+	else if (type == PIPE_SEQUENCE)
+	{
+		printf("%.*sPIPE_SEQUENCE\n", depth * 2, pad);
+		pretty_printer((void*)(((t_pipe_sequence*)node)->command), COMMAND, depth + 1);
+		if (((t_pipe_sequence*)node)->next)
+		{
+			printf("%.*s|\n", (depth + 1) * 2, pad);
+			pretty_printer((void*)(((t_pipe_sequence*)node)->linebreak), LINEBREAK, depth + 1);
+			pretty_printer((void*)(((t_pipe_sequence*)node)->next), PIPE_SEQUENCE, depth);	
+		}
+	}
+	else if (type == COMMAND)
+	{
+		printf("%.*sCOMMAND\n", depth * 2, pad);
+		pretty_printer((void*)(((t_command*)node)->simple_command), SIMPLE_COMMAND, depth + 1);
+		pretty_printer((void*)(((t_command*)node)->compound_command), COMPOUND_COMMAND, depth + 1);
+		pretty_printer((void*)(((t_command*)node)->redirect_list), REDIRECT_LIST, depth + 1);
+		pretty_printer((void*)(((t_command*)node)->function_definition),
+													FUNCTION_DEFINITION, depth + 1);
+	}
+	else if (type == COMPOUND_COMMAND)
+	{
+		printf("%.*sCOMPOUND_COMMAND\n", depth * 2, pad);
+		pretty_printer((void*)(((t_compound_command*)node)->brace_group), BRACE_GROUP, depth + 1);
+		pretty_printer((void*)(((t_compound_command*)node)->subshell), SUBSHELL, depth + 1);
+		pretty_printer((void*)(((t_compound_command*)node)->for_clause), FOR_CLAUSE, depth + 1);
+		pretty_printer((void*)(((t_compound_command*)node)->case_clause), CASE_CLAUSE, depth + 1);
+		pretty_printer((void*)(((t_compound_command*)node)->if_clause), IF_CLAUSE, depth + 1);
+		pretty_printer((void*)(((t_compound_command*)node)->while_clause), WHILE_CLAUSE, depth + 1);
+		pretty_printer((void*)(((t_compound_command*)node)->until_clause), UNTIL_CLAUSE, depth + 1);
+	}
+}
+
 /*
 ** please send help
 **            --alkozma
@@ -733,8 +808,11 @@ t_and_or			*make_and_or(t_atom **atoms)
 
 	ret = NULL;
 	pipeline = NULL;
-	if (!atoms || !*atoms || !(pipeline == make_pipeline(atoms)))
+	if (!atoms || !*atoms || !(pipeline = make_pipeline(atoms)))
+	{
+		printf("error making and_or\n");
 		return (NULL);
+	}
 	ret = malloc(sizeof(*ret));
 	ret->pipeline = pipeline;
 	ret->and_if = *atoms && (*atoms)->type == AND_IF ? pop_atom(atoms) : NULL;
@@ -790,5 +868,8 @@ t_molecule	*moleculizer(t_atom *atoms)
 	}
 	ret = malloc(sizeof(*ret));
 	ret->command = make_complete_command(&atoms);
+	if (!ret->command)
+		printf("help\n");
+	pretty_printer((void*)ret->command, COMPLETE_COMMAND, 0);
 	return (ret);
 }

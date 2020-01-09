@@ -211,17 +211,20 @@ struct					s_atom
 struct					s_separator_op
 {
 	t_atom				*atom;
+	int					id;
 };
 
 struct					s_newline_list
 {
 	t_atom				*atom;
 	t_newline_list		*next;
+	int					id;
 };
 
 struct					s_linebreak
 {
 	t_newline_list		*list;
+	int					id;
 };
 
 struct					s_sequential_sep
@@ -229,6 +232,7 @@ struct					s_sequential_sep
 	t_atom				*atom;
 	t_linebreak			*linebreak;
 	t_newline_list		*newline_list;
+	int					id;
 };
 
 struct					s_separator
@@ -236,28 +240,33 @@ struct					s_separator
 	t_separator_op		*separator_op;
 	t_linebreak			*linebreak;
 	t_newline_list		*newline_list;
+	int					id;
 };
 
 struct					s_here_end
 {
 	t_atom				*word;
+	int					id;
 };
 
 struct					s_io_here
 {
 	t_atom				*atom;
 	t_here_end			*end;
+	int					id;
 };
 
 struct					s_filename
 {
 	t_atom				*word;
+	int					id;
 };
 
 struct					s_io_file
 {
 	t_atom				*op;
 	t_filename			*filename;
+	int					id;
 };
 
 struct					s_io_redirect
@@ -265,12 +274,14 @@ struct					s_io_redirect
 	t_atom				*io_number;
 	t_io_file			*io_file;
 	t_io_here			*io_here;
+	int					id;
 };
 
 struct					s_redirect_list
 {
 	t_io_redirect		*io_redirect;
 	t_redirect_list		*next;
+	int					id;
 };
 
 struct					s_cmd_suffix
@@ -278,6 +289,7 @@ struct					s_cmd_suffix
 	t_io_redirect		*io_redir;
 	t_atom				*word;
 	t_cmd_suffix		*next;
+	int					id;
 };
 
 struct					s_cmd_prefix
@@ -285,16 +297,19 @@ struct					s_cmd_prefix
 	t_io_redirect		*io_redir;
 	t_atom				*assignment_word;
 	t_cmd_prefix		*next;
+	int					id;
 };
 
 struct					s_cmd_word
 {
 	t_atom				*word;			// word
+	int					id;
 };
 
 struct					s_cmd_name
 {
 	t_atom				*name;			// word
+	int					id;
 };
 
 struct					s_simple_command
@@ -303,6 +318,7 @@ struct					s_simple_command
 	t_cmd_word			*cmd_word;
 	t_cmd_suffix		*cmd_suffix;
 	t_cmd_name			*cmd_name;
+	int					id;
 };
 
 struct					s_do_group
@@ -310,6 +326,7 @@ struct					s_do_group
 	t_atom				*word;			// 'do'
 	t_compound_list		*compound_list;
 	t_atom				*done;			// 'done'
+	int					id;
 };
 
 struct					s_brace_group
@@ -317,17 +334,20 @@ struct					s_brace_group
 	t_atom				*lbrace;		// '{'
 	t_compound_list		*compound_list;
 	t_atom				*rbrace;		// '}'
+	int					id;
 };
 
 struct					s_fname
 {
 	t_atom				*fname;			// word
+	int					id;
 };
 
 struct					s_function_body
 {
 	t_compound_command	*command;
 	t_redirect_list		*redirect_list;
+	int					id;
 };
 
 struct					s_function_definition
@@ -337,6 +357,7 @@ struct					s_function_definition
 	t_atom				*rparen;		// ')'
 	t_linebreak			*linebreak;
 	t_function_body		*function_body;
+	int					id;
 };
 
 struct					s_until_clause
@@ -344,6 +365,7 @@ struct					s_until_clause
 	t_atom				*word;			// 'until'
 	t_compound_list		*compound_list;
 	t_do_group			*do_group;
+	int					id;
 };
 
 struct					s_while_clause
@@ -351,6 +373,7 @@ struct					s_while_clause
 	t_atom				*word;			// 'while'
 	t_compound_list		*compound_list;
 	t_do_group			*do_group;
+	int					id;
 };
 
 struct					s_else_part
@@ -360,6 +383,7 @@ struct					s_else_part
 	t_atom				*then;
 	t_else_part			*else_part;
 	t_atom				*word;			// 'else'
+	int					id;
 };
 
 struct					s_if_clause
@@ -370,6 +394,7 @@ struct					s_if_clause
 	t_compound_list		*compound_list2;
 	t_else_part			*else_part;
 	t_atom				*fi;
+	int					id;
 };
 
 struct					s_case_item
@@ -381,6 +406,7 @@ struct					s_case_item
 	t_compound_list		*compound_list;
 	t_atom				*dsemi;
 	t_linebreak			*linebreak2;
+	int					id;
 };
 
 struct					s_pattern
@@ -388,6 +414,7 @@ struct					s_pattern
 	t_pattern			*pattern;
 	t_atom				*pipe;
 	t_atom				*word;
+	int					id;
 };
 
 struct					s_case_item_ns
@@ -397,18 +424,21 @@ struct					s_case_item_ns
 	t_atom				*rparen;
 	t_compound_list		*compound_list;
 	t_linebreak			*linebreak;
+	int					id;
 };
 
 struct					s_case_list
 {
 	t_case_list			*list;
 	t_case_item			*item;
+	int					id;
 };
 
 struct					s_case_list_ns
 {
 	t_case_list			*list;
 	t_case_item_ns		*item;
+	int					id;
 };
 
 struct					s_case_clause
@@ -421,22 +451,26 @@ struct					s_case_clause
 	t_case_list			*case_list;
 	t_case_list_ns		*case_list_ns;
 	t_atom				*esac;
+	int					id;
 };
 
 struct					s_wordlist
 {
 	t_wordlist			*list;
 	t_atom				*word;
+	int					id;
 };
 
 struct					s_in
 {
 	t_atom				*word;
+	int					id;
 };
 
 struct					s_name
 {
 	t_atom				*word;
+	int					id;
 };
 
 struct					s_for_clause
@@ -448,6 +482,7 @@ struct					s_for_clause
 	t_wordlist			*wordlist;
 	t_sequential_sep	*sequential_sep;
 	t_do_group			*do_group;
+	int					id;
 };
 
 struct					s_term_node
@@ -455,6 +490,7 @@ struct					s_term_node
 	t_term_node			*term;
 	t_separator			*separator;
 	t_and_or			*and_or;
+	int					id;
 };
 
 struct					s_compound_list
@@ -462,6 +498,7 @@ struct					s_compound_list
 	t_newline_list		*list;
 	t_term_node			*term;
 	t_separator			*separator;
+	int					id;
 };
 
 struct					s_subshell
@@ -469,6 +506,7 @@ struct					s_subshell
 	t_atom				*lparen;
 	t_compound_list		*compound_list;
 	t_atom				*rparen;
+	int					id;
 };
 
 struct					s_compound_command
@@ -480,6 +518,7 @@ struct					s_compound_command
 	t_if_clause			*if_clause;
 	t_while_clause		*while_clause;
 	t_until_clause		*until_clause;
+	int					id;
 };
 
 struct					s_command
@@ -488,6 +527,7 @@ struct					s_command
 	t_compound_command	*compound_command;
 	t_redirect_list		*redirect_list;
 	t_function_definition	*function_definition;
+	int					id;
 };
 
 struct					s_pipe_sequence
@@ -496,12 +536,14 @@ struct					s_pipe_sequence
 	t_atom				*pipe;
 	t_linebreak			*linebreak;
 	t_command			*command;
+	int					id;
 };
 
 struct					s_pipeline
 {
 	t_atom				*bang;
 	t_pipe_sequence		*pipe_sequence;
+	int					id;
 };
 
 struct					s_and_or
@@ -511,6 +553,7 @@ struct					s_and_or
 	t_atom				*or_if;
 	t_linebreak			*linebreak;
 	t_pipeline			*pipeline;
+	int					id;
 };
 
 struct					s_list_node
@@ -518,12 +561,14 @@ struct					s_list_node
 	t_list_node			*next;
 	t_separator_op		*separator_op;
 	t_and_or			*and_or;
+	int					id;
 };
 
 struct					s_complete_command
 {
 	t_list_node			*list;
 	t_separator			*separator;
+	int					id;
 };
 
 typedef struct			s_molecule
