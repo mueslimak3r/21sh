@@ -86,6 +86,42 @@ void				pretty_printer(void *node, int type, int depth)
 		pretty_printer((void*)(((t_compound_command*)node)->while_clause), WHILE_CLAUSE, depth + 1);
 		pretty_printer((void*)(((t_compound_command*)node)->until_clause), UNTIL_CLAUSE, depth + 1);
 	}
+	else if (type == SUBSHELL)
+	{
+		printf("%.*sSUBSHELL\n", depth * 2, pad);
+		printf("%.*s%s\n", (depth + 1) * 2, pad, ((t_subshell*)node)->lparen->str);
+		pretty_printer((void*)(((t_subshell*)node)->compound_list), COMPOUND_LIST, depth + 1);
+		printf("%.*s%s\n", (depth + 1) * 2, pad, ((t_subshell*)node)->rparen->str);
+	}
+	else if (type == COMPOUND_LIST)
+	{
+		printf("%.*sCOMPOUND_LIST\n", depth * 2, pad);
+		pretty_printer((void*)(((t_compound_list*)node)->list), NEWLINE_LIST, depth + 1);
+		pretty_printer((void*)(((t_compound_list*)node)->term), TERM, depth + 1);
+		pretty_printer((void*)(((t_compound_list*)node)->separator), SEPARATOR, depth + 1);
+	}
+	else if (type == FOR_CLAUSE)
+	{
+		printf("%.*sFOR_CLAUSE\n", depth * 2, pad);
+		printf("%.*s%s\n", (depth + 1) * 2, pad, ((t_for_clause*)node)->for_word->str);
+		pretty_printer((void*)(((t_for_clause*)node)->name), NAME, depth + 1);
+		pretty_printer((void*)(((t_for_clause*)node)->linebreak), LINEBREAK, depth + 1);
+		pretty_printer((void*)(((t_for_clause*)node)->in), IN, depth + 1);
+		pretty_printer((void*)(((t_for_clause*)node)->wordlist), WORDLIST, depth + 1);
+		pretty_printer((void*)(((t_for_clause*)node)->sequential_sep), SEQUENTIAL_SEP, depth + 1);
+		pretty_printer((void*)(((t_for_clause*)node)->do_group), DO_GROUP, depth + 1);
+	}
+	else if (type == NAME || type == IN)
+	{
+		printf("%.*s%s\n", depth * 2, pad, type == NAME ? "NAME" : "IN");
+		printf("%.*s%s\n", (depth + 1) * 2, pad, ((t_in*)node)->word->str);
+	}
+	else if (type == WORDLIST)
+	{
+		printf("%.*sWORDLIST\n", depth * 2, pad);
+		printf("%.*s%s\n", (depth + 1) * 2, pad, ((t_wordlist*)node)->word->str);
+		pretty_printer((void*)(((t_wordlist*)node)->list), WORDLIST, depth);
+	}
 }
 
 /*
@@ -101,6 +137,7 @@ t_sequential_sep		*make_sequential_sep(t_atom **atoms)
 	ret->atom = (*atoms)->type == SEMICOLON ? pop_atom(atoms) : NULL;
 	ret->linebreak = ret->atom ? make_linebreak(atoms) : NULL;
 	ret->newline_list = ret->atom ? NULL : make_newline_list(atoms);
+	ret->id = SEQUENTIAL_SEP;
 	return (ret);
 }
 
@@ -116,6 +153,7 @@ t_separator				*make_separator(t_atom **atoms)
 		ret->newline_list = make_newline_list(atoms);
 	else
 		ret->newline_list = NULL;
+	ret->id = SEPARATOR;
 	return (ret);
 }
 
@@ -128,6 +166,7 @@ t_separator_op			*make_separator_op(t_atom **atoms)
 		return (NULL);
 	ret = malloc(sizeof(*ret));
 	ret->atom = pop_atom(atoms);
+	ret->id = SEPARATOR_OP;
 	return (ret);
 }
 
@@ -137,6 +176,7 @@ t_linebreak				*make_linebreak(t_atom **atoms)
 
 	ret = malloc(sizeof(*ret));
 	ret->list = make_newline_list(atoms);
+	ret->id = LINEBREAK;
 	return (ret);
 }
 
@@ -150,6 +190,7 @@ t_newline_list			*make_newline_list(t_atom **atoms)
 	ret = malloc(sizeof(*ret));
 	ret->atom = pop_atom(atoms);
 	ret->next = make_newline_list(atoms);
+	ret->id = NEWLINE_LIST;
 	return (ret);
 }
 
@@ -162,6 +203,7 @@ t_here_end				*make_here_end(t_atom **atoms)
 		return (NULL);
 	ret = malloc(sizeof(*ret));
 	ret->word = pop_atom(atoms);
+	ret->id = HERE_END;
 	return (ret);
 }
 
@@ -176,6 +218,7 @@ t_io_here				*make_io_here(t_atom **atoms)
 	ret->atom = pop_atom(atoms);
 	if (!(ret->end = make_here_end(atoms)))
 		ft_printf_fd(STDERR_FILENO, "problem in make io here\bn");
+	ret->id = IO_HERE;
 	return (ret);
 }
 
@@ -188,6 +231,7 @@ t_filename				*make_filename(t_atom **atoms)
 		return (NULL);
 	ret = malloc(sizeof(*ret));
 	ret->word = pop_atom(atoms);
+	ret->id = FILENAME;
 	return (ret);
 }
 
@@ -204,6 +248,7 @@ t_io_file				*make_io_file(t_atom **atoms)
 	ret = malloc(sizeof(*ret));
 	ret->op = pop_atom(atoms);
 	ret->filename = make_filename(atoms);
+	ret->id = IO_FILE;
 	return (ret);
 }
 
@@ -225,6 +270,7 @@ t_io_redirect			*make_io_redirect(t_atom **atoms)
 		ret->io_here = make_io_here(atoms);
 	else
 		ret->io_here = NULL;
+	ret->id = IO_REDIRECT;
 	return (ret);
 }
 
@@ -239,6 +285,7 @@ t_redirect_list			*make_redirect_list(t_atom **atoms)
 	ret = malloc(sizeof(*ret));
 	ret->io_redirect = io_redir;
 	ret->next = make_redirect_list(atoms);
+	ret->id = REDIRECT_LIST;
 	return (ret);
 }
 
@@ -254,6 +301,7 @@ t_cmd_suffix			*make_cmd_suffix(t_atom **atoms)
 		!(ret->word = (*atoms)->type == TYPE_WORD ? pop_atom(atoms) : NULL))
 		return (NULL);
 	ret->next = make_cmd_suffix(atoms);
+	ret->id = CMD_SUFFIX;
 	return (ret);
 }
 
@@ -269,9 +317,11 @@ t_cmd_prefix			*make_cmd_prefix(t_atom **atoms)
 		!(ret->assignment_word = (*atoms)->type == ASSIGNMENT_WORD ? pop_atom(atoms) : NULL))
 		return (NULL);
 	ret->next = make_cmd_prefix(atoms);
+	ret->id = CMD_PREFIX;
 	return (ret);
 }
 
+// i think this is not used
 t_cmd_word				*make_cmd_word(t_atom **atoms)
 {
 	t_cmd_word	*ret;
@@ -293,6 +343,7 @@ t_cmd_name				*make_cmd_name(t_atom **atoms)
 		return (NULL);
 	ret = malloc(sizeof(*ret));
 	ret->name = pop_atom(atoms);
+	ret->id = CMD_NAME;
 	return (ret);
 }
 
@@ -315,6 +366,7 @@ t_simple_command		*make_simple_command(t_atom **atoms)
 		ret->cmd_word = make_cmd_word(atoms);
 		ret->cmd_suffix = make_cmd_suffix(atoms);
 	}
+	ret->id = SIMPLE_COMMAND;
 	return (ret);
 }
 
@@ -330,6 +382,7 @@ t_do_group				*make_do_group(t_atom **atoms)
 	ret->compound_list = make_compound_list(atoms);
 	if (!(ret->done = (*atoms)->type == DONE ? pop_atom(atoms) : NULL))
 		ft_printf_fd(STDERR_FILENO, "theres a problem making your do group\n");
+	ret->id = DO_GROUP;
 	return (ret);
 }
 
@@ -345,6 +398,7 @@ t_brace_group			*make_brace_group(t_atom **atoms)
 		!(ret->compound_list = make_compound_list(atoms)) ||
 		!(ret->rbrace = (*atoms)->type == RIGHT_BRACE ? pop_atom(atoms) : NULL))
 		return (NULL);
+	ret->id = BRACE_GROUP;
 	return (ret);
 }
 
@@ -357,6 +411,7 @@ t_fname					*make_fname(t_atom **atoms)
 		return (NULL);
 	ret = malloc(sizeof(*ret));
 	ret->fname = pop_atom(atoms);
+	ret->id = FNAME;
 	return (ret);
 }
 
@@ -374,6 +429,7 @@ t_function_body			*make_function_body(t_atom **atoms)
 		return (NULL);
 	}
 	ret->redirect_list = make_redirect_list(atoms);
+	ret->id = FUNCTION_BODY;
 	return (ret);
 }
 
@@ -391,6 +447,7 @@ t_function_definition	*make_function_definition(t_atom **atoms)
 		!(ret->linebreak = make_linebreak(atoms)) || 
 		!(ret->function_body = make_function_body(atoms)))
 		return (NULL);
+	ret->id = FUNCTION_DEFINITION;
 	return (ret);
 }
 
@@ -406,6 +463,7 @@ t_until_clause		*make_until_clause(t_atom **atoms)
 	ret->do_group = make_do_group(atoms);
 	if (!ret->compound_list || !ret->do_group)
 		ft_printf_fd(STDERR_FILENO, "hey making until clause fucked up\n");
+	ret->id = UNTIL_CLAUSE;
 	return (ret);
 }
 
@@ -422,6 +480,7 @@ t_while_clause		*make_while_clause(t_atom **atoms)
 	ret->do_group = make_do_group(atoms);
 	if (!ret->compound_list || !ret->do_group)
 		ft_printf_fd(STDERR_FILENO, "make while clause error\n");
+	ret->id = WHILE_CLAUSE;
 	return (ret);
 }
 
@@ -437,6 +496,7 @@ t_else_part			*make_else_part(t_atom **atoms)
 	ret->compound_list = make_compound_list(atoms);
 	ret->then = ret->word->type == ELIF && (*atoms)->type == THEN ? pop_atom(atoms) : NULL;
 	ret->else_part = ret->then ? make_else_part(atoms) : NULL;
+	ret->id = ELSE_PART;
 	return (ret);
 }
 
@@ -461,6 +521,7 @@ t_if_clause			*make_if_clause(t_atom **atoms)
 	if (*atoms && (*atoms)->type != FI)
 		ft_printf_fd(STDERR_FILENO, "error making if clause2\n");
 	ret->fi = pop_atom(atoms);
+	ret->id = IF_CLAUSE;
 	return (ret);
 }
 
@@ -475,6 +536,7 @@ t_pattern			*make_pattern(t_atom **atoms)
 	ret->word = pop_atom(atoms);
 	ret->pipe = (*atoms)->type == REDIR_PIPE ? pop_atom(atoms) : NULL;
 	ret->pattern = ret->pipe ? make_pattern(atoms) : NULL;
+	ret->id = PATTERN;
 	return (ret);
 }
 
@@ -497,6 +559,7 @@ t_case_item			*make_case_item(t_atom **atoms)
 		ft_printf_fd(STDERR_FILENO, "error making case item 2\n");
 	ret->dsemi = (*atoms)->type == DSEMI ? pop_atom(atoms) : NULL;
 	ret->linebreak2 = make_linebreak(atoms);
+	ret->id = CASE_ITEM;
 	return (ret);	
 }
 
@@ -514,8 +577,10 @@ t_case_item_ns		*make_case_item_ns(t_atom **atoms)
 	ret->rparen = pop_atom(atoms);
 	ret->compound_list = make_compound_list(atoms);
 	ret->linebreak = make_linebreak(atoms);
+	ret->id = CASE_ITEM_NS;
 	return (ret);
 }
+
 
 t_case_list		*make_case_list(t_atom **atoms)
 {
@@ -530,9 +595,11 @@ t_case_list		*make_case_list(t_atom **atoms)
 	ret = malloc(sizeof(*ret));
 	ret->list = list;
 	ret->item = item;
+	ret->id = CASE_LIST;
 	return (ret);
 }
 
+// i dont really understand this "ns" thing --alkozma
 t_case_list_ns		*make_case_list_ns(t_atom **atoms)
 {
 	t_case_list_ns	*ret;
@@ -546,6 +613,7 @@ t_case_list_ns		*make_case_list_ns(t_atom **atoms)
 	ret = malloc(sizeof(*ret));
 	ret->list = list;
 	ret->item = item;
+	ret->id = CASE_LIST_NS;
 	return (ret);
 }
 
@@ -566,6 +634,7 @@ t_case_clause		*make_case_clause(t_atom **atoms)
 	else
 		ret->case_list_ns = NULL;
 	ret->esac = pop_atom(atoms);
+	ret->id = CASE_CLAUSE;
 	return (ret);
 }
 
@@ -579,6 +648,7 @@ t_wordlist		*make_wordlist(t_atom **atoms)
 	ret = malloc(sizeof(*ret));
 	ret->word = pop_atom(atoms);
 	ret->list = make_wordlist(atoms);
+	ret->id = WORDLIST;
 	return (ret);
 }
 
@@ -591,6 +661,7 @@ t_in			*make_in(t_atom **atoms)
 		return (NULL);
 	ret = malloc(sizeof(*ret));
 	ret->word = pop_atom(atoms);
+	ret->id = IN;
 	return (ret);
 }
 
@@ -614,6 +685,7 @@ t_name			*make_name(t_atom **atoms)
 	}
 	ret = malloc(sizeof(*ret));
 	ret->word = pop_atom(atoms);
+	ret->id = NAME;
 	return (ret);
 }
 
@@ -632,6 +704,7 @@ t_for_clause		*make_for_clause(t_atom **atoms)
 	ret->wordlist = make_wordlist(atoms);
 	ret->sequential_sep = make_sequential_sep(atoms);
 	ret->do_group = make_do_group(atoms);
+	ret->id = FOR_CLAUSE;
 	return (ret);
 }
 
@@ -649,6 +722,7 @@ t_term_node		*make_term_node(t_atom **atoms)
 		ret->term = make_term_node(atoms);
 	else
 		ret->term = NULL;
+	ret->id = TERM;
 	return (ret); 
 }
 
@@ -670,6 +744,7 @@ t_compound_list		*make_compound_list(t_atom **atoms)
 	}
 	ret->separator = make_separator(atoms);
 	ret->list = list;
+	ret->id = COMPOUND_LIST;
 	return (ret);
 }
 
@@ -698,6 +773,7 @@ t_subshell			*make_subshell(t_atom **atoms)
 	}
 	ret->rparen = pop_atom(atoms);
 	ft_printf_fd(STDERR_FILENO, "made subshell\n");
+	ret->id = SUBSHELL;
 	return (ret);
 }
 
@@ -735,6 +811,7 @@ t_compound_command	*make_compound_command(t_atom **atoms)
 		return (NULL);
 	}
 	ft_printf_fd(STDERR_FILENO, "made compound command\n");
+	ret->id = COMPOUND_COMMAND;
 	return (ret);
 }
 
@@ -765,6 +842,7 @@ t_command			*make_command(t_atom **atoms)
 		return (NULL);
 	}
 	ft_printf_fd(STDERR_FILENO, "made command\n");
+	ret->id = COMMAND;
 	return (ret);
 }
 
@@ -775,14 +853,21 @@ t_pipe_sequence		*make_pipe_sequence(t_atom **atoms)
 
 	ret = NULL;
 	if (!atoms || !*atoms || !(command = make_command(atoms)))
+	{
+		printf("fail on %s\n", *atoms ? (*atoms)->str : "NULL");
 		return (NULL);
+	}
 	ret = malloc(sizeof(*ret));
 	ret->command = command;
 	if (!atoms || !*atoms || !(ret->pipe = (*atoms)->type == REDIR_PIPE ? pop_atom(atoms) : NULL))
+	{
+		printf("fail on %s\n", *atoms ? (*atoms)->str : "NULL");
 		return (NULL);
+	}
 	ret->linebreak = make_linebreak(atoms);
 	ret->next = make_pipe_sequence(atoms);
 	ft_printf_fd(STDERR_FILENO, "made pipe sequence\n");
+	ret->id = PIPE_SEQUENCE;
 	return (ret);
 }
 
@@ -798,6 +883,7 @@ t_pipeline			*make_pipeline(t_atom **atoms)
 	ret->pipe_sequence = pipe_sequence;
 	ret->bang = (*atoms)->type == BANG ? pop_atom(atoms) : NULL;
 	ft_printf_fd(STDERR_FILENO, "made pipeline\n");
+	ret->id = PIPELINE;
 	return (ret);
 }
 
@@ -819,6 +905,7 @@ t_and_or			*make_and_or(t_atom **atoms)
 	ret->or_if = *atoms && (*atoms)->type == OR_IF ? pop_atom(atoms) : NULL;
 	ret->next = ret->and_if || ret->or_if ? make_and_or(atoms) : NULL;
 	ft_printf_fd(STDERR_FILENO, "made and_or\n");
+	ret->id = AND_OR;
 	return (ret);
 }
 
@@ -835,6 +922,7 @@ t_list_node			*make_list_node(t_atom **atoms)
 	ret->separator_op = make_separator_op(atoms);
 	ret->next = ret->separator_op ? make_list_node(atoms) : NULL;
 	ft_printf_fd(STDERR_FILENO, "made list\n");
+	ret->id = LIST;
 	return (ret);
 }
 
@@ -854,6 +942,7 @@ t_complete_command	*make_complete_command(t_atom **atoms)
 	ret->list = list;
 	ret->separator = separator;
 	ft_printf_fd(STDERR_FILENO, "made complete command\n");
+	ret->id = COMPLETE_COMMAND;
 	return (ret);
 }
 

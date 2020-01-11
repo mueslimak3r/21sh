@@ -394,7 +394,7 @@ t_atom	*atomizer(char *str)
 			tmp = tmp->str ? delimit(tmp) : tmp;
 			while (ft_isspace(str[i]))
 				i++;
-		}	
+		}
 		else if ((tmp->type == TYPE_WORD && del < 0) || quoting)
 		{
 			classifier(&tmp, str[i], 1);
@@ -414,7 +414,8 @@ t_atom	*atomizer(char *str)
 			classifier(&tmp, str[i], 1);
 			i++;
 		}
-		else if (classifier(&tmp, str[i], 1) > TYPE_WORD || can_delimit(str, i + 1) >= 0)
+		else if ((classifier(&tmp, str[i], 1) > TYPE_WORD || can_delimit(str, i + 1) >= 0) &&
+				!(tmp->type == MINUS && str[i + 1] && !ft_isdigit(str[i + 1])))
 		{
 			tmp = tmp->str ? delimit(tmp) : tmp;
 			if (!ft_isspace(str[i]))
