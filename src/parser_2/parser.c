@@ -96,7 +96,7 @@ void				pretty_printer(void *node, int type, int depth)
 	else if (type == COMPOUND_LIST)
 	{
 		printf("%.*sCOMPOUND_LIST\n", depth * 2, pad);
-		pretty_printer((void*)(((t_compound_list*)node)->list), NEWLINE_LIST, depth + 1);
+		pretty_printer((void*)(((t_compound_list*)node)->linebreak), NEWLINE_LIST, depth + 1);
 		pretty_printer((void*)(((t_compound_list*)node)->term), TERM, depth + 1);
 		pretty_printer((void*)(((t_compound_list*)node)->separator), SEPARATOR, depth + 1);
 	}
@@ -730,20 +730,16 @@ t_compound_list		*make_compound_list(t_atom **atoms)
 {
 	t_term_node	*term;
 	t_compound_list	*ret;
-	t_newline_list	*list;
+	t_linebreak	*linebreak;
 
 	ret = NULL;
 	if (!atoms || !*atoms || (
-		!(term = make_term_node(atoms)) && !(list = make_newline_list(atoms))))
+		!((linebreak = make_linebreak(atoms)) && (term = make_term_node(atoms)))))
 		return (NULL);
 	ret = malloc(sizeof(*ret));
-	if (!(ret->term = term ? term : make_term_node(atoms)))
-	{
-		ft_printf_fd(STDERR_FILENO, "compound list parse error\n");
-		return (NULL);
-	}
-	ret->separator = make_separator(atoms);
-	ret->list = list;
+	ret->linebreak = linebreak;
+	ret->term = term;
+	ret->linebreak = linebreak;
 	ret->id = COMPOUND_LIST;
 	return (ret);
 }
@@ -943,6 +939,35 @@ t_complete_command	*make_complete_command(t_atom **atoms)
 	ret->separator = separator;
 	ft_printf_fd(STDERR_FILENO, "made complete command\n");
 	ret->id = COMPLETE_COMMAND;
+	return (ret);
+}
+
+t_complete_commands	*make_complete_commands(t_atom **atoms)
+{
+	t_complete_commands	*ret;
+	t_complete_command	*complete_command;
+
+	ret = NULL;
+	if (!atoms || !*atoms || !(complete_command = make_complete_command(atoms)))
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->complete_command = complete_command;
+	ret->newline_list = make_newline_list(atoms);
+	ret->complete_commands = make_complete_commands(atoms);
+	return (ret);
+}
+
+t_program			*make_program(t_atom **atoms)
+{
+	t_program	*ret;
+
+	ret = NULL;
+	if (!atoms || !*atoms)
+		return (NULL);
+	ret = malloc(sizeof(*ret));
+	ret->linebreak = make_linebreak(atoms);
+	ret->complete_commands = make_complete_commands(atoms);
+	ret->linebreak2 = ret->linebreak ? make_linebreak(atoms) : NULL;
 	return (ret);
 }
 

@@ -1,5 +1,7 @@
 typedef struct s_atom t_atom;
 
+typedef struct	s_program			t_program;
+typedef struct	s_complete_commands	t_complete_commands;
 typedef struct	s_complete_command	t_complete_command;
 typedef struct	s_list_node			t_list_node;
 typedef struct	s_and_or			t_and_or;
@@ -497,7 +499,7 @@ struct					s_term_node
 struct					s_compound_list
 {
 	int					id;
-	t_newline_list		*list;
+	t_linebreak			*linebreak;
 	t_term_node			*term;
 	t_separator			*separator;
 };
@@ -572,6 +574,20 @@ struct					s_complete_command
 	t_separator			*separator;
 };
 
+struct					s_complete_commands
+{
+	t_complete_commands	*complete_commands;
+	t_newline_list		*newline_list;
+	t_complete_command	*complete_command;
+};
+
+struct					s_program
+{
+	t_linebreak			*linebreak;
+	t_complete_commands	*complete_commands;
+	t_linebreak			*linebreak2;
+};
+
 typedef struct			s_molecule
 {
 	t_complete_command	*command;
@@ -625,3 +641,5 @@ t_pipeline				*make_pipeline(t_atom **atoms);
 t_and_or				*make_and_or(t_atom **atoms);
 t_list_node				*make_list_node(t_atom **atoms);
 t_complete_command		*make_complete_command(t_atom **atoms);
+t_complete_commands		*make_complete_commands(t_atom **atoms);
+t_program				*make_program(t_atom **atoms);
