@@ -971,6 +971,30 @@ t_program			*make_program(t_atom **atoms)
 	return (ret);
 }
 
+static void	*do_type_jump(void *node, unsigned int type, unsigned int method)
+{
+
+	static void *(*type_ptr[])(void *, unsigned int, unsigned int method) = {
+		handle_program, handle_complete_commands, handle_complete_command,
+		handle_list, handle_and_or, handle_pipeline, handle_pipe_sequence,
+		handle_command, handle_compound_command, handle_subshell,
+		handle_compound_list, handle_term, handle_for_clause, handle_name,
+		handle_in, handle_case_clause, handle_case_list_ns, handle_case_list,
+		handle_case_item_ns, handle_case_item, handle_pattern,
+		handle_if_clause, handle_else_part, handle_while_clause,
+		handle_until_clause, handle_function_definition, handle_function_body,
+		handle_fname, handle_brace_group, handle_do_group,
+		handle_simple_commmand, handle_cmd_name, handle_cmd_prefix,
+		handle_cmd_suffix, handle_redirect_list, handle_io_redirect,
+		handle_io_file, handle_filename, handle_io_here, handle_here_end,
+		handle_newline_list, handle_linebreak, handle_separator_op,
+		handle_separator, handle_sequential_sep, handle_wordlist
+	};
+	if (type < (sizeof(type_ptr) / sizeof(*type_ptr)))
+		return (type_ptr[type](node, type, method));
+	return (0);
+}
+
 t_molecule	*moleculizer(t_atom *atoms)
 {
 	t_molecule	*ret;
@@ -984,6 +1008,9 @@ t_molecule	*moleculizer(t_atom *atoms)
 	ret->command = make_complete_command(&atoms);
 	if (!ret->command)
 		printf("help\n");
-	pretty_printer((void*)ret->command, COMPLETE_COMMAND, 0);
+	else
+		do_type_jump(ret->command, 0, VISIT);
+	//(type_a_ptr[0])(ret->command, 0);
+	//pretty_printer((void*)ret->command, COMPLETE_COMMAND, 0);
 	return (ret);
 }

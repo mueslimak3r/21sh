@@ -1,3 +1,6 @@
+#ifndef PARSER_H
+# define PARSER_H
+
 typedef struct s_atom t_atom;
 
 typedef struct	s_program			t_program;
@@ -47,6 +50,13 @@ typedef struct	s_linebreak			t_linebreak;
 typedef struct	s_separator_op		t_separator_op;
 typedef struct	s_separator			t_separator;
 typedef struct	s_sequential_sep	t_sequential_sep;
+
+enum	e_type_methods
+{
+	CREATE,
+	VISIT,
+	PRINT
+};
 
 enum	e_ast_grammar
 {
@@ -206,7 +216,7 @@ enum	e_tokens
 struct					s_atom
 {
 	char				*str;
-	struct s_atom		*next;
+	t_atom				*next;
 	int					type;
 	int					peek;
 };
@@ -590,8 +600,57 @@ struct					s_program
 
 typedef struct			s_molecule
 {
-	t_complete_command	*command;
+	t_program			*program;
 }						t_molecule;
+
+void					*handle_program(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_complete_commands(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_complete_command(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_list(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_and_or(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_pipeline(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_pipe_sequence(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_command(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_compound_command(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_subshell(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_compound_list(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_term(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_for_clause(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_name(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_in(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_case_clause(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_case_list_ns(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_case_list(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_case_item_ns(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_case_item(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_pattern(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_if_clause(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_else_part(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_while_clause(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_until_clause(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_function_definition(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_function_body(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_fname(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_brace_group(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_do_group(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_simple_commmand(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_cmd_name(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_cmd_prefix(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_cmd_suffix(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_redirect_list(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_io_redirect(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_io_file(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_filename(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_io_here(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_here_end(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_newline_list(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_linebreak(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_separator_op(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_separator(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_sequential_sep(void *node, unsigned int type, unsigned int method, unsigned int depth);
+void					*handle_wordlist(void *node, unsigned int type, unsigned int method, unsigned int depth);
+
+
 
 t_atom					*atomizer(char *str);
 t_molecule				*moleculizer(t_atom	*atoms);
@@ -643,3 +702,5 @@ t_list_node				*make_list_node(t_atom **atoms);
 t_complete_command		*make_complete_command(t_atom **atoms);
 t_complete_commands		*make_complete_commands(t_atom **atoms);
 t_program				*make_program(t_atom **atoms);
+
+#endif
